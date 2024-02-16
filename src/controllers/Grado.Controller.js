@@ -1,5 +1,5 @@
+import { GetConnection, sql } from '../DataBase/contection/Conexion'
 
-import { GetConnection, sql } from '../database/conection';
 //correcciones
 export const GetDocumentos = async (req, res) => {
     try {
