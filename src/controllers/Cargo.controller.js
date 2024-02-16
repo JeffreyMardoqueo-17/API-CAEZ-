@@ -1,4 +1,4 @@
-import { GetConnection, sql } from "../database/conection";
+import { GetConnection, sql } from '../DataBase/contection/Conexion'
 
 //Metodo get
 export const GetCargo = async (req, res) => {

@@ -1,5 +1,5 @@
-import { GetConnection } from "../database/conection";
-import sql from 'mssql';
+import { GetConnection, sql } from '../DataBase/contection/Conexion'
+
 
 //metodo para obtener los tipo de pago ==========================================================
 export const GetTipoPago = async (req, res) => {

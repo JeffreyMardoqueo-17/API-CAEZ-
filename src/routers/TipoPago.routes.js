@@ -1,6 +1,4 @@
 import {Route, Router} from "express"; //router permitira crear rutas URLS
-import {GetTipoPago, POSTNewTypePayment} from '../controllers/TipoPago.controller'
-
 import { GetTipoPago, POSTNewTypePayment } from "../controllers/TipoPago.controller";
 const router = Router();
 //creamos la ruta para traer
