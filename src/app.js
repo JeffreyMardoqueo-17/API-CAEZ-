@@ -2,7 +2,6 @@ import express from 'express'
 import configuracion from './configuracion';
 // //rutas
 import CargosControllers from './routers/Cargo.routes'; //ruta de cargo
-import Grado from './routers/Grado.routes';  //Rutas para el manejo del grado academico
 import TipoPago from './routers/TipoPago.routes'; ///RUTAS TIPO PAGO 
 
 
