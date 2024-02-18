@@ -1,6 +1,59 @@
 -----------------------///TABLA TURNO////////////----------------------------
+USE APICaezBD
+--------------------------------sp de Parentezco
+-- SP para obtener todos los parentezcos
+CREATE PROCEDURE SPObtenerParentezcos
+AS
+BEGIN
+    SELECT * FROM Parentezco;
+END;
+GO
+
+-- SP para obtener un parentezco por su Id
+CREATE PROCEDURE SPObtenerParentezcoPorId
+    @Id TINYINT
+AS
+BEGIN
+    SELECT * FROM Parentezco
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar un nuevo parentezco
+CREATE PROCEDURE SPInsertarParentezco
+    @Nombre VARCHAR(50)
+AS
+BEGIN
+    INSERT INTO Parentezco (Nombre)
+    VALUES (@Nombre);
+END;
+GO
+
+-- SP para actualizar un parentezco existente
+CREATE PROCEDURE SPActualizarParentezco
+    @Id TINYINT,
+    @Nombre VARCHAR(50)
+AS
+BEGIN
+    UPDATE Parentezco
+    SET Nombre = @Nombre
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un parentezco por su Id
+CREATE PROCEDURE SPEliminarParentezco
+    @Id TINYINT
+AS
+BEGIN
+    DELETE FROM Parentezco
+    WHERE Id = @Id;
+END;
+GO
+
 
 -- SP para obtener todos los turnos
+
 CREATE PROCEDURE SPObtenerTurnos
 AS
 BEGIN
@@ -326,6 +379,388 @@ BEGIN
     UPDATE Fondo SET MontoTotal = @NuevoMonto
 END
 GO
+--------------------------ADMINISTRADOR 
 
+-- SP para obtener todos los administradores
+CREATE PROCEDURE SPObtenerAdministradores
+AS
+BEGIN
+    SELECT * FROM Administrador;
+END;
+GO
 
+-- SP para obtener un administrador por su Id
+CREATE PROCEDURE SPObtenerAdministradorPorId
+    @Id BIGINT
+AS
+BEGIN
+    SELECT * FROM Administrador
+    WHERE Id = @Id;
+END;
+GO
 
+-- SP para insertar un nuevo administrador
+CREATE PROCEDURE SPInsertarAdministrador
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdCargo TINYINT,
+    @Telefono VARCHAR(50),
+    @Pass VARCHAR(200)
+AS
+BEGIN
+    INSERT INTO Administrador (Nombre, Apellido, IdCargo, Telefono, Pass)
+    VALUES (@Nombre, @Apellido, @IdCargo, @Telefono, @Pass);
+END;
+GO
+
+-- SP para actualizar un administrador existente
+CREATE PROCEDURE SPActualizarAdministrador
+    @Id BIGINT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdCargo TINYINT,
+    @Telefono VARCHAR(50),
+    @Pass VARCHAR(200)
+AS
+BEGIN
+    UPDATE Administrador
+    SET Nombre = @Nombre, Apellido = @Apellido, IdCargo = @IdCargo, Telefono = @Telefono, Pass = @Pass
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un administrador por su Id
+CREATE PROCEDURE SPEliminarAdministrador
+    @Id BIGINT
+AS
+BEGIN
+    DELETE FROM Administrador
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para autenticación de administrador
+CREATE PROCEDURE SPLoginAdministrador
+    @Nombre VARCHAR(50),
+    @Pass VARCHAR(200)
+AS
+BEGIN
+    DECLARE @AdminId BIGINT
+
+    SELECT @AdminId = Id FROM Administrador
+    WHERE Nombre = @Nombre AND Pass = @Pass;
+
+    IF @AdminId IS NOT NULL
+        SELECT @AdminId AS Id;
+    ELSE
+        SELECT NULL AS Id;
+END;
+GO
+
+----------------ENCARGADO ------------------------
+-- SP para obtener todos los encargados
+CREATE PROCEDURE SPObtenerEncargados
+AS
+BEGIN
+    SELECT * FROM Encargado;
+END;
+GO
+
+-- SP para obtener un encargado por su Id
+CREATE PROCEDURE SPObtenerEncargadoPorId
+    @Id BIGINT
+AS
+BEGIN
+    SELECT * FROM Encargado
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar un nuevo encargado
+CREATE PROCEDURE SPInsertarEncargado
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdTipoDoc TINYINT,
+    @NumeroDocumento VARCHAR(50),
+    @Telefono VARCHAR(50),
+    @Direccion TINYINT,
+    @Parentezco VARCHAR(50),
+    @IdAdministrador BIGINT
+AS
+BEGIN
+    INSERT INTO Encargado (Nombre, Apellido, IdTipoDoc, NumeroDocumento, Telefono, Direccion, Parentezco, IdAdministrador)
+    VALUES (@Nombre, @Apellido, @IdTipoDoc, @NumeroDocumento, @Telefono, @Direccion, @Parentezco, @IdAdministrador);
+END;
+GO
+
+-- SP para actualizar un encargado existente
+CREATE PROCEDURE SPActualizarEncargado
+    @Id BIGINT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdTipoDoc TINYINT,
+    @NumeroDocumento VARCHAR(50),
+    @Telefono VARCHAR(50),
+    @Direccion TINYINT,
+    @Parentezco VARCHAR(50),
+    @IdAdministrador BIGINT
+AS
+BEGIN
+    UPDATE Encargado
+    SET Nombre = @Nombre, Apellido = @Apellido, IdTipoDoc = @IdTipoDoc, NumeroDocumento = @NumeroDocumento,
+        Telefono = @Telefono, Direccion = @Direccion, Parentezco = @Parentezco, IdAdministrador = @IdAdministrador
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un encargado por su Id
+CREATE PROCEDURE SPEliminarEncargado
+    @Id BIGINT
+AS
+BEGIN
+    DELETE FROM Encargado
+    WHERE Id = @Id;
+END;
+GO
+
+-------------------ALUMNOOOOOOOOOOOOOOOOOOOOOOOS
+-- SP para obtener todos los alumnos
+CREATE PROCEDURE SPObtenerAlumnos
+AS
+BEGIN
+    SELECT * FROM Alumno;
+END;
+GO
+
+-- SP para obtener un alumno por su Id
+CREATE PROCEDURE SPObtenerAlumnoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Alumno
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar un nuevo alumno
+CREATE PROCEDURE SPInsertarAlumno
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdGrado TINYINT,
+    @IdTipoDoc TINYINT,
+    @NumeroDocumento VARCHAR(50),
+    @IdEncargado BIGINT,
+    @IdTurno TINYINT,
+    @IdAdministrador BIGINT
+AS
+BEGIN
+    INSERT INTO Alumno (Nombre, Apellido, IdGrado, IdTipoDoc, NumeroDocumento, IdEncargado, IdTurno, IdAdministrador)
+    VALUES (@Nombre, @Apellido, @IdGrado, @IdTipoDoc, @NumeroDocumento, @IdEncargado, @IdTurno, @IdAdministrador);
+END;
+GO
+
+-- SP para actualizar un alumno existente
+CREATE PROCEDURE SPActualizarAlumno
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdGrado TINYINT,
+    @IdTipoDoc TINYINT,
+    @NumeroDocumento VARCHAR(50),
+    @IdEncargado BIGINT,
+    @IdTurno TINYINT,
+    @IdAdministrador BIGINT
+AS
+BEGIN
+    UPDATE Alumno
+    SET Nombre = @Nombre, Apellido = @Apellido, IdGrado = @IdGrado, IdTipoDoc = @IdTipoDoc,
+        NumeroDocumento = @NumeroDocumento, IdEncargado = @IdEncargado, IdTurno = @IdTurno, IdAdministrador = @IdAdministrador
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un alumno por su Id
+CREATE PROCEDURE SPEliminarAlumno
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Alumno
+    WHERE Id = @Id;
+END;
+GO
+
+---------------------------------PAGO 
+-- SP para obtener todos los pagos
+CREATE PROCEDURE SPObtenerPagos
+AS
+BEGIN
+    SELECT * FROM Pago;
+END;
+GO
+
+-- SP para obtener un pago por su Id
+CREATE PROCEDURE SPObtenerPagoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Pago
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar un nuevo pago
+CREATE PROCEDURE SPInsertarPago
+    @NumeroFactura INT,
+    @IdAlumno INT,
+    @IdEncargado BIGINT,
+    @Multa DECIMAL(10, 2),
+    @FechaRegistro DATE,
+    @IdAdministrador BIGINT
+AS
+BEGIN
+    INSERT INTO Pago (NumeroFactura, IdAlumno, IdEncargado, Multa, FechaRegistro, IdAdministrador)
+    VALUES (@NumeroFactura, @IdAlumno, @IdEncargado, @Multa, @FechaRegistro, @IdAdministrador);
+END;
+GO
+
+-- SP para actualizar un pago existente
+CREATE PROCEDURE SPActualizarPago
+    @Id INT,
+    @NumeroFactura INT,
+    @IdAlumno INT,
+    @IdEncargado BIGINT,
+    @Multa DECIMAL(10, 2),
+    @FechaRegistro DATE,
+    @IdAdministrador BIGINT
+AS
+BEGIN
+    UPDATE Pago
+    SET NumeroFactura = @NumeroFactura, IdAlumno = @IdAlumno, IdEncargado = @IdEncargado, Multa = @Multa,
+        FechaRegistro = @FechaRegistro, IdAdministrador = @IdAdministrador
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un pago por su Id
+CREATE PROCEDURE SPEliminarPago
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Pago
+    WHERE Id = @Id;
+END;
+GO
+
+-------------------//////////////////////// MULTA
+-- SP para obtener todas las multas
+CREATE PROCEDURE SPObtenerMultas
+AS
+BEGIN
+    SELECT * FROM Multa;
+END;
+GO
+
+-- SP para obtener una multa por su Id
+CREATE PROCEDURE SPObtenerMultaPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Multa
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar una nueva multa
+CREATE PROCEDURE SPInsertarMulta
+    @Nombre VARCHAR(50),
+    @IdPago INT
+AS
+BEGIN
+    INSERT INTO Multa (Nombre, IdPago)
+    VALUES (@Nombre, @IdPago);
+END;
+GO
+
+-- SP para actualizar una multa existente
+CREATE PROCEDURE SPActualizarMulta
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @IdPago INT
+AS
+BEGIN
+    UPDATE Multa
+    SET Nombre = @Nombre,
+        IdPago = @IdPago
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar una multa por su Id
+CREATE PROCEDURE SPEliminarMulta
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Multa
+    WHERE Id = @Id;
+END;
+GO
+	
+---------------------------------////FACTURAAAAAAAAAAA
+-- SP para obtener todas las facturas
+CREATE PROCEDURE SPObtenerFacturas
+AS
+BEGIN
+    SELECT * FROM Factura;
+END;
+GO
+
+-- SP para obtener una factura por su Id
+CREATE PROCEDURE SPObtenerFacturaPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Factura
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar una nueva factura
+CREATE PROCEDURE SPInsertarFactura
+    @IdPago INT
+AS
+BEGIN
+    INSERT INTO Factura (IdPago)
+    VALUES (@IdPago);
+END;
+GO
+
+-- SP para actualizar una factura existente
+CREATE PROCEDURE SPActualizarFactura
+    @Id INT,
+    @IdPago INT
+AS
+BEGIN
+    UPDATE Factura
+    SET IdPago = @IdPago
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar una factura por su Id
+CREATE PROCEDURE SPEliminarFactura
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Factura
+    WHERE Id = @Id;
+END;
+GO
+-----------SUMAR EL FONDO ACTUAL MAS EL QUE SE REGISTE, TABLA FONDO
+CREATE PROCEDURE SP_SumarPagosDonacionesAlFondo
+    @Monto DECIMAL(10, 2)
+AS
+BEGIN
+    UPDATE Fondo
+    SET Monto = Monto + @Monto;
+END;
+GO
