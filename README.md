@@ -29,6 +29,8 @@ Eliminar un parentezco por su ID (DELETE):
 Método: DELETE
 Ruta: /Parentezcos/:id
 Descripción: Elimina un parentezco de la base de datos por su ID.
+![image](https://github.com/JeffreyMardoqueo-17/API-CAEZ-/assets/126411958/dd4801ad-a836-4ef4-bf96-456c702ad0a9)
+
 La API utiliza un enfoque modular y escalable, permitiendo la
 adición de nuevas funcionalidades y la expansión a otras entidades 
 relacionadas en el futuro. La implementación de los SP garantiza un 
