@@ -1,7 +1,7 @@
 import { GetConnection } from '../DataBase/contection/Conexion'
 import sql from 'mssql';
 
-// Método para obtener todos los parentezcos
+// Método para obtener todos los parentezcos === http://localhost:5000/Parentezcos
 export const GetParentezcos = async (req, res) => {
     try {
         const pool = await GetConnection();
@@ -13,7 +13,7 @@ export const GetParentezcos = async (req, res) => {
     }
 };
 
-// Método para obtener un parentezco por su Id
+// Método para obtener un parentezco por su Id   == http://localhost:5000/Parentezcos/6
 export const GetParentezcoPorId = async (req, res) => {
     const { id } = req.params;
     try {
@@ -33,6 +33,9 @@ export const GetParentezcoPorId = async (req, res) => {
 // Método para insertar un nuevo parentezco
 export const PostParentezco = async (req, res) => {
     const { nombre } = req.body;
+    if (!nombre) {
+        return res.status(400).json({ msg: 'El campo nombre es requerido' });
+    }
     try {
         const pool = await GetConnection();
         await pool.request().input('Nombre', sql.VarChar(50), nombre).query('EXEC SPInsertarParentezco @Nombre');
@@ -43,7 +46,13 @@ export const PostParentezco = async (req, res) => {
     }
 };
 
-// Método para actualizar un parentezco existente
+
+// Método para actualizar un parentezco existente http://localhost:5000/Parentezcos/5  
+/*
+{
+    "nombre": "Tío"
+}
+ */
 export const PutParentezco = async (req, res) => {
     const { id } = req.params;
     const { nombre } = req.body;
