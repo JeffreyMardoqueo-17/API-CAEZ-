@@ -132,4 +132,4 @@ CREATE TABLE Factura(
 GO
 
 insert into Parentezco(Nombre)
-					Values('Mamá');
+					Values('Papá');
