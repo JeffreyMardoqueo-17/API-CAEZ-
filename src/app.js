@@ -4,7 +4,7 @@ import ParentezcoRouter from './routers/Parentezco.routes'; // Importa el enruta
 import TurnoRputer from './routers/Turno.routes'
 import GradoRouter from './routers/Grado.routes'
 import TipoDocumentos from './routers/TipoDocumento.routes'
-
+import TipoPago from './routers/TipoPago.routes'
 
 const app = express();
 const port = configuracion.port; // Define la variable port utilizando const
@@ -17,7 +17,7 @@ app.use(ParentezcoRouter); //parentezco Router
 app.use(TurnoRputer) //turno
 app.use(GradoRouter)//grado
 app.use(TipoDocumentos) //tipo doc
-
+app.use(TipoPago) //tipo pago
 app.listen(port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`);
 });
