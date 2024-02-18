@@ -6,14 +6,14 @@ const dbSettings = {
     user: 'Jeffrey', //usuario de la base de datos
     password: 'jeffrey20068f',
     server: 'localhost',
-    database: 'CAEZGESTORBD',
+    database: 'APICaezBD',
     options : {
         encrypt : true,
         trustServerCertificate: true
     },
 }
 //conecion asincrona, se intentara conectar atraves de una especie de promesa
-async function GetConnection() { //funcion para conectarse a la base de datos
+export async function GetConnection() { //funcion para conectarse a la base de datos
     try {
         const pool = await sql.connect(dbSettings)//conectarse a la BD atraves de esos parametros => traera una coneccion
         return pool;
@@ -22,3 +22,4 @@ async function GetConnection() { //funcion para conectarse a la base de datos
     }
 }
 GetConnection();
+export default sql;

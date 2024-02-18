@@ -263,7 +263,7 @@ BEGIN
 END;
 GO
 
--- SP para obtener una dirección por su Id
+-- SP para obtener una direcciï¿½n por su Id
 CREATE PROCEDURE SPObtenerDireccionPorId
     @Id TINYINT
 AS
@@ -273,7 +273,7 @@ BEGIN
 END;
 GO
 
--- SP para insertar una nueva dirección
+-- SP para insertar una nueva direcciï¿½n
 CREATE PROCEDURE SPInsertarDireccion
     @Nombre VARCHAR(200)
 AS
@@ -283,7 +283,7 @@ BEGIN
 END;
 GO
 
--- SP para actualizar una dirección existente
+-- SP para actualizar una direcciï¿½n existente
 CREATE PROCEDURE SPActualizarDireccion
     @Id TINYINT,
     @Nombre VARCHAR(200)
@@ -295,7 +295,7 @@ BEGIN
 END;
 GO
 
--- SP para eliminar una dirección por su Id
+-- SP para eliminar una direcciï¿½n por su Id
 CREATE PROCEDURE SPEliminarDireccion
     @Id TINYINT
 AS
@@ -439,7 +439,7 @@ BEGIN
 END;
 GO
 
--- SP para autenticación de administrador
+-- SP para autenticaciï¿½n de administrador
 CREATE PROCEDURE SPLoginAdministrador
     @Nombre VARCHAR(50),
     @Pass VARCHAR(200)
