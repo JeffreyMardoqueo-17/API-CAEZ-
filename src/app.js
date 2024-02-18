@@ -2,6 +2,10 @@ import express from 'express';
 import configuracion from './configuracion';
 import ParentezcoRouter from './routers/Parentezco.routes'; // Importa el enrutador de Parentezco
 import TurnoRputer from './routers/Turno.routes'
+import GradoRouter from './routers/Grado.routes'
+
+
+
 const app = express();
 const port = configuracion.port; // Define la variable port utilizando const
 
@@ -11,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extends: false }));
 app.use(ParentezcoRouter); //parentezco Router
 app.use(TurnoRputer) //turno
+app.use(GradoRouter)//grado
 
 
 app.listen(port, () => {
