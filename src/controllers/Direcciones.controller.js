@@ -72,3 +72,19 @@ export const DeleteDireccion = async (req, res) => {
         res.status(500).json({ msg: 'Error al eliminar la dirección' });
     }
 };
+
+
+
+///de esta no estoy seguro 
+// Método para buscar direcciones por un texto de búsqueda
+export const BuscarDireccionesPorNombre = async (req, res) => {
+    const { textoBusqueda } = req.params;
+    try {
+        const pool = await GetConnection();
+        const result = await pool.request().input('TextoBusqueda', sql.VarChar(200), textoBusqueda).query('EXEC SPBuscarDireccionesPorNombre @TextoBusqueda');
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(`Error al buscar direcciones: ${error}`);
+        res.status(500).json({ msg: 'Error al buscar direcciones' });
+    }
+};
