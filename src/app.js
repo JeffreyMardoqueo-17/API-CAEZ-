@@ -1,18 +1,18 @@
-import express from 'express'
+import express from 'express';
 import configuracion from './configuracion';
-// //rutas
-import CargosControllers from './routers/Cargo.routes'; //ruta de cargo
-import TipoPago from './routers/TipoPago.routes'; ///RUTAS TIPO PAGO 
+import ParentezcoRouter from './routers/Parentezco.routes'; // Importa el enrutador de Parentezco
 
-
-
-let port = 8000;
 const app = express();
-app.set('port', configuracion.port)
+const port = configuracion.port; // Define la variable port utilizando const
 
+app.set('port', port);
 
-app.use(CargosControllers); //Usar las rutas de CargoRouter
-// app.use(Grado); //Usar las rutas de Grado
-app.use(TipoPago);// Usar las rutas de TipoPago
+app.use(express.json());
+app.use(express.urlencoded({ extends: false }));
+app.use(ParentezcoRouter);
+
+app.listen(port, () => {
+    console.log(`Servidor corriendo en el puerto ${port}`);
+});
 
 export default app;
