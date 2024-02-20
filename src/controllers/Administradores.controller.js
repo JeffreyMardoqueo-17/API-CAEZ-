@@ -34,9 +34,9 @@ export const GetAdministradorPorId = async (req, res) => {
 // Método para insertar un nuevo administrador
 export const PostAdministrador = async (req, res) => {
     const { nombre, apellido, idCargo, telefono, pass } = req.body;
-    if (!nombre || !apellido || !idCargo || !telefono || !pass) {
-        return res.status(400).json({ msg: 'Todos los campos son requeridos' });
-    }
+    // if (!nombre || !apellido || !idCargo || !telefono || !pass) {
+    //     return res.status(400).json({ msg: 'Todos los campos son requeridos' });
+    // }
     try {
         const pool = await GetConnection();
         await pool.request()
