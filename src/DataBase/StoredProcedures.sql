@@ -1,5 +1,4 @@
------------------------///TABLA TURNO////////////----------------------------
-USE APICaezBD
+
 --------------------------------sp de Parentezco
 -- SP para obtener todos los parentezcos
 CREATE PROCEDURE SPObtenerParentezcos
