@@ -33,9 +33,6 @@ export const GetParentezcoPorId = async (req, res) => {
 // Método para insertar un nuevo parentezco
 export const PostParentezco = async (req, res) => {
     const { nombre } = req.body;
-    if (!nombre) {
-        return res.status(400).json({ msg: 'El campo nombre es requerido' });
-    }
     try {
         const pool = await GetConnection();
         await pool.request().input('Nombre', sql.VarChar(50), nombre).query('EXEC SPInsertarParentezco @Nombre');

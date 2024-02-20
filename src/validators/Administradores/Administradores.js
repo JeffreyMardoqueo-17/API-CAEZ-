@@ -1,6 +1,5 @@
 import { check } from 'express-validator';
-import { validateResult } from '../helpers/ValidateHeper';
-import { is } from 'express/lib/request';
+import { validateResult } from '../../helpers/ValidateHeper';
 
 /**-- TABLA Administrador
 CREATE TABLE Administrador(
@@ -12,7 +11,7 @@ CREATE TABLE Administrador(
     Pass VARCHAR(200) NOT NULL
 ); */
 
-const validateCreate = [
+const ValidatePostAdministrador = [
     check('nombre')
         .exists()
         .not()
@@ -58,4 +57,4 @@ const validateCreate = [
 }
 ];
 
-export { validateCreate };
+export { ValidatePostAdministrador };
