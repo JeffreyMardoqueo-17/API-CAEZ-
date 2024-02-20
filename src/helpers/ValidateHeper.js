@@ -9,4 +9,5 @@ const validateResult = (req, res, next) =>{
         res.send({errors : error.array()})
     }
 }
-export {validateResult}
+// module.exports(validateResult)
+export{validateResult}
