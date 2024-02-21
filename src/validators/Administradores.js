@@ -1,5 +1,5 @@
 import { check } from 'express-validator';
-import { validateResult } from '../../helpers/ValidateHeper';
+import { validateResult } from '../helpers/ValidateHeper';
 
 /**-- TABLA Administrador
 CREATE TABLE Administrador(
@@ -56,4 +56,4 @@ const ValidatePostAdministrador = [
     validateResult(req, res, next)
 }
 ];
-export { validateCreate };
+export { ValidatePostAdministrador }; // asi como debe de ser
