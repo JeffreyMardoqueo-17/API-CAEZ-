@@ -390,7 +390,7 @@ GO
 
 -- SP para obtener un administrador por su Id
 CREATE PROCEDURE SPObtenerAdministradorPorId
-    @Id BIGINT
+    @Id INT
 AS
 BEGIN
     SELECT * FROM Administrador
@@ -414,7 +414,7 @@ GO
 
 -- SP para actualizar un administrador existente
 CREATE PROCEDURE SPActualizarAdministrador
-    @Id BIGINT,
+    @Id INT,
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
     @IdCargo TINYINT,
@@ -430,7 +430,7 @@ GO
 
 -- SP para eliminar un administrador por su Id
 CREATE PROCEDURE SPEliminarAdministrador
-    @Id BIGINT
+    @Id INT
 AS
 BEGIN
     DELETE FROM Administrador
@@ -444,7 +444,7 @@ CREATE PROCEDURE SPLoginAdministrador
     @Pass VARCHAR(200)
 AS
 BEGIN
-    DECLARE @AdminId BIGINT
+    DECLARE @AdminId INT
 
     SELECT @AdminId = Id FROM Administrador
     WHERE Nombre = @Nombre AND Pass = @Pass;
@@ -467,7 +467,7 @@ GO
 
 -- SP para obtener un encargado por su Id
 CREATE PROCEDURE SPObtenerEncargadoPorId
-    @Id BIGINT
+    @Id INT
 AS
 BEGIN
     SELECT * FROM Encargado
@@ -483,7 +483,7 @@ CREATE PROCEDURE SPInsertarEncargado
     @Telefono VARCHAR(50),
     @Direccion TINYINT,
     @IdParentezco TINYINT,
-    @IdAdministrador BIGINT
+    @IdAdministrador INT
 AS
 BEGIN
     INSERT INTO Encargado (Nombre, Apellido, IdTipoDoc, NumeroDocumento, Telefono, Direccion, IdParentezco, IdAdministrador)
@@ -493,7 +493,7 @@ GO
 
 -- SP para actualizar un encargado existente
 CREATE PROCEDURE SPActualizarEncargado
-    @Id BIGINT,
+    @Id INT,
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
     @IdTipoDoc TINYINT,
@@ -501,7 +501,7 @@ CREATE PROCEDURE SPActualizarEncargado
     @Telefono VARCHAR(50),
     @Direccion TINYINT,
     @IdParentezco TINYINT,
-    @IdAdministrador BIGINT
+    @IdAdministrador INT
 AS
 BEGIN
     UPDATE Encargado
@@ -518,7 +518,7 @@ END;
 GO
 -- SP para eliminar un encargado por su Id
 CREATE PROCEDURE SPEliminarEncargado
-    @Id BIGINT
+    @Id INT
 AS
 BEGIN
     DELETE FROM Encargado
@@ -552,9 +552,9 @@ CREATE PROCEDURE SPInsertarAlumno
     @IdGrado TINYINT,
     @IdTipoDoc TINYINT,
     @NumeroDocumento VARCHAR(50),
-    @IdEncargado BIGINT,
+    @IdEncargado INT,
     @IdTurno TINYINT,
-    @IdAdministrador BIGINT
+    @IdAdministrador INT
 AS
 BEGIN
     INSERT INTO Alumno (Nombre, Apellido, IdGrado, IdTipoDoc, NumeroDocumento, IdEncargado, IdTurno, IdAdministrador)
@@ -570,9 +570,9 @@ CREATE PROCEDURE SPActualizarAlumno
     @IdGrado TINYINT,
     @IdTipoDoc TINYINT,
     @NumeroDocumento VARCHAR(50),
-    @IdEncargado BIGINT,
+    @IdEncargado INT,
     @IdTurno TINYINT,
-    @IdAdministrador BIGINT
+    @IdAdministrador INT
 AS
 BEGIN
     UPDATE Alumno
@@ -618,7 +618,7 @@ CREATE PROCEDURE SPInsertarPago
     @Multa DECIMAL(10, 2),
     @TotalPagado DECIMAL(10, 2),
     @FechaRegistro DATE,
-    @IdAdministrador BIGINT
+    @IdAdministrador INT
 AS
 BEGIN
     INSERT INTO Pago (IdAlumno, IdEncargado, MontoPagar, Multa, TotalPagado, FechaRegistro, IdAdministrador)
@@ -630,12 +630,12 @@ GO
 CREATE PROCEDURE SPActualizarPago
     @Id INT,
     @IdAlumno INT,
-    @IdEncargado BIGINT,
+    @IdEncargado INT,
     @MontoPagar DECIMAL(10, 2),
     @Multa DECIMAL(10, 2),
     @TotalPagado DECIMAL(10, 2),
     @FechaRegistro DATE,
-    @IdAdministrador BIGINT
+    @IdAdministrador INT
 AS
 BEGIN
     UPDATE Pago
