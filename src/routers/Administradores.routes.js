@@ -1,6 +1,6 @@
 import express from 'express';
 import { GetAdministradores, GetAdministradorPorId, PostAdministrador, PutAdministrador, DeleteAdministrador, LoginAdministrador } from '../controllers/Administradores.controller';
-import {ValidatePostAdministrador} from '../validators/Administradores/Administradores';
+import {ValidatePostAdministrador} from '../validators/Administradores';
 
 
 const router = express.Router();
