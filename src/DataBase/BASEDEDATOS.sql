@@ -1,6 +1,6 @@
 -- TABLA Cargo-- TABLA Cargo
-CREATE DATABASE APICaez
-USE APICaez
+CREATE DATABASE CAEZAPIBD
+USE CAEZAPIBD
 -- TABLA Cargo
 CREATE TABLE Cargo(
     Id TINYINT NOT NULL PRIMARY KEY IDENTITY (1,1),
@@ -42,7 +42,12 @@ CREATE TABLE TipoPago(
     Nombre VARCHAR(80) NOT NULL
 );
 GO
-
+-- TABLA Parentezco
+CREATE TABLE Parentezco(
+    Id TINYINT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL
+);
+GO
 -- TABLA Mes
 CREATE TABLE Mes(
     Id TINYINT NOT NULL PRIMARY KEY IDENTITY (1,1),
@@ -70,7 +75,7 @@ CREATE TABLE Encargado(
     NumeroDocumento VARCHAR(50) NOT NULL,
     Telefono VARCHAR(50) NOT NULL,
     Direccion TINYINT NOT NULL FOREIGN KEY REFERENCES Direccion(Id),
-    Parentezco VARCHAR(50),
+    IdParentezco TINYINT NOT NULL FOREIGN KEY REFERENCES Parentezco(Id),
     IdAdministrador BIGINT NOT NULL FOREIGN KEY REFERENCES Administrador(Id)
 );
 GO
@@ -89,46 +94,30 @@ CREATE TABLE Alumno(
 );
 GO
 
--- TABLA Fondo
-CREATE TABLE Fondo(
- Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
-    Monto DECIMAL(10, 2) NOT NULL
-);
-GO
-
 -- TABLA Pago
 CREATE TABLE Pago(
     Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
-    NumeroFactura INT NOT NULL,
     IdAlumno INT NOT NULL FOREIGN KEY REFERENCES Alumno(Id),
     IdEncargado BIGINT NOT NULL,
-    Multa DECIMAL(10, 2) NOT NULL,
+    MontoPagar DECIMAL(10, 2) NOT NULL, -- Monto que debe pagar el alumno
+    Multa DECIMAL(10, 2) NOT NULL DEFAULT 0, -- Multa que puede ingresar el administrador
+    TotalPagado DECIMAL(10, 2) NOT NULL DEFAULT 0, -- Total pagado (MontoPagar + Multa)
     FechaRegistro DATE NOT NULL,
     IdAdministrador BIGINT NOT NULL FOREIGN KEY REFERENCES Administrador(Id)
 );
 GO
 
--- TABLA Parentezco
-CREATE TABLE Parentezco(
-    Id TINYINT NOT NULL PRIMARY KEY IDENTITY (1,1),
-    Nombre VARCHAR(50) NOT NULL
-);
-GO
 
--- TABLA Multa
-CREATE TABLE Multa(
-    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
-    Nombre VARCHAR(50) NOT NULL,
-    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pago(Id)
-);
-GO
-
--- TABLA Factura
 CREATE TABLE Factura(
     Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pago(Id)
+    NumeroFactura INT NOT NULL,
+    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pago(Id),
+    FechaDescarga DATETIME NOT NULL -- Fecha y hora de descarga de la factura
 );
 GO
-
-insert into Parentezco(Nombre)
-					Values('Papá');
+-----TABLA FONDO
+CREATE TABLE Fondo(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    MontoTotal DECIMAL(10, 2) NOT NULL DEFAULT 0 -- Monto total acumulado
+);
+GO

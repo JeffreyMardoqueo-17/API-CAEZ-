@@ -474,7 +474,6 @@ BEGIN
     WHERE Id = @Id;
 END;
 GO
-
 -- SP para insertar un nuevo encargado
 CREATE PROCEDURE SPInsertarEncargado
     @Nombre VARCHAR(50),
@@ -483,12 +482,12 @@ CREATE PROCEDURE SPInsertarEncargado
     @NumeroDocumento VARCHAR(50),
     @Telefono VARCHAR(50),
     @Direccion TINYINT,
-    @Parentezco VARCHAR(50),
+    @IdParentezco TINYINT,
     @IdAdministrador BIGINT
 AS
 BEGIN
-    INSERT INTO Encargado (Nombre, Apellido, IdTipoDoc, NumeroDocumento, Telefono, Direccion, Parentezco, IdAdministrador)
-    VALUES (@Nombre, @Apellido, @IdTipoDoc, @NumeroDocumento, @Telefono, @Direccion, @Parentezco, @IdAdministrador);
+    INSERT INTO Encargado (Nombre, Apellido, IdTipoDoc, NumeroDocumento, Telefono, Direccion, IdParentezco, IdAdministrador)
+    VALUES (@Nombre, @Apellido, @IdTipoDoc, @NumeroDocumento, @Telefono, @Direccion, @IdParentezco, @IdAdministrador);
 END;
 GO
 
@@ -501,17 +500,22 @@ CREATE PROCEDURE SPActualizarEncargado
     @NumeroDocumento VARCHAR(50),
     @Telefono VARCHAR(50),
     @Direccion TINYINT,
-    @Parentezco VARCHAR(50),
+    @IdParentezco TINYINT,
     @IdAdministrador BIGINT
 AS
 BEGIN
     UPDATE Encargado
-    SET Nombre = @Nombre, Apellido = @Apellido, IdTipoDoc = @IdTipoDoc, NumeroDocumento = @NumeroDocumento,
-        Telefono = @Telefono, Direccion = @Direccion, Parentezco = @Parentezco, IdAdministrador = @IdAdministrador
+    SET Nombre = @Nombre,
+        Apellido = @Apellido,
+        IdTipoDoc = @IdTipoDoc,
+        NumeroDocumento = @NumeroDocumento,
+        Telefono = @Telefono,
+        Direccion = @Direccion,
+        IdParentezco = @IdParentezco,
+        IdAdministrador = @IdAdministrador
     WHERE Id = @Id;
 END;
 GO
-
 -- SP para eliminar un encargado por su Id
 CREATE PROCEDURE SPEliminarEncargado
     @Id BIGINT
@@ -606,40 +610,45 @@ BEGIN
     WHERE Id = @Id;
 END;
 GO
-
 -- SP para insertar un nuevo pago
 CREATE PROCEDURE SPInsertarPago
-    @NumeroFactura INT,
     @IdAlumno INT,
     @IdEncargado BIGINT,
+    @MontoPagar DECIMAL(10, 2),
     @Multa DECIMAL(10, 2),
+    @TotalPagado DECIMAL(10, 2),
     @FechaRegistro DATE,
     @IdAdministrador BIGINT
 AS
 BEGIN
-    INSERT INTO Pago (NumeroFactura, IdAlumno, IdEncargado, Multa, FechaRegistro, IdAdministrador)
-    VALUES (@NumeroFactura, @IdAlumno, @IdEncargado, @Multa, @FechaRegistro, @IdAdministrador);
+    INSERT INTO Pago (IdAlumno, IdEncargado, MontoPagar, Multa, TotalPagado, FechaRegistro, IdAdministrador)
+    VALUES (@IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador);
 END;
 GO
 
 -- SP para actualizar un pago existente
 CREATE PROCEDURE SPActualizarPago
     @Id INT,
-    @NumeroFactura INT,
     @IdAlumno INT,
     @IdEncargado BIGINT,
+    @MontoPagar DECIMAL(10, 2),
     @Multa DECIMAL(10, 2),
+    @TotalPagado DECIMAL(10, 2),
     @FechaRegistro DATE,
     @IdAdministrador BIGINT
 AS
 BEGIN
     UPDATE Pago
-    SET NumeroFactura = @NumeroFactura, IdAlumno = @IdAlumno, IdEncargado = @IdEncargado, Multa = @Multa,
-        FechaRegistro = @FechaRegistro, IdAdministrador = @IdAdministrador
+    SET IdAlumno = @IdAlumno,
+        IdEncargado = @IdEncargado,
+        MontoPagar = @MontoPagar,
+        Multa = @Multa,
+        TotalPagado = @TotalPagado,
+        FechaRegistro = @FechaRegistro,
+        IdAdministrador = @IdAdministrador
     WHERE Id = @Id;
 END;
 GO
-
 -- SP para eliminar un pago por su Id
 CREATE PROCEDURE SPEliminarPago
     @Id INT
@@ -650,61 +659,19 @@ BEGIN
 END;
 GO
 
--------------------//////////////////////// MULTA
--- SP para obtener todas las multas
-CREATE PROCEDURE SPObtenerMultas
-AS
-BEGIN
-    SELECT * FROM Multa;
-END;
-GO
-
--- SP para obtener una multa por su Id
-CREATE PROCEDURE SPObtenerMultaPorId
-    @Id INT
-AS
-BEGIN
-    SELECT * FROM Multa
-    WHERE Id = @Id;
-END;
-GO
-
--- SP para insertar una nueva multa
-CREATE PROCEDURE SPInsertarMulta
-    @Nombre VARCHAR(50),
-    @IdPago INT
-AS
-BEGIN
-    INSERT INTO Multa (Nombre, IdPago)
-    VALUES (@Nombre, @IdPago);
-END;
-GO
-
--- SP para actualizar una multa existente
-CREATE PROCEDURE SPActualizarMulta
-    @Id INT,
-    @Nombre VARCHAR(50),
-    @IdPago INT
-AS
-BEGIN
-    UPDATE Multa
-    SET Nombre = @Nombre,
-        IdPago = @IdPago
-    WHERE Id = @Id;
-END;
-GO
-
--- SP para eliminar una multa por su Id
-CREATE PROCEDURE SPEliminarMulta
-    @Id INT
-AS
-BEGIN
-    DELETE FROM Multa
-    WHERE Id = @Id;
-END;
-GO
-	
 ---------------------------------////FACTURAAAAAAAAAAA
+-- SP para crear una nueva factura
+CREATE PROCEDURE SPInsertarFactura
+    @NumeroFactura INT,
+    @IdPago INT,
+    @FechaDescarga DATETIME
+AS
+BEGIN
+    INSERT INTO Factura (NumeroFactura, IdPago, FechaDescarga)
+    VALUES (@NumeroFactura, @IdPago, @FechaDescarga);
+END;
+GO
+
 -- SP para obtener todas las facturas
 CREATE PROCEDURE SPObtenerFacturas
 AS
@@ -713,7 +680,7 @@ BEGIN
 END;
 GO
 
--- SP para obtener una factura por su Id
+-- SP para obtener una factura por su ID
 CREATE PROCEDURE SPObtenerFacturaPorId
     @Id INT
 AS
@@ -723,43 +690,34 @@ BEGIN
 END;
 GO
 
--- SP para insertar una nueva factura
-CREATE PROCEDURE SPInsertarFactura
-    @IdPago INT
+-- SP para actualizar el monto total en la tabla Fondo
+-- SP para actualizar el monto total del fondo
+CREATE PROCEDURE SP_ActualizarMontoTotalFondo
 AS
 BEGIN
-    INSERT INTO Factura (IdPago)
-    VALUES (@IdPago);
-END;
+    DECLARE @NuevoMontoTotal DECIMAL(10, 2)
+
+    -- Calcular el nuevo monto total sumando los montos pagados de la tabla Pago
+    SELECT @NuevoMontoTotal = ISNULL(SUM(TotalPagado), 0) FROM Pago
+
+    -- Actualizar el monto total en la tabla Fondo
+    UPDATE Fondo SET MontoTotal = @NuevoMontoTotal
+END
+GO
+-- SP para obtener el monto total actualizado del fondo
+CREATE PROCEDURE SP_ObtenerMontoTotalFondo
+AS
+BEGIN
+    SELECT MontoTotal FROM Fondo
+END
 GO
 
--- SP para actualizar una factura existente
-CREATE PROCEDURE SPActualizarFactura
-    @Id INT,
-    @IdPago INT
+-- Crear un trigger para ejecutar SP_ActualizarMontoTotalFondo después de cada inserción en la tabla Pago
+CREATE TRIGGER ActualizarMontoTotalFondo
+ON Pago
+AFTER INSERT
 AS
 BEGIN
-    UPDATE Factura
-    SET IdPago = @IdPago
-    WHERE Id = @Id;
-END;
-GO
-
--- SP para eliminar una factura por su Id
-CREATE PROCEDURE SPEliminarFactura
-    @Id INT
-AS
-BEGIN
-    DELETE FROM Factura
-    WHERE Id = @Id;
-END;
-GO
------------SUMAR EL FONDO ACTUAL MAS EL QUE SE REGISTE, TABLA FONDO
-CREATE PROCEDURE SP_SumarPagosDonacionesAlFondo
-    @Monto DECIMAL(10, 2)
-AS
-BEGIN
-    UPDATE Fondo
-    SET Monto = Monto + @Monto;
-END;
+    EXEC SP_ActualizarMontoTotalFondo
+END
 GO
