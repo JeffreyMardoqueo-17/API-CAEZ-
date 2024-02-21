@@ -19,7 +19,7 @@ export const GetAdministradorPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.BigInt, id).query('EXEC SPObtenerAdministradorPorId @Id');
+        const result = await pool.request().input('Id', sql.int, id).query('EXEC SPObtenerAdministradorPorId @Id');
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -59,7 +59,7 @@ export const PutAdministrador = async (req, res) => {
     try {
         const pool = await GetConnection();
         await pool.request()
-            .input('Id', sql.BigInt, id)
+            .input('Id', sql.int, id)
             .input('Nombre', sql.VarChar(50), nombre)
             .input('Apellido', sql.VarChar(50), apellido)
             .input('IdCargo', sql.TinyInt, idCargo)
@@ -78,7 +78,7 @@ export const DeleteAdministrador = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Id', sql.BigInt, id).query('EXEC SPEliminarAdministrador @Id');
+        await pool.request().input('Id', sql.int, id).query('EXEC SPEliminarAdministrador @Id');
         res.status(200).json({ msg: 'Administrador eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el administrador: ${error}`);

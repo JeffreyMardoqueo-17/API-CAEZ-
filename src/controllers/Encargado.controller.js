@@ -2,7 +2,7 @@ import { GetConnection } from '../DataBase/contection/Conexion';
 import sql from 'mssql';
 
 // Desestructuración de campos
-const { BigInt, TinyInt, VarChar } = sql;
+const { Int, TinyInt, VarChar } = sql;
 
 // Validación de campos
 const validarCampos = (datos) => {
@@ -29,7 +29,7 @@ export const GetEncargadoPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        const result = await pool.request().input('Id', BigInt, id).query('EXEC SPObtenerEncargadoPorId @Id');
+        const result = await pool.request().input('Id', Int, id).query('EXEC SPObtenerEncargadoPorId @Id');
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -57,7 +57,7 @@ export const PostEncargado = async (req, res) => {
             .input('Telefono', VarChar(50), Telefono)
             .input('Direccion', TinyInt, parseInt(Direccion))
             .input('IdParentezco', TinyInt, parseInt(IdParentezco))
-            .input('IdAdministrador', BigInt, parseInt(IdAdministrador))
+            .input('IdAdministrador', Int, parseInt(IdAdministrador))
             .query('EXEC SPInsertarEncargado @Nombre, @Apellido, @IdTipoDoc, @NumeroDocumento, @Telefono, @Direccion, @IdParentezco, @IdAdministrador');
 
         res.status(201).json({ msg: 'Encargado creado correctamente' });
@@ -77,7 +77,7 @@ export const PutEncargado = async (req, res) => {
 
         const pool = await GetConnection();
         await pool.request()
-            .input('Id', BigInt, id)
+            .input('Id', Int, id)
             .input('Nombre', VarChar(50), nombre)
             .input('Apellido', VarChar(50), apellido)
             .input('IdTipoDoc', TinyInt, parseInt(IdTipoDoc))
@@ -85,7 +85,7 @@ export const PutEncargado = async (req, res) => {
             .input('Telefono', VarChar(50), Telefono)
             .input('Direccion', TinyInt, parseInt(Direccion))
             .input('IdParentezco', TinyInt, parseInt(IdParentezco))
-            .input('IdAdministrador', BigInt, parseInt(IdAdministrador))
+            .input('IdAdministrador', Int, parseInt(IdAdministrador))
             .query('EXEC SPActualizarEncargado @Id, @Nombre, @Apellido, @IdTipoDoc, @NumeroDocumento, @Telefono, @Direccion, @IdParentezco, @IdAdministrador');
 
         res.status(200).json({ msg: 'Encargado actualizado correctamente' });
@@ -100,7 +100,7 @@ export const DeleteEncargado = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Id', BigInt, id).query('EXEC SPEliminarEncargado @Id');
+        await pool.request().input('Id', Int, id).query('EXEC SPEliminarEncargado @Id');
         res.status(200).json({ msg: 'Encargado eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el encargado: ${error}`);
