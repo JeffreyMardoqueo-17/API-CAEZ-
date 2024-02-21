@@ -29,8 +29,7 @@ export const GetAdministradorPorId = async (req, res) => {
         console.error(`Error al obtener el administrador: ${error}`);
         res.status(500).json({ msg: 'Error al obtener el administrador' });
     }
-};
-
+}; 
 // Método para insertar un nuevo administrador
 export const PostAdministrador = async (req, res) => {
     const { nombre, apellido, idCargo, telefono, pass } = req.body;
