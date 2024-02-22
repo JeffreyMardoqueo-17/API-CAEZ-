@@ -11,6 +11,9 @@ import Cargo from './routers/Cargo.routes'
 import Administradores from './routers/Administradores.routes'
 import Encargados from './routers/Encargado.routes'
 import Alumnos from './routers/Alumno.routes'
+import Pagos from './routers/Pago.routes'
+import Facturas from './routers/Facturas.routes'
+
 
 const app = express();
 const port = configuracion.port; // Define la variable port utilizando const
@@ -30,6 +33,8 @@ app.use(Cargo); //cargo
 app.use(Administradores);
 app.use(Encargados);
 app.use(Alumnos)
+app.use(Pagos)
+app.use(Facturas)
 // app.use(ActualizarFondo);//actualizar fondo 
 // app.use(Administradires);
 
