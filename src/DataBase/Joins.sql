@@ -1,3 +1,4 @@
+USE BDCaezApi
 SELECT
     Factura.*,
     Pago.*,
