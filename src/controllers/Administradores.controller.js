@@ -19,7 +19,8 @@ export const GetAdministradorPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.int, id).query('EXEC SPObtenerAdministradorPorId @Id');
+        const result = await pool.request().input('Id', sql.Int, id).query('EXEC SPObtenerAdministradorPorId @Id');
+
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
