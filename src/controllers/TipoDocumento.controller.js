@@ -34,13 +34,13 @@ export const GetTipoDocumentoPorId = async (req, res) => {
 
 // Método para insertar un nuevo tipo de documento
 export const PostTipoDocumento = async (req, res) => {
-    const { nombre } = req.body;
-    if (!nombre) {
+    const { Nombre } = req.body;
+    if (!Nombre) {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
         const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(80), nombre).query('EXEC SPInsertarTipoDocumento @Nombre');
+        await pool.request().input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPInsertarTipoDocumento @Nombre');
         res.status(201).json({ msg: 'Tipo de documento creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el tipo de documento: ${error}`);
@@ -51,10 +51,10 @@ export const PostTipoDocumento = async (req, res) => {
 // Método para actualizar un tipo de documento existente
 export const PutTipoDocumento = async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { Nombre } = req.body;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), nombre).query('EXEC SPActualizarTipoDocumento @Id, @Nombre');
+        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPActualizarTipoDocumento @Id, @Nombre');
         res.status(200).json({ msg: 'Tipo de documento actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el tipo de documento: ${error}`);

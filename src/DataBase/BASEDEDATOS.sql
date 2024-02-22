@@ -86,15 +86,16 @@ CREATE TABLE Alumno(
 );
 GO
 -- TABLA Pago
-CREATE TABLE Pago(
-    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+CREATE TABLE Pago (
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1, 1),
     IdAlumno INT NOT NULL FOREIGN KEY REFERENCES Alumno(Id),
     IdEncargado BIGINT NOT NULL,
-    MontoPagar DECIMAL(10, 2) NOT NULL, -- Monto que debe pagar el alumno
-    Multa DECIMAL(10, 2) NOT NULL DEFAULT 0, -- Multa que puede ingresar el administrador
-    TotalPagado DECIMAL(10, 2) NOT NULL DEFAULT 0, -- Total pagado (MontoPagar + Multa)
+    MontoPagar DECIMAL(10, 2) NOT NULL,
+    Multa DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    TotalPagado DECIMAL(10, 2) NOT NULL DEFAULT 0,
     FechaRegistro DATE NOT NULL,
-    IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES Administrador(Id)
+    IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES Administrador(Id),
+    IdMes TINYINT NOT NULL FOREIGN KEY REFERENCES Mes(Id)
 );
 GO
 

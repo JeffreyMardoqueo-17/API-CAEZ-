@@ -32,13 +32,13 @@ export const GetTurnoPorId = async (req, res) => {
 
 // Método para insertar un nuevo turno
 export const PostTurno = async (req, res) => {
-    const { nombre } = req.body;
-    if (!nombre) {
+    const { Nombre } = req.body;
+    if (!Nombre) {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
         const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(80), nombre).query('EXEC SPInsertarTurno @Nombre');
+        await pool.request().input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPInsertarTurno @Nombre');
         res.status(201).json({ msg: 'Turno creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el turno: ${error}`);
@@ -49,10 +49,10 @@ export const PostTurno = async (req, res) => {
 // Método para actualizar un turno existente
 export const PutTurno = async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { Nombre } = req.body;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), nombre).query('EXEC SPActualizarTurno @Id, @Nombre');
+        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPActualizarTurno @Id, @Nombre');
         res.status(200).json({ msg: 'Turno actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el turno: ${error}`);

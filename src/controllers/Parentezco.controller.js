@@ -32,10 +32,10 @@ export const GetParentezcoPorId = async (req, res) => {
 
 // Método para insertar un nuevo parentezco
 export const PostParentezco = async (req, res) => {
-    const { nombre } = req.body;
+    const { Nombre } = req.body;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(50), nombre).query('EXEC SPInsertarParentezco @Nombre');
+        await pool.request().input('Nombre', sql.VarChar(50), Nombre).query('EXEC SPInsertarParentezco @Nombre');
         res.status(201).json({ msg: 'Parentezco creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el parentezco: ${error}`);
