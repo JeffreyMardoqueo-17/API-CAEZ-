@@ -6,7 +6,7 @@ const dbSettings = {
     user: 'Jeffrey', //usuario de la base de datos
     password: 'jeffrey20068f',
     server: 'localhost',
-    database: 'CAEZ',
+    database: 'Caez',
     options : {
         encrypt : true,
         trustServerCertificate: true

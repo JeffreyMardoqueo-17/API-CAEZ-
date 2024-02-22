@@ -618,11 +618,12 @@ CREATE PROCEDURE SPInsertarPago
     @Multa DECIMAL(10, 2),
     @TotalPagado DECIMAL(10, 2),
     @FechaRegistro DATE,
-    @IdAdministrador INT
+    @IdAdministrador INT,
+    @IdMes TINYINT
 AS
 BEGIN
-    INSERT INTO Pago (IdAlumno, IdEncargado, MontoPagar, Multa, TotalPagado, FechaRegistro, IdAdministrador)
-    VALUES (@IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador);
+    INSERT INTO Pago (IdAlumno, IdEncargado, MontoPagar, Multa, TotalPagado, FechaRegistro, IdAdministrador, IdMes)
+    VALUES (@IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador, @IdMes);
 END;
 GO
 
@@ -635,7 +636,8 @@ CREATE PROCEDURE SPActualizarPago
     @Multa DECIMAL(10, 2),
     @TotalPagado DECIMAL(10, 2),
     @FechaRegistro DATE,
-    @IdAdministrador INT
+    @IdAdministrador INT,
+    @IdMes TINYINT
 AS
 BEGIN
     UPDATE Pago
@@ -645,10 +647,12 @@ BEGIN
         Multa = @Multa,
         TotalPagado = @TotalPagado,
         FechaRegistro = @FechaRegistro,
-        IdAdministrador = @IdAdministrador
+        IdAdministrador = @IdAdministrador,
+        IdMes = @IdMes
     WHERE Id = @Id;
 END;
 GO
+
 -- SP para eliminar un pago por su Id
 CREATE PROCEDURE SPEliminarPago
     @Id INT

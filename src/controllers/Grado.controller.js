@@ -32,13 +32,13 @@ export const GetGradoPorId = async (req, res) => {
 
 // Método para insertar un nuevo grado
 export const PostGrado = async (req, res) => {
-    const { nombre } = req.body;
+    const { Nombre } = req.body;
     if (!nombre) {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
         const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(50), nombre).query('EXEC SPInsertarGrado @Nombre');
+        await pool.request().input('Nombre', sql.VarChar(50), Nombre).query('EXEC SPInsertarGrado @Nombre');
         res.status(201).json({ msg: 'Grado creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el grado: ${error}`);

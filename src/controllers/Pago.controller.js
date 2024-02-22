@@ -32,7 +32,7 @@ export const GetPagoPorId = async (req, res) => {
 
 // Método para insertar un nuevo pago
 export const PostPago = async (req, res) => {
-    const { idAlumno, idEncargado, montoPagar, multa, totalPagado, fechaRegistro, idAdministrador } = req.body;
+    const { idAlumno, idEncargado, montoPagar, multa, totalPagado, fechaRegistro, idAdministrador, idMes } = req.body;
     try {
         const pool = await GetConnection();
         await pool.request()
@@ -43,7 +43,8 @@ export const PostPago = async (req, res) => {
             .input('TotalPagado', sql.Decimal(10, 2), totalPagado)
             .input('FechaRegistro', sql.Date, fechaRegistro)
             .input('IdAdministrador', sql.Int, idAdministrador)
-            .query('EXEC SPInsertarPago @IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador');
+            .input('IdMes', sql.TinyInt, idMes)
+            .query('EXEC SPInsertarPago @IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador, @IdMes');
         res.status(201).json({ msg: 'Pago creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el pago: ${error}`);
@@ -54,7 +55,7 @@ export const PostPago = async (req, res) => {
 // Método para actualizar un pago existente
 export const PutPago = async (req, res) => {
     const { id } = req.params;
-    const { idAlumno, idEncargado, montoPagar, multa, totalPagado, fechaRegistro, idAdministrador } = req.body;
+    const { idAlumno, idEncargado, montoPagar, multa, totalPagado, fechaRegistro, idAdministrador, idMes } = req.body;
     try {
         const pool = await GetConnection();
         await pool.request()
@@ -66,7 +67,8 @@ export const PutPago = async (req, res) => {
             .input('TotalPagado', sql.Decimal(10, 2), totalPagado)
             .input('FechaRegistro', sql.Date, fechaRegistro)
             .input('IdAdministrador', sql.Int, idAdministrador)
-            .query('EXEC SPActualizarPago @Id, @IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador');
+            .input('IdMes', sql.TinyInt, idMes)
+            .query('EXEC SPActualizarPago @Id, @IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador, @IdMes');
         res.status(200).json({ msg: 'Pago actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el pago: ${error}`);

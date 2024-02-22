@@ -51,15 +51,14 @@ export const PostAdministrador = async (req, res) => {
         res.status(500).json({ msg: 'Error al insertar el administrador' });
     }
 };
-
-// Método para actualizar un administrador existente
+//put administrador o actualizar 
 export const PutAdministrador = async (req, res) => {
     const { id } = req.params;
     const { nombre, apellido, idCargo, telefono, pass } = req.body;
     try {
         const pool = await GetConnection();
         await pool.request()
-            .input('Id', sql.int, id)
+            .input('Id', sql.Int, id)
             .input('Nombre', sql.VarChar(50), nombre)
             .input('Apellido', sql.VarChar(50), apellido)
             .input('IdCargo', sql.TinyInt, idCargo)
@@ -72,6 +71,7 @@ export const PutAdministrador = async (req, res) => {
         res.status(500).json({ msg: 'Error al actualizar el administrador' });
     }
 };
+
 
 // Método para eliminar un administrador por su Id
 export const DeleteAdministrador = async (req, res) => {
