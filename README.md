@@ -1,4 +1,3 @@
-```markdown
 # Descripción del Proyecto API-CAEZ
 
 El proyecto API-CAEZ es una API RESTful desarrollada utilizando Node.js, Express y SQL Server para gestionar información sobre parentezcos. La API se conecta a una base de datos SQL Server utilizando Stored Procedures (SP) para realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) en la tabla Parentezco.
@@ -36,6 +35,6 @@ La API utiliza un enfoque modular y escalable, permitiendo la adición de nuevas
 
 Para las validaciones, se utiliza Express Validator. La API se integra con SQL Server para almacenar y gestionar los datos de manera eficiente.
 
-![Diagrama de la API]![image](https://github.com/JeffreyMardoqueo-17/API-CAEZ-/assets/126411958/f06c564e-0dc9-4545-94d2-88e56fa39dc2)
+![Diagrama de la API]![image](https://github.com/JeffreyMardoqueo-17/API-CAEZ-/assets/126411958/17a08ec7-d0da-4d07-8be5-c380ba24864a)
 
-```
+
