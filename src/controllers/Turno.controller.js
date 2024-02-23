@@ -33,9 +33,9 @@ export const GetTurnoPorId = async (req, res) => {
 // Método para insertar un nuevo turno
 export const PostTurno = async (req, res) => {
     const { Nombre } = req.body;
-    if (!Nombre) {
-        return res.status(400).json({ msg: 'El campo nombre es requerido' });
-    }
+    // if (!Nombre) {
+    //     return res.status(400).json({ msg: 'El campo nombre es requerido' });
+    // }
     try {
         const pool = await GetConnection();
         await pool.request().input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPInsertarTurno @Nombre');

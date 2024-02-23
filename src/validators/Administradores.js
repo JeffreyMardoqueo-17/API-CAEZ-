@@ -56,4 +56,5 @@ const ValidatePostAdministrador = [
     validateResult(req, res, next)
 }
 ];
+
 export { ValidatePostAdministrador }; // asi como debe de ser
