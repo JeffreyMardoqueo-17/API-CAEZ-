@@ -1,5 +1,5 @@
 // Importa la función para generar tokens JWT
-const { generateToken } = require('../helpers/jwt');
+const { generateToken } = require('../helpers/JWT');
 import { GetConnection } from '../DataBase/contection/Conexion';
 import sql from 'mssql';
 // Controlador para manejar la obtención de todos los administradores
