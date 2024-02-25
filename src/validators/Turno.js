@@ -13,15 +13,4 @@ const ValidatePostTurno = [
 }
 ];
 
-const ValidatePutTurno = [
-    check('Nombre')
-        .optional() // El campo es opcional para el método PUT
-        .isString()
-        .withMessage('El nombre debe ser un tipo texto'),
-
-    (req, res, next) => { //verificar, retornar o que siga todo el flujo
-        validateResult(req, res, next);
-    }
-];
-
-export { ValidatePostTurno, ValidatePutTurno};
+export { ValidatePostTurno };

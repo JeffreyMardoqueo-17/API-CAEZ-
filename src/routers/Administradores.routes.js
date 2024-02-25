@@ -1,6 +1,6 @@
 import express from 'express';
 import { GetAdministradores, GetAdministradorPorId, PostAdministrador, PutAdministrador, DeleteAdministrador, LoginAdministrador } from '../controllers/Administradores.controller';
-import { ValidatePostAdministrador, ValidatePutAdministrador } from '../validators/Administradores';
+import { ValidatePostAdministrador } from '../validators/Administradores';
 import { verifyToken } from '../helpers/jwt'; // Importa la función verifyToken
 
 const router = express.Router();
@@ -24,7 +24,7 @@ router.use((req, res, next) => {
 router.get('/administradores', GetAdministradores);
 router.get('/administradores/:id', GetAdministradorPorId);
 router.post('/administradores', ValidatePostAdministrador, PostAdministrador);
-router.put('/administradores/:id', ValidatePutAdministrador,PutAdministrador);
+router.put('/administradores/:id', PutAdministrador);
 router.delete('/administradores/:id', DeleteAdministrador);
 
 export default router;

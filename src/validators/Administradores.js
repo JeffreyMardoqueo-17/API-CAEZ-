@@ -57,44 +57,4 @@ const ValidatePostAdministrador = [
 }
 ];
 
-const ValidatePutAdministrador = [
-    check('nombre')
-        .optional()
-        .not()
-        .isEmpty()
-        .isString()
-        .withMessage('El nombre debe ser un tipo texto no vacío'),
-
-    check('apellido')
-        .optional()
-        .not()
-        .isEmpty()
-        .isString()
-        .withMessage('El apellido debe ser un tipo texto no vacío'),
-
-    check('idCargo')
-        .optional()
-        .not()
-        .isEmpty(),
-
-    check('telefono')
-        .optional()
-        .not()
-        .isEmpty()
-        .matches(/^\d{8}$/)
-        .withMessage('El número de teléfono debe tener exactamente 8 dígitos'),
-
-    check('pass')
-        .optional()
-        .not()
-        .isEmpty()
-        .isLength({ min: 5 })
-        .withMessage('La contraseña debe tener al menos 5 caracteres'),
-
-    (req, res, next) => {
-        validateResult(req, res, next);
-    }
-];
-
-
-export { ValidatePostAdministrador, ValidatePutAdministrador}; // asi como debe de ser
+export { ValidatePostAdministrador }; // asi como debe de ser

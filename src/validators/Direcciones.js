@@ -13,16 +13,4 @@ const ValidatePostDirecciones = [
 }
 ];
 
-const ValidatePutDirecciones = [
-    check('Nombre')
-        .optional()
-        .not()
-        .isEmpty()
-        .isString()
-        .withMessage('El nombre debe ser un tipo texto no vacío'),
-    (req, res, next) => {
-        validateResult(req, res, next);
-    }
-];
-
-export { ValidatePostDirecciones, ValidatePutDirecciones };
+export { ValidatePostDirecciones };
