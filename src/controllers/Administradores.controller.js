@@ -85,51 +85,26 @@ export const DeleteAdministrador = async (req, res) => {
 };
 
 // Controlador para autenticación de administrador
-// Método para autenticación de administrador
 export const LoginAdministrador = async (req, res) => {
-    const { nombre, pass } = req.body; // Obtener nombre y contraseña del cuerpo de la solicitud
+    const { nombre, pass } = req.body;
 
     try {
-        const pool = await GetConnection();
+        const pool = await GetConnection(); // Establece la conexión a la base de datos
         const result = await pool.request()
             .input('Nombre', sql.VarChar(50), nombre)
             .input('Pass', sql.VarChar(200), pass)
-            .execute('SPLoginAdministrador');
+            .execute('SPLoginAdministrador'); // Ejecuta el SP para autenticar al administrador
 
-        const adminId = result.recordset[0].Id;
-        
+        const adminId = result.recordset[0].Id; // Obtiene el Id del administrador del resultado
+
         if (adminId) {
-            const token = generateToken({ adminId });
-            res.status(200).json({ token });
+            const token = generateToken({ adminId }); // Genera un token JWT con el Id del administrador
+            res.status(200).json({ token }); // Devuelve el token como respuesta
         } else {
-            res.status(401).json({ msg: 'Credenciales incorrectas' });
+            res.status(401).json({ msg: 'Credenciales incorrectas' }); // Si las credenciales son incorrectas, devuelve un mensaje de error
         }
     } catch (error) {
         console.error(`Error al iniciar sesión: ${error}`);
         res.status(500).json({ msg: 'Error al iniciar sesión' });
     }
 };
-
-
-//para el fronten 
-/**
- * En tu frontend, puedes enviar una solicitud POST a la ruta /administradores/login con el nombre de usuario y la contraseña en el cuerpo de la solicitud. Por ejemplo, utilizando fetch en JavaScript:
- */
-/**fetch('http://localhost:5000/administradores/login', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    nombre: 'nombre_de_usuario',
-    pass: 'contraseña'
-  })
-})
-.then(response => response.json())
-.then(data => {
-  console.log(data.token); // Aquí recibirás el token JWT
-})
-.catch(error => {
-  console.error('Error:', error);
-});
- */
