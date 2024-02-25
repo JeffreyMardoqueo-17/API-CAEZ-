@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { GetTiposPago, GetTipoPagoPorId, PostTipoPago, PutTipoPago, DeleteTipoPago } from '../controllers/TipoPago.controller';
-import { ValidatePostTipoPago } from '../validators/TipoPago';
+import { ValidatePostTipoPago, ValidatePutTipoPago } from '../validators/TipoPago';
 
 const route = Router();
 
@@ -8,7 +8,7 @@ const route = Router();
 route.get('/TiposPago', GetTiposPago);
 route.get('/TiposPago/:id', GetTipoPagoPorId);
 route.post('/TiposPago',ValidatePostTipoPago, PostTipoPago);
-route.put('/TiposPago/:id', PutTipoPago);
+route.put('/TiposPago/:id',ValidatePutTipoPago, PutTipoPago);
 route.delete('/TiposPago/:id', DeleteTipoPago);
 
 export default route;

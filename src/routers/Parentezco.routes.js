@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { GetParentezcos, GetParentezcoPorId, PostParentezco, DeleteParentezco, PutParentezco } from '../controllers/Parentezco.controller';
-import { ValidatePostParentezco } from "../validators/Parentezco";
+import { ValidatePostParentezco, ValidatePutParentezco } from "../validators/Parentezco";
 
 
 const route = Router();
@@ -10,6 +10,6 @@ route.get('/Parentezcos', GetParentezcos); // Cambio de nombre a Parentezcos par
 route.get('/Parentezcos/:id', GetParentezcoPorId); // Cambio de ruta para obtener un parentezco por su ID
 route.post('/Parentezcos',ValidatePostParentezco, PostParentezco);
 route.delete('/Parentezcos/:id', DeleteParentezco); // Cambio de ruta para eliminar un parentezco por su ID
-route.put('/Parentezcos/:id', PutParentezco); // Cambio de ruta para actualizar un parentezco por su ID
+route.put('/Parentezcos/:id', ValidatePutParentezco,PutParentezco); // Cambio de ruta para actualizar un parentezco por su ID
 
 export default route;
