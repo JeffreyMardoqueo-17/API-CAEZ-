@@ -84,3 +84,86 @@ BEGIN
     WHERE Id = @Id;
 END;
 GO
+-----====================================================PADRINOS O PERSONAS QUE BECAN =============
+-- SP para obtener todos los padrinos
+CREATE PROCEDURE SPObtenerPadrinos
+AS
+BEGIN
+    SELECT * FROM Padrino;
+END;
+GO
+
+-- SP para obtener un padrino por su Id
+CREATE PROCEDURE SPObtenerPadrinoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Padrino
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para insertar un nuevo padrino
+CREATE PROCEDURE SPInsertarPadrino
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdAdministrador INT,
+    @FechaRegistro DATETIME
+AS
+BEGIN
+    INSERT INTO Padrino (Nombre, Apellido, IdSexo, IdRole, Telefono, Correo, IdDireccion, IdAdministrador, FechaRegistro)
+    VALUES (@Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaRegistro);
+END;
+GO
+
+-- SP para actualizar un padrino existente
+CREATE PROCEDURE SPActualizarPadrino
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdAdministrador INT,
+    @FechaRegistro DATETIME
+AS
+BEGIN
+    UPDATE Padrino
+    SET Nombre = @Nombre,
+        Apellido = @Apellido,
+        IdSexo = @IdSexo,
+        IdRole = @IdRole,
+        Telefono = @Telefono,
+        Correo = @Correo,
+        IdDireccion = @IdDireccion,
+        IdAdministrador = @IdAdministrador,
+        FechaRegistro = @FechaRegistro
+    WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un padrino por su Id
+CREATE PROCEDURE SPEliminarPadrino
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Padrino
+    WHERE Id = @Id;
+END;
+GO
+-- SP para buscar padrinos por nombre
+CREATE PROCEDURE SPBuscarPadrinosPorNombre
+    @NombreBusqueda VARCHAR(50)
+AS
+BEGIN
+    SELECT * FROM Padrino
+    WHERE Nombre LIKE '%' + @NombreBusqueda + '%';
+END;
+GO

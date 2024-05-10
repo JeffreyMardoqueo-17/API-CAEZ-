@@ -90,7 +90,6 @@ CREATE TABLE Padrino(
     IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
     FechaRegistro datetime not null
 );
-
 ------------------------ENCARGADO
 CREATE TABLE Encargado(
     Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
