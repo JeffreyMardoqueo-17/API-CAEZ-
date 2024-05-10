@@ -18,3 +18,15 @@ export const GetMesPorNombre = async (req, res) => {
         res.status(500).json({ msg: 'Error al obtener el mes' });
     }
 };
+
+//para obtener todos los meses
+export const GetMeses = async (req, res) => {
+    try {
+        const pool = await GetConnection();
+        const result = await pool.request().query('EXEC SPObtenerMeses');
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(`Error al obtener los meses: ${error}`);
+        res.status(500).json({ msg: 'Error al obtener los meses' });
+    }
+};

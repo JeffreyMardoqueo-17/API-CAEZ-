@@ -74,3 +74,15 @@ export const DeleteTipoDocumento = async (req, res) => {
         res.status(500).json({ msg: 'Error al eliminar el tipo de documento' });
     }
 };
+// Método para buscar direcciones por un texto de búsqueda
+export const BuscarTipoDocumentoPorTexto = async (req, res) => {
+    const { textoBusqueda } = req.params;
+    try {
+        const pool = await GetConnection();
+        const result = await pool.request().input('TextoBusqueda', sql.VarChar(80), textoBusqueda).query('EXEC SPBuscarTipoDocumentosPorTexto @TextoBusqueda');
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(`Error al buscar el Tipo de Documentos: ${error}`);
+        res.status(500).json({ msg: 'Error al buscar Documentos' });
+    }
+};

@@ -72,3 +72,15 @@ export const DeleteTipoPago = async (req, res) => {
         res.status(500).json({ msg: 'Error al eliminar el tipo de pago' });
     }
 };
+// Método para buscar tipo de pagos por un texto de búsqueda
+export const BuscarTipoPagoPorTexto = async (req, res) => {
+    const { textoBusqueda } = req.params;
+    try {
+        const pool = await GetConnection();
+        const result = await pool.request().input('TextoBusqueda', sql.VarChar(80), textoBusqueda).query('EXEC SPBuscarTipoPagoPorTexto @TextoBusqueda');
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(`Error al buscar tipo de pagos: ${error}`);
+        res.status(500).json({ msg: 'Error al buscar tipo de pagos' });
+    }
+};

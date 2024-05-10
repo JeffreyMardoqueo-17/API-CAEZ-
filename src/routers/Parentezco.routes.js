@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { GetParentezcos, GetParentezcoPorId, PostParentezco, DeleteParentezco, PutParentezco } from '../controllers/Parentezco.controller';
+import { GetParentezcos, GetParentezcoPorId, PostParentezco, DeleteParentezco, PutParentezco, BuscarParentezcoPorTexto } from '../controllers/Parentezco.controller';
 import { ValidatePostParentezco } from "../validators/Parentezco";
 
 
@@ -11,5 +11,6 @@ route.get('/Parentezcos/:id', GetParentezcoPorId); // Cambio de ruta para obtene
 route.post('/Parentezcos',ValidatePostParentezco, PostParentezco);
 route.delete('/Parentezcos/:id', DeleteParentezco); // Cambio de ruta para eliminar un parentezco por su ID
 route.put('/Parentezcos/:id', PutParentezco); // Cambio de ruta para actualizar un parentezco por su ID
+route.get('/Parentezcos/Buscar/:textoBusqueda', BuscarParentezcoPorTexto)
 
 export default route;

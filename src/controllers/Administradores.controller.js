@@ -89,19 +89,19 @@ export const LoginAdministrador = async (req, res) => {
     const { nombre, pass } = req.body;
 
     try {
-        const pool = await GetConnection(); // Establece la conexión a la base de datos
+        const pool = await GetConnection(); 
         const result = await pool.request()
             .input('Nombre', sql.VarChar(50), nombre)
             .input('Pass', sql.VarChar(200), pass)
-            .execute('SPLoginAdministrador'); // Ejecuta el SP para autenticar al administrador
+            .execute('SPLoginAdministrador'); // SP 
 
         const adminId = result.recordset[0].Id; // Obtiene el Id del administrador del resultado
 
         if (adminId) {
             const token = generateToken({ adminId }); // Genera un token JWT con el Id del administrador
-            res.status(200).json({ token }); // Devuelve el token como respuesta
+            res.status(200).json({ token }); // Devuelve el token como respuesta obvioooo
         } else {
-            res.status(401).json({ msg: 'Credenciales incorrectas' }); // Si las credenciales son incorrectas, devuelve un mensaje de error
+            res.status(401).json({ msg: 'Credenciales incorrectas' }); // Si las credenciale son incorrectas se chinga todo
         }
     } catch (error) {
         console.error(`Error al iniciar sesión: ${error}`);
