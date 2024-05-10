@@ -18,7 +18,7 @@ export const GetDireccionPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPObtenerDireccionPorId @Id');
+        const result = await pool.request().input('Id', sql.INT, id).query('EXEC SPObtenerDireccionPorId @Id');
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -52,7 +52,7 @@ export const PutDireccion = async (req, res) => {
     const { nombre } = req.body;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(200), nombre).query('EXEC SPActualizarDireccion @Id, @Nombre');
+        await pool.request().input('Id', sql.INT, id).input('Nombre', sql.VarChar(200), nombre).query('EXEC SPActualizarDireccion @Id, @Nombre');
         res.status(200).json({ msg: 'Dirección actualizada correctamente' });
     } catch (error) {
         console.error(`Error al actualizar la dirección: ${error}`);
@@ -65,7 +65,7 @@ export const DeleteDireccion = async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPEliminarDireccion @Id');
+        await pool.request().input('Id', sql.INT, id).query('EXEC SPEliminarDireccion @Id');
         res.status(200).json({ msg: 'Dirección eliminada correctamente' });
     } catch (error) {
         console.error(`Error al eliminar la dirección: ${error}`);
@@ -73,15 +73,12 @@ export const DeleteDireccion = async (req, res) => {
     }
 };
 
-
-
-///de esta no estoy seguro 
 // Método para buscar direcciones por un texto de búsqueda
-export const BuscarDireccionesPorNombre = async (req, res) => {
+export const BuscarDireccionesPorTexto = async (req, res) => {
     const { textoBusqueda } = req.params;
     try {
         const pool = await GetConnection();
-        const result = await pool.request().input('TextoBusqueda', sql.VarChar(200), textoBusqueda).query('EXEC SPBuscarDireccionesPorNombre @TextoBusqueda');
+        const result = await pool.request().input('TextoBusqueda', sql.VarChar(200), textoBusqueda).query('EXEC SPBuscarDireccionesPorTexto @TextoBusqueda');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al buscar direcciones: ${error}`);
