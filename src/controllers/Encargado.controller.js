@@ -1,6 +1,5 @@
 import sql from 'mssql';
-
-import poolPromise from '../DataBase';
+import poolPromise from '../DataBase/contection/Conexion';
 
 const EncargadoController = {
     async createEncargado(req, res) {
