@@ -1,5 +1,5 @@
 import sql from 'mssql';
-import { poolPromise } from '../database';
+import { poolPromise } from '../DataBase/contection/Conexion';
 
 const AlumnoController = {
     // Método para crear un nuevo alumno
@@ -7,7 +7,7 @@ const AlumnoController = {
         const { Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado } = req.body;
         try {
             const pool = await poolPromise;
-            await pool.request()
+            const result = await pool.request()
                 .input('Nombre', sql.VarChar(50), Nombre)
                 .input('Apellido', sql.VarChar(50), Apellido)
                 .input('FechaNacimiento', sql.Date, FechaNacimiento)
@@ -24,7 +24,8 @@ const AlumnoController = {
                 .input('FechaRegistro', sql.DateTime, FechaRegistro)
                 .input('EsBecado', sql.Bit, EsBecado)
                 .query('EXEC SPCrearAlumno @Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado');
-            res.status(201).json({ msg: 'Alumno creado correctamente' });
+
+            res.status(201).json({ msg: 'Alumno creado correctamente', idAlumno: result.recordset[0].IdAlumno });
         } catch (error) {
             console.error(`Error al crear el alumno: ${error}`);
             res.status(500).json({ msg: 'Error al crear el alumno' });
@@ -134,6 +135,16 @@ const AlumnoController = {
         } catch (error) {
             console.error(`Error al buscar alumnos por grado: ${error}`);
             res.status(500).json({ msg: 'Error al buscar alumnos por grado' });
+        }
+    },
+    async buscarAlumnosPorBeca(req, res) {
+        try {
+            const pool = await poolPromise;
+            const result = await pool.request().query('EXEC SPBuscarAlumnosPorBeca');
+            res.status(200).json(result.recordset[0]);
+        } catch (error) {
+            console.error(`Error al buscar alumnos por beca: ${error}`);
+            res.status(500).json({ msg: 'Error al buscar alumnos por beca' });
         }
     },
 };

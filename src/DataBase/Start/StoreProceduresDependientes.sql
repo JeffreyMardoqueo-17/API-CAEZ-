@@ -243,6 +243,7 @@ BEGIN
 END
 GO
 -- ALUMNOS============================================================================================
+-- CREAR ALUMNOS
 CREATE PROCEDURE SPCrearAlumno
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
@@ -261,8 +262,32 @@ CREATE PROCEDURE SPCrearAlumno
     @EsBecado BIT
 AS
 BEGIN
+    DECLARE @IdGrupo INT;
+
+    -- Verificar si ya existe un grupo para el grado del alumno
+    SELECT @IdGrupo = Id
+    FROM Grupo
+    WHERE Nombre = CONCAT('Grado ', @IdGrado);
+
+    -- Si no existe, crear un nuevo grupo
+    IF @IdGrupo IS NULL
+    BEGIN
+        INSERT INTO Grupo (Nombre)
+        VALUES (CONCAT('Grado ', @IdGrado));
+        
+        SET @IdGrupo = SCOPE_IDENTITY();
+    END
+
+    -- Insertar el alumno y asignarle el grupo correspondiente
     INSERT INTO Alumno (Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado)
     VALUES (@Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado);
+
+    -- Asignar al alumno al grupo correspondiente
+    UPDATE Alumno
+    SET IdGrupo = @IdGrupo
+    WHERE Id = SCOPE_IDENTITY();
+
+    SELECT SCOPE_IDENTITY() AS IdAlumno;
 END
 GO
 -- MODIFICAR ALUMNOS
@@ -349,5 +374,42 @@ BEGIN
     SELECT *
     FROM Alumno
     WHERE IdGrado = @IdGrado;
+END
+GO
+-- BUSCAR ALUMNOS POR BECA
+CREATE PROCEDURE SPBuscarAlumnosPorBeca
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @TotalBecados INT, @TotalNoBecados INT;
+
+    SELECT @TotalBecados = COUNT(*)
+    FROM Alumno
+    WHERE EsBecado = 1;
+
+    SELECT @TotalNoBecados = COUNT(*)
+    FROM Alumno
+    WHERE EsBecado = 0;
+
+    SELECT @TotalBecados AS TotalBecados, @TotalNoBecados AS TotalNoBecados;
+END
+GO
+
+-- GRUPOS O GRADOS CON ALUMNOS SEPARADOS-==================
+CREATE PROCEDURE SPTraerTodosLosGrupos
+AS
+BEGIN
+    SELECT * FROM Grupo;
+END
+GO
+---TRAER GRUPO POR ID
+CREATE PROCEDURE SPTraerGrupoPorID
+    @Id INT
+AS
+BEGIN
+    SELECT *
+    FROM GRUPO
+    WHERE Id = @Id;
 END
 GO

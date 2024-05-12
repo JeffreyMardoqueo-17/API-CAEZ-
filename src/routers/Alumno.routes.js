@@ -10,6 +10,8 @@ router.put('/alumnos/:id', alumno.modificarAlumno);
 router.delete('/alumnos/:id', alumno.eliminarAlumno);
 router.get('alumnos/buscar/:nombre', alumno.buscarAlumnosPorNombre);
 router.get('alumnos/buscar/:idgrado', alumno.buscarAlumnosPorGrado);
+router.get('/alumnos/beca', alumno.buscarAlumnosPorBeca);
+
 
 
 export default router;
