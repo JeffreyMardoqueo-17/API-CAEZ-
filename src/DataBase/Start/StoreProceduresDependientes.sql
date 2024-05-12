@@ -241,3 +241,113 @@ AS
 BEGIN
     SELECT * FROM Encargado WHERE Nombre LIKE '%' + @TextoBusqueda + '%';
 END
+GO
+-- ALUMNOS============================================================================================
+CREATE PROCEDURE SPCrearAlumno
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @FechaNacimiento DATE,
+    @IdSexo INT,
+    @IdRole INT,
+    @IdEncargado INT,
+    @IdEnfermedad INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdGrado INT,
+    @IdTurno INT,
+    @IdAdministrador INT,
+    @IdPadrino INT,
+    @FechaRegistro DATETIME,
+    @EsBecado BIT
+AS
+BEGIN
+    INSERT INTO Alumno (Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado)
+    VALUES (@Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado);
+END
+GO
+-- MODIFICAR ALUMNOS
+CREATE PROCEDURE SPModificarAlumno
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @FechaNacimiento DATE,
+    @IdSexo INT,
+    @IdRole INT,
+    @IdEncargado INT,
+    @IdEnfermedad INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdGrado INT,
+    @IdTurno INT,
+    @IdAdministrador INT,
+    @IdPadrino INT,
+    @FechaRegistro DATETIME,
+    @EsBecado BIT
+AS
+BEGIN
+    UPDATE Alumno
+    SET Nombre = @Nombre,
+        Apellido = @Apellido,
+        FechaNacimiento = @FechaNacimiento,
+        IdSexo = @IdSexo,
+        IdRole = @IdRole,
+        IdEncargado = @IdEncargado,
+        IdEnfermedad = @IdEnfermedad,
+        IdTipoDocumento = @IdTipoDocumento,
+        NumDocumento = @NumDocumento,
+        IdGrado = @IdGrado,
+        IdTurno = @IdTurno,
+        IdAdministrador = @IdAdministrador,
+        IdPadrino = @IdPadrino,
+        FechaRegistro = @FechaRegistro,
+        EsBecado = @EsBecado
+    WHERE Id = @Id;
+END
+GO
+-- TARER ALUMNOS POR IDENTIFIED
+CREATE PROCEDURE SPTraerAlumnoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT *
+    FROM Alumno
+    WHERE Id = @Id;
+END
+GO
+-- traer a todos los alumnos
+CREATE PROCEDURE SPTraerTodosLosAlumnos
+AS
+BEGIN
+    SELECT *
+    FROM Alumno;
+END
+GO
+-- ELLIMINAR ALUMNOS
+CREATE PROCEDURE SPEliminarAlumno
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Alumno
+    WHERE Id = @Id;
+END
+GO
+-- BUSCAR ALUMNOS POR NOMBRES
+CREATE PROCEDURE SPBuscarAlumnosPorNombre
+    @Nombre VARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Alumno
+    WHERE Nombre LIKE '%' + @Nombre + '%';
+END
+GO
+-- BUSCAR ALUMNOS POR GRADO
+CREATE PROCEDURE SPBuscarAlumnosPorGrado
+    @IdGrado INT
+AS
+BEGIN
+    SELECT *
+    FROM Alumno
+    WHERE IdGrado = @IdGrado;
+END
+GO
