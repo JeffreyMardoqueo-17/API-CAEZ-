@@ -1,5 +1,5 @@
 import sql from 'mssql';
-import { poolPromise } from '../database';
+import { poolPromise } from '../DataBase';
 
 const PadrinoController = {
     async getPadrinos(req, res) {
@@ -102,7 +102,5 @@ const PadrinoController = {
         }
     }
 };
-
-
 
 export default PadrinoController;

@@ -167,3 +167,77 @@ BEGIN
     WHERE Nombre LIKE '%' + @NombreBusqueda + '%';
 END;
 GO
+
+
+---ENCARGADOS =======================================
+-- CREAR ENCARGADOS
+CREATE PROCEDURE SPInsertarEncargado
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @TelEmergencia VARCHAR(10),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdAdministrador INT
+AS
+BEGIN
+    INSERT INTO Encargado (Nombre, Apellido, IdSexo, IdRole, Telefono, TelEmergencia, Correo, IdDireccion, IdTipoDocumento, NumDocumento, IdAdministrador, FechaRegistro)
+    VALUES (@Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @TelEmergencia, @Correo, @IdDireccion, @IdTipoDocumento, @NumDocumento, @IdAdministrador, GETDATE());
+END
+GO
+-- OBETENER ENCARGADO POR ID
+CREATE PROCEDURE SPObtenerEncargadoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Encargado WHERE Id = @Id;
+END
+GO
+-- obtener todos los encargados
+CREATE PROCEDURE SPTraerTodosEncargados
+AS
+BEGIN
+    SELECT * FROM Encargado;
+END
+GO
+-- ACTUALIZAR EL ENCARGADO
+CREATE PROCEDURE SPActualizarEncargado
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @TelEmergencia VARCHAR(10),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdAdministrador INT
+AS
+BEGIN
+    UPDATE Encargado
+    SET Nombre = @Nombre, Apellido = @Apellido, IdSexo = @IdSexo, IdRole = @IdRole, Telefono = @Telefono, TelEmergencia = @TelEmergencia,
+        Correo = @Correo, IdDireccion = @IdDireccion, IdTipoDocumento = @IdTipoDocumento, NumDocumento = @NumDocumento, IdAdministrador = @IdAdministrador
+    WHERE Id = @Id;
+END
+GO
+-- ELIMINAR ENCARGADO
+CREATE PROCEDURE SPEliminarEncargado
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Encargado WHERE Id = @Id;
+END
+GO
+-- BUSCAR ENCARGADO POR NOMBRES
+CREATE PROCEDURE SPBuscarEncargadoPorNombre
+    @TextoBusqueda VARCHAR(50)
+AS
+BEGIN
+    SELECT * FROM Encargado WHERE Nombre LIKE '%' + @TextoBusqueda + '%';
+END
