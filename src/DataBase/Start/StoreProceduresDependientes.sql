@@ -167,3 +167,249 @@ BEGIN
     WHERE Nombre LIKE '%' + @NombreBusqueda + '%';
 END;
 GO
+
+
+---ENCARGADOS =======================================
+-- CREAR ENCARGADOS
+CREATE PROCEDURE SPInsertarEncargado
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @TelEmergencia VARCHAR(10),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdAdministrador INT
+AS
+BEGIN
+    INSERT INTO Encargado (Nombre, Apellido, IdSexo, IdRole, Telefono, TelEmergencia, Correo, IdDireccion, IdTipoDocumento, NumDocumento, IdAdministrador, FechaRegistro)
+    VALUES (@Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @TelEmergencia, @Correo, @IdDireccion, @IdTipoDocumento, @NumDocumento, @IdAdministrador, GETDATE());
+END
+GO
+-- OBETENER ENCARGADO POR ID
+CREATE PROCEDURE SPObtenerEncargadoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Encargado WHERE Id = @Id;
+END
+GO
+-- obtener todos los encargados
+CREATE PROCEDURE SPTraerTodosEncargados
+AS
+BEGIN
+    SELECT * FROM Encargado;
+END
+GO
+-- ACTUALIZAR EL ENCARGADO
+CREATE PROCEDURE SPActualizarEncargado
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @TelEmergencia VARCHAR(10),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdAdministrador INT
+AS
+BEGIN
+    UPDATE Encargado
+    SET Nombre = @Nombre, Apellido = @Apellido, IdSexo = @IdSexo, IdRole = @IdRole, Telefono = @Telefono, TelEmergencia = @TelEmergencia,
+        Correo = @Correo, IdDireccion = @IdDireccion, IdTipoDocumento = @IdTipoDocumento, NumDocumento = @NumDocumento, IdAdministrador = @IdAdministrador
+    WHERE Id = @Id;
+END
+GO
+-- ELIMINAR ENCARGADO
+CREATE PROCEDURE SPEliminarEncargado
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Encargado WHERE Id = @Id;
+END
+GO
+-- BUSCAR ENCARGADO POR NOMBRES
+CREATE PROCEDURE SPBuscarEncargadoPorNombre
+    @TextoBusqueda VARCHAR(50)
+AS
+BEGIN
+    SELECT * FROM Encargado WHERE Nombre LIKE '%' + @TextoBusqueda + '%';
+END
+GO
+-- ALUMNOS============================================================================================
+-- CREAR ALUMNOS
+CREATE PROCEDURE SPCrearAlumno
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @FechaNacimiento DATE,
+    @IdSexo INT,
+    @IdRole INT,
+    @IdEncargado INT,
+    @IdEnfermedad INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdGrado INT,
+    @IdTurno INT,
+    @IdAdministrador INT,
+    @IdPadrino INT,
+    @FechaRegistro DATETIME,
+    @EsBecado BIT
+AS
+BEGIN
+    DECLARE @IdGrupo INT;
+
+    -- Verificar si ya existe un grupo para el grado del alumno
+    SELECT @IdGrupo = Id
+    FROM Grupo
+    WHERE Nombre = CONCAT('Grado ', @IdGrado);
+
+    -- Si no existe, crear un nuevo grupo
+    IF @IdGrupo IS NULL
+    BEGIN
+        INSERT INTO Grupo (Nombre)
+        VALUES (CONCAT('Grado ', @IdGrado));
+        
+        SET @IdGrupo = SCOPE_IDENTITY();
+    END
+
+    -- Insertar el alumno y asignarle el grupo correspondiente
+    INSERT INTO Alumno (Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado)
+    VALUES (@Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado);
+
+    -- Asignar al alumno al grupo correspondiente
+    UPDATE Alumno
+    SET IdGrupo = @IdGrupo
+    WHERE Id = SCOPE_IDENTITY();
+
+    SELECT SCOPE_IDENTITY() AS IdAlumno;
+END
+GO
+-- MODIFICAR ALUMNOS
+CREATE PROCEDURE SPModificarAlumno
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @FechaNacimiento DATE,
+    @IdSexo INT,
+    @IdRole INT,
+    @IdEncargado INT,
+    @IdEnfermedad INT,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdGrado INT,
+    @IdTurno INT,
+    @IdAdministrador INT,
+    @IdPadrino INT,
+    @FechaRegistro DATETIME,
+    @EsBecado BIT
+AS
+BEGIN
+    UPDATE Alumno
+    SET Nombre = @Nombre,
+        Apellido = @Apellido,
+        FechaNacimiento = @FechaNacimiento,
+        IdSexo = @IdSexo,
+        IdRole = @IdRole,
+        IdEncargado = @IdEncargado,
+        IdEnfermedad = @IdEnfermedad,
+        IdTipoDocumento = @IdTipoDocumento,
+        NumDocumento = @NumDocumento,
+        IdGrado = @IdGrado,
+        IdTurno = @IdTurno,
+        IdAdministrador = @IdAdministrador,
+        IdPadrino = @IdPadrino,
+        FechaRegistro = @FechaRegistro,
+        EsBecado = @EsBecado
+    WHERE Id = @Id;
+END
+GO
+-- TARER ALUMNOS POR IDENTIFIED
+CREATE PROCEDURE SPTraerAlumnoPorId
+    @Id INT
+AS
+BEGIN
+    SELECT *
+    FROM Alumno
+    WHERE Id = @Id;
+END
+GO
+-- traer a todos los alumnos
+CREATE PROCEDURE SPTraerTodosLosAlumnos
+AS
+BEGIN
+    SELECT *
+    FROM Alumno;
+END
+GO
+-- ELLIMINAR ALUMNOS
+CREATE PROCEDURE SPEliminarAlumno
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Alumno
+    WHERE Id = @Id;
+END
+GO
+-- BUSCAR ALUMNOS POR NOMBRES
+CREATE PROCEDURE SPBuscarAlumnosPorNombre
+    @Nombre VARCHAR(50)
+AS
+BEGIN
+    SELECT *
+    FROM Alumno
+    WHERE Nombre LIKE '%' + @Nombre + '%';
+END
+GO
+-- BUSCAR ALUMNOS POR GRADO
+CREATE PROCEDURE SPBuscarAlumnosPorGrado
+    @IdGrado INT
+AS
+BEGIN
+    SELECT *
+    FROM Alumno
+    WHERE IdGrado = @IdGrado;
+END
+GO
+-- BUSCAR ALUMNOS POR BECA
+CREATE PROCEDURE SPBuscarAlumnosPorBeca
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @TotalBecados INT, @TotalNoBecados INT;
+
+    SELECT @TotalBecados = COUNT(*)
+    FROM Alumno
+    WHERE EsBecado = 1;
+
+    SELECT @TotalNoBecados = COUNT(*)
+    FROM Alumno
+    WHERE EsBecado = 0;
+
+    SELECT @TotalBecados AS TotalBecados, @TotalNoBecados AS TotalNoBecados;
+END
+GO
+
+-- GRUPOS O GRADOS CON ALUMNOS SEPARADOS-==================
+CREATE PROCEDURE SPTraerTodosLosGrupos
+AS
+BEGIN
+    SELECT * FROM Grupo;
+END
+GO
+---TRAER GRUPO POR ID
+CREATE PROCEDURE SPTraerGrupoPorID
+    @Id INT
+AS
+BEGIN
+    SELECT *
+    FROM GRUPO
+    WHERE Id = @Id;
+END
+GO

@@ -1,5 +1,5 @@
 import sql from 'mssql';
-import { poolPromise } from '../database';
+import { poolPromise } from '../DataBase/contection/Conexion';
 
 const UserController = {
     async getUsers(req, res) {

@@ -1,12 +1,17 @@
 import express from 'express';
-import { GetAlumnos, GetAlumnoPorId, PostAlumno, PutAlumno, DeleteAlumno } from '../controllers/Alumno.controller';
+import alumno from '../controllers/Alumno.controller';
 
 const router = express.Router();
 
-router.get('/alumnos', GetAlumnos);
-router.get('/alumnos/:id', GetAlumnoPorId);
-router.post('/alumnos', PostAlumno);
-router.put('/alumnos/:id', PutAlumno);
-router.delete('/alumnos/:id', DeleteAlumno);
+router.get('/alumnos', alumno.obtenerTodosLosAlumnos);
+router.get('/alumnos/:id', alumno.obtenerAlumnoPorId);
+router.post('/alumnos', alumno.crearAlumno);
+router.put('/alumnos/:id', alumno.modificarAlumno);
+router.delete('/alumnos/:id', alumno.eliminarAlumno);
+router.get('alumnos/buscar/:nombre', alumno.buscarAlumnosPorNombre);
+router.get('alumnos/buscar/:idgrado', alumno.buscarAlumnosPorGrado);
+router.get('/alumnos/beca', alumno.buscarAlumnosPorBeca);
+
+
 
 export default router;
