@@ -414,6 +414,9 @@ BEGIN
 END
 GO
 ---========================================SP DE PAGOS 
+
+
+---========================================SP DE PAGOS 
 CREATE PROCEDURE SPCrearPago
     @IdAlumno INT,
     @Multa DECIMAL(10, 2) = 0,
@@ -439,7 +442,8 @@ BEGIN
 
     WHILE @Posicion <= LEN(@MesesPagados)
     BEGIN
-        SET @Mes = CAST(SUBSTRING(@MesesPagados, @Posicion, CHARINDEX(',', @MesesPagados + ',', @Posicion) - @Posicion) AS INT);
+       SET @Mes = CAST(SUBSTRING(CONVERT(VARCHAR(MAX), @MesesPagados), @Posicion, 
+                            CHARINDEX(',', CONVERT(VARCHAR(MAX), @MesesPagados) + ',', @Posicion) - @Posicion) AS INT);
 
         INSERT INTO PagoMes (IdPago, IdMes)
         VALUES (@IdPago, @Mes);
@@ -449,20 +453,7 @@ BEGIN
 END;
 GO
 -- SP para leer todos los pagos
-CREATE PROCEDURE SPTraerTodosLosPagos
-AS
-BEGIN
-    SELECT * FROM Pago;
-END;
-GO
--- SP para leer un pago por ID
-CREATE PROCEDURE SPTraerPagoPorID
-    @Id INT
-AS
-BEGIN
-    SELECT * FROM Pago WHERE Id = @Id;
-END;
-GO
+
 -- SP para actualizar un pago
 CREATE PROCEDURE SPActualizarPago
     @Id INT,
@@ -497,7 +488,8 @@ BEGIN
 
     WHILE @Posicion <= LEN(@MesesPagados)
     BEGIN
-        SET @Mes = CAST(SUBSTRING(@MesesPagados, @Posicion, CHARINDEX(',', @MesesPagados + ',', @Posicion) - @Posicion) AS INT);
+        SET @Mes = CAST(SUBSTRING(CONVERT(VARCHAR(MAX), @MesesPagados), @Posicion, 
+                        CHARINDEX(',', CONVERT(VARCHAR(MAX), @MesesPagados) + ',', @Posicion) - @Posicion) AS INT);
 
         INSERT INTO PagoMes (IdPago, IdMes)
         VALUES (@Id, @Mes);
@@ -506,6 +498,23 @@ BEGIN
     END;
 END;
 GO
+
+-- SP para leer todos los pagos
+CREATE PROCEDURE SPTraerTodosLosPagos
+AS
+BEGIN
+    SELECT * FROM Pago;
+END;
+GO
+-- SP para leer un pago por ID
+CREATE PROCEDURE SPTraerPagoPorID
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Pago WHERE Id = @Id;
+END;
+GO
+
 -- SP para eliminar un pago
 CREATE PROCEDURE SPEliminarPago
     @Id INT
