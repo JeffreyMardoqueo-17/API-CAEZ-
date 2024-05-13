@@ -1,24 +1,50 @@
-import { GetConnection } from '../DataBase/contection/Conexion';
-import sql from 'mssql';
+const sql = require('mssql');
+const  poolPromise  = require('../DataBase/contection/Conexions');
+
+// Método para crear un nuevo pago
+async function crearPago(req, res) {
+    const { IdAlumno, Multa, IdTipoPago, Descuento, TotalPagado, FechaRegistro, IdAdministrador, Descripcion, MesesPagados } = req.body;
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('IdAlumno', sql.Int, IdAlumno)
+            .input('Multa', sql.Decimal(10, 2), Multa)
+            .input('IdTipoPago', sql.Int, IdTipoPago)
+            .input('Descuento', sql.Decimal(5, 2), Descuento)
+            .input('TotalPagado', sql.Decimal(10, 2), TotalPagado)
+            .input('FechaRegistro', sql.DateTime, FechaRegistro)
+            .input('IdAdministrador', sql.Int, IdAdministrador)
+            .input('Descripcion', sql.VarChar(sql.MAX), Descripcion)
+            .input('MesesPagados', sql.VarChar(sql.MAX), MesesPagados)
+            .query('EXEC SPCrearPago @IdAlumno, @Multa, @IdTipoPago, @Descuento, @TotalPagado, @FechaRegistro, @IdAdministrador, @Descripcion, @MesesPagados');
+
+        res.status(201).json({ msg: 'Pago creado correctamente' });
+    } catch (error) {
+        console.error(`Error al crear el pago: ${error}`);
+        res.status(500).json({ msg: 'Error al crear el pago' });
+    }
+}
 
 // Método para obtener todos los pagos
-export const GetPagos = async (req, res) => {
+async function obtenerTodosLosPagos(req, res) {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerPagos');
+        const pool = await poolPromise;
+        const result = await pool.request().query('EXEC SPTraerTodosLosPagos');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener los pagos: ${error}`);
         res.status(500).json({ msg: 'Error al obtener los pagos' });
     }
-};
+}
 
-// Método para obtener un pago por su Id
-export const GetPagoPorId = async (req, res) => {
+// Método para obtener un pago por ID
+async function obtenerPagoPorID(req, res) {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.Int, id).query('EXEC SPObtenerPagoPorId @Id');
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('Id', sql.Int, id)
+            .query('EXEC SPTraerPagoPorID @Id');
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -28,63 +54,54 @@ export const GetPagoPorId = async (req, res) => {
         console.error(`Error al obtener el pago: ${error}`);
         res.status(500).json({ msg: 'Error al obtener el pago' });
     }
-};
+}
 
-// Método para insertar un nuevo pago
-export const PostPago = async (req, res) => {
-    const { idAlumno, idEncargado, montoPagar, multa, totalPagado, fechaRegistro, idAdministrador, idMes } = req.body;
-    try {
-        const pool = await GetConnection();
-        await pool.request()
-            .input('IdAlumno', sql.Int, idAlumno)
-            .input('IdEncargado', sql.BigInt, idEncargado)
-            .input('MontoPagar', sql.Decimal(10, 2), montoPagar)
-            .input('Multa', sql.Decimal(10, 2), multa)
-            .input('TotalPagado', sql.Decimal(10, 2), totalPagado)
-            .input('FechaRegistro', sql.Date, fechaRegistro)
-            .input('IdAdministrador', sql.Int, idAdministrador)
-            .input('IdMes', sql.TinyInt, idMes)
-            .query('EXEC SPInsertarPago @IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador, @IdMes');
-        res.status(201).json({ msg: 'Pago creado correctamente' });
-    } catch (error) {
-        console.error(`Error al insertar el pago: ${error}`);
-        res.status(500).json({ msg: 'Error al insertar el pago' });
-    }
-};
-
-// Método para actualizar un pago existente
-export const PutPago = async (req, res) => {
+// Método para actualizar un pago
+async function actualizarPago(req, res) {
     const { id } = req.params;
-    const { idAlumno, idEncargado, montoPagar, multa, totalPagado, fechaRegistro, idAdministrador, idMes } = req.body;
+    const { IdAlumno, Multa, IdTipoPago, Descuento, TotalPagado, FechaRegistro, IdAdministrador, Descripcion, MesesPagados } = req.body;
     try {
-        const pool = await GetConnection();
+        const pool = await poolPromise;
         await pool.request()
             .input('Id', sql.Int, id)
-            .input('IdAlumno', sql.Int, idAlumno)
-            .input('IdEncargado', sql.Int, idEncargado)
-            .input('MontoPagar', sql.Decimal(10, 2), montoPagar)
-            .input('Multa', sql.Decimal(10, 2), multa)
-            .input('TotalPagado', sql.Decimal(10, 2), totalPagado)
-            .input('FechaRegistro', sql.Date, fechaRegistro)
-            .input('IdAdministrador', sql.Int, idAdministrador)
-            .input('IdMes', sql.TinyInt, idMes)
-            .query('EXEC SPActualizarPago @Id, @IdAlumno, @IdEncargado, @MontoPagar, @Multa, @TotalPagado, @FechaRegistro, @IdAdministrador, @IdMes');
+            .input('IdAlumno', sql.Int, IdAlumno)
+            .input('Multa', sql.Decimal(10, 2), Multa)
+            .input('IdTipoPago', sql.Int, IdTipoPago)
+            .input('Descuento', sql.Decimal(5, 2), Descuento)
+            .input('TotalPagado', sql.Decimal(10, 2), TotalPagado)
+            .input('FechaRegistro', sql.DateTime, FechaRegistro)
+            .input('IdAdministrador', sql.Int, IdAdministrador)
+            .input('Descripcion', sql.VarChar(sql.MAX), Descripcion)
+            .input('MesesPagados', sql.VarChar(sql.MAX), MesesPagados)
+            .query('EXEC SPActualizarPago @Id, @IdAlumno, @Multa, @IdTipoPago, @Descuento, @TotalPagado, @FechaRegistro, @IdAdministrador, @Descripcion, @MesesPagados');
+
         res.status(200).json({ msg: 'Pago actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el pago: ${error}`);
         res.status(500).json({ msg: 'Error al actualizar el pago' });
     }
-};
+}
 
-// Método para eliminar un pago por su Id
-export const DeletePago = async (req, res) => {
+// Método para eliminar un pago
+async function eliminarPago(req, res) {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.Int, id).query('EXEC SPEliminarPago @Id');
+        const pool = await poolPromise;
+        await pool.request()
+            .input('Id', sql.Int, id)
+            .query('EXEC SPEliminarPago @Id');
+
         res.status(200).json({ msg: 'Pago eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el pago: ${error}`);
         res.status(500).json({ msg: 'Error al eliminar el pago' });
     }
+}
+
+module.exports = {
+    crearPago,
+    obtenerTodosLosPagos,
+    obtenerPagoPorID,
+    actualizarPago,
+    eliminarPago
 };
