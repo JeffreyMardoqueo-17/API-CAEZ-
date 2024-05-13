@@ -413,3 +413,163 @@ BEGIN
     WHERE Id = @Id;
 END
 GO
+---========================================SP DE PAGOS 
+
+
+---========================================SP DE PAGOS 
+CREATE PROCEDURE SPCrearPago
+    @IdAlumno INT,
+    @Multa DECIMAL(10, 2) = 0,
+    @IdTipoPago INT = NULL,
+    @Descuento DECIMAL(5, 2) = 0,
+    @TotalPagado DECIMAL(10, 2),
+    @FechaRegistro DATETIME,
+    @IdAdministrador INT,
+    @Descripcion VARCHAR(MAX),
+    @MesesPagados INT -- Lista de meses pagados separados por comas (por ejemplo, '1,2,3')
+AS
+BEGIN
+    DECLARE @IdPago INT;
+
+    INSERT INTO Pago (IdAlumno, Multa, IdTipoPago, Descuento, TotalPagado, FechaRegistro, IdAdministrador, Descripcion)
+    VALUES (@IdAlumno, @Multa, @IdTipoPago, @Descuento, @TotalPagado, @FechaRegistro, @IdAdministrador, @Descripcion);
+
+    SET @IdPago = SCOPE_IDENTITY();
+
+    -- Dividir la lista de meses y registrar cada mes en la tabla PagoMes
+    DECLARE @Mes INT;
+    DECLARE @Posicion INT = 1;
+
+    WHILE @Posicion <= LEN(@MesesPagados)
+    BEGIN
+       SET @Mes = CAST(SUBSTRING(CONVERT(VARCHAR(MAX), @MesesPagados), @Posicion, 
+                            CHARINDEX(',', CONVERT(VARCHAR(MAX), @MesesPagados) + ',', @Posicion) - @Posicion) AS INT);
+
+        INSERT INTO PagoMes (IdPago, IdMes)
+        VALUES (@IdPago, @Mes);
+
+        SET @Posicion = CHARINDEX(',', @MesesPagados, @Posicion) + 1;
+    END;
+END;
+GO
+-- SP para leer todos los pagos
+
+-- SP para actualizar un pago
+CREATE PROCEDURE SPActualizarPago
+    @Id INT,
+    @IdAlumno INT,
+    @Multa DECIMAL(10, 2) = 0,
+    @IdTipoPago INT = NULL,
+    @Descuento DECIMAL(5, 2) = 0,
+    @TotalPagado DECIMAL(10, 2),
+    @FechaRegistro DATETIME,
+    @IdAdministrador INT,
+    @Descripcion VARCHAR(MAX),
+    @MesesPagados INT -- Lista de meses pagados separados por comas (por ejemplo, '1,2,3')
+AS
+BEGIN
+    UPDATE Pago
+    SET IdAlumno = @IdAlumno,
+        Multa = @Multa,
+        IdTipoPago = @IdTipoPago,
+        Descuento = @Descuento,
+        TotalPagado = @TotalPagado,
+        FechaRegistro = @FechaRegistro,
+        IdAdministrador = @IdAdministrador,
+        Descripcion = @Descripcion
+    WHERE Id = @Id;
+
+    -- Eliminar los registros existentes de PagoMes
+    DELETE FROM PagoMes WHERE IdPago = @Id;
+
+    -- Dividir la lista de meses y registrar cada mes en la tabla PagoMes
+    DECLARE @Mes INT;
+    DECLARE @Posicion INT = 1;
+
+    WHILE @Posicion <= LEN(@MesesPagados)
+    BEGIN
+        SET @Mes = CAST(SUBSTRING(CONVERT(VARCHAR(MAX), @MesesPagados), @Posicion, 
+                        CHARINDEX(',', CONVERT(VARCHAR(MAX), @MesesPagados) + ',', @Posicion) - @Posicion) AS INT);
+
+        INSERT INTO PagoMes (IdPago, IdMes)
+        VALUES (@Id, @Mes);
+
+        SET @Posicion = CHARINDEX(',', @MesesPagados, @Posicion) + 1;
+    END;
+END;
+GO
+
+-- SP para leer todos los pagos
+CREATE PROCEDURE SPTraerTodosLosPagos
+AS
+BEGIN
+    SELECT * FROM Pago;
+END;
+GO
+-- SP para leer un pago por ID
+CREATE PROCEDURE SPTraerPagoPorID
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM Pago WHERE Id = @Id;
+END;
+GO
+
+-- SP para eliminar un pago
+CREATE PROCEDURE SPEliminarPago
+    @Id INT
+AS
+BEGIN
+    DELETE FROM PagoMes WHERE IdPago = @Id;
+    DELETE FROM Pago WHERE Id = @Id;
+END;
+GO
+--=============================================PAGO MEES
+-- pagos meses, los pagos que relacionen a varios meses, si un alumno en un solo apgo pago varios MESes
+
+-- SP para crear un registro en PagoMes
+CREATE PROCEDURE SPCrearPagoMes
+    @IdPago INT,
+    @IdMes INT
+AS
+BEGIN
+    INSERT INTO PagoMes (IdPago, IdMes)
+    VALUES (@IdPago, @IdMes);
+END;
+GO
+-- SP para leer todos los registros de PagoMes
+CREATE PROCEDURE SPTraerTodosLosPagosMes
+AS
+BEGIN
+    SELECT * FROM PagoMes;
+END;
+GO
+-- SP para leer un registro de PagoMes por ID
+CREATE PROCEDURE SPTraerPagoMesPorID
+    @Id INT
+AS
+BEGIN
+    SELECT * FROM PagoMes WHERE Id = @Id;
+END;
+GO
+-- SP para actualizar un registro de PagoMes
+CREATE PROCEDURE SPActualizarPagoMes
+    @Id INT,
+    @IdPago INT,
+    @IdMes INT
+AS
+BEGIN
+    UPDATE PagoMes
+    SET IdPago = @IdPago,
+        IdMes = @IdMes
+    WHERE Id = @Id;
+END;
+GO
+-- SP para eliminar un registro de PagoMes
+CREATE PROCEDURE SPEliminarPagoMes
+    @Id INT
+AS
+BEGIN
+    DELETE FROM PagoMes WHERE Id = @Id;
+END;
+
