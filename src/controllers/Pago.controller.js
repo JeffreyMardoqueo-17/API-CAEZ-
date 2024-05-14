@@ -1,6 +1,5 @@
 const sql = require('mssql');
-const  poolPromise  = require('../DataBase/contection/Conexions');
-
+import { poolPromise } from '../DataBase/contection/Conexion';
 // Método para crear un nuevo pago
 async function crearPago(req, res) {
     const { IdAlumno, Multa, IdTipoPago, Descuento, TotalPagado, FechaRegistro, IdAdministrador, Descripcion, MesesPagados } = req.body;
