@@ -572,4 +572,4 @@ AS
 BEGIN
     DELETE FROM PagoMes WHERE Id = @Id;
 END;
-
+GO  
