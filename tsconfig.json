@@ -1,0 +1,54 @@
+{
+    "compilerOptions": {
+        "target": "es6", // o superior según sus necesidades
+        "module": "commonjs", // u otro sistema de módulos
+        "strict": true, // habilitar la verificación estricta de tipos
+        "esModuleInterop": true, // habilita la compatibilidad con módulos ES
+        "allowJs": true, // permite la compilación de archivos JavaScript existentes
+        "outDir": "./dist", // directorio de salida para archivos compilados
+        "sourceMap": true, // generar mapas de origen para la depuración
+        "declaration": false, // no generar archivos de declaración
+        "forceConsistentCasingInFileNames": true, // forzar la carcasa consistente en los nombres de archivo
+        // Agregue rutas a sus archivos de modelo aquí
+        "paths": {
+            "@configuration/*": [
+                "src/configuration/*"
+            ],
+            "@database/*": [
+                "src/database/*"
+            ],
+            "@helpers/*": [
+                "src/helpers/*"
+            ],
+            "@models/*": [
+                "src/models/*"
+            ],
+            "@validators/*": [
+                "src/validators/*"
+            ],
+            "@routers/*": [
+                "src/routers/*"
+            ],
+            "@controllers/*": [
+                "src/controllers/*"
+            ]
+        },
+        "lib": [
+            "dom",
+            "esnext"
+        ], // incluir bibliotecas estándar de TypeScript
+        "noImplicitAny": true, // deshabilitar la inferencia de tipo 'any' implícita
+        "skipLibCheck": true, // omitir la verificación de la biblioteca estándar de TypeScript (puede ser útil durante el desarrollo)
+        "esModuleResolution": "node", // utilizar la resolución de módulos de Node.js
+        "experimentalDecorators": true // habilitar decoradores experimentales de TypeScript
+    },
+    "include": [
+        "src/**/*.ts", // compilar todos los archivos TypeScript en el directorio "src"
+        "tests/**/*.ts" // compilar todos los archivos de prueba TypeScript en el directorio "tests"
+    ],
+    "exclude": [
+        "node_modules", // excluir el directorio "node_modules"
+        "dist" // excluir el directorio de salida
+    ],
+    "watch": true // activar la compilación en caliente (opcional)
+}
