@@ -1,13 +1,9 @@
-import { GetConnection } from '../DataBase/contection/Conexion'
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
-
-
-// Método para obtener todos los tipos de documento
 
 export const GetTiposDocumento = async (req, res) => {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerTiposDocumento');
+        const result = await executeQuery('EXEC SPObtenerTiposDocumento');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener los tipos de documento: ${error}`);
@@ -15,12 +11,10 @@ export const GetTiposDocumento = async (req, res) => {
     }
 };
 
-// Método para obtener un tipo de documento por su Id
 export const GetTipoDocumentoPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPObtenerTipoDocumentoPorId @Id');
+        const result = await executeQuery('EXEC SPObtenerTipoDocumentoPorId @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -32,15 +26,13 @@ export const GetTipoDocumentoPorId = async (req, res) => {
     }
 };
 
-// Método para insertar un nuevo tipo de documento
 export const PostTipoDocumento = async (req, res) => {
     const { Nombre } = req.body;
     if (!Nombre) {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPInsertarTipoDocumento @Nombre');
+        await executeQuery('EXEC SPInsertarTipoDocumento @Nombre', [{ name: 'Nombre', type: sql.VarChar(80), value: Nombre }]);
         res.status(201).json({ msg: 'Tipo de documento creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el tipo de documento: ${error}`);
@@ -48,13 +40,11 @@ export const PostTipoDocumento = async (req, res) => {
     }
 };
 
-// Método para actualizar un tipo de documento existente
 export const PutTipoDocumento = async (req, res) => {
     const { id } = req.params;
     const { Nombre } = req.body;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPActualizarTipoDocumento @Id, @Nombre');
+        await executeQuery('EXEC SPActualizarTipoDocumento @Id, @Nombre', [{ name: 'Id', type: sql.TINYINT, value: id }, { name: 'Nombre', type: sql.VarChar(80), value: Nombre }]);
         res.status(200).json({ msg: 'Tipo de documento actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el tipo de documento: ${error}`);
@@ -62,27 +52,24 @@ export const PutTipoDocumento = async (req, res) => {
     }
 };
 
-// Método para eliminar un tipo de documento por su Id
 export const DeleteTipoDocumento = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPEliminarTipoDocumento @Id');
+        await executeQuery('EXEC SPEliminarTipoDocumento @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         res.status(200).json({ msg: 'Tipo de documento eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el tipo de documento: ${error}`);
         res.status(500).json({ msg: 'Error al eliminar el tipo de documento' });
     }
 };
-// Método para buscar direcciones por un texto de búsqueda
+
 export const BuscarTipoDocumentoPorTexto = async (req, res) => {
-    const { textoBusqueda } = req.params;
+    const { textoBusqueda } = req.body;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('TextoBusqueda', sql.VarChar(80), textoBusqueda).query('EXEC SPBuscarTipoDocumentosPorTexto @TextoBusqueda');
+        const result = await executeQuery('EXEC SPBuscarTipoDocumentosPorTexto @TextoBusqueda', [{ name: 'TextoBusqueda', type: sql.VarChar(80), value: textoBusqueda }]);
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al buscar el Tipo de Documentos: ${error}`);
-        res.status(500).json({ msg: 'Error al buscar Documentos' });
+        res.status(500).json({ msg: 'Error al obtener el tipo de documento', error: error });
     }
 };
