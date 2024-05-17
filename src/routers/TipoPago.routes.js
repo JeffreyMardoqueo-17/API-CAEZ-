@@ -7,9 +7,9 @@ const route = Router();
 // Rutas
 route.get('/TiposPago', GetTiposPago);
 route.get('/TiposPago/:id', GetTipoPagoPorId);
-route.post('/TiposPago',ValidatePostTipoPago, PostTipoPago);
+route.post('/TiposPago', PostTipoPago);
 route.put('/TiposPago/:id', PutTipoPago);
 route.delete('/TiposPago/:id', DeleteTipoPago);
-route.get('TipoPago/Buscar/:textoBusqueda', BuscarTipoPagoPorTexto)
+route.post('/TiposPago/Buscar/', BuscarTipoPagoPorTexto)
 
 export default route;

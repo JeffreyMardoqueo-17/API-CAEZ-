@@ -10,6 +10,6 @@ route.get('/TiposDocumento/:id', GetTipoDocumentoPorId);
 route.post('/TiposDocumento',ValidatePostTipoDoc, PostTipoDocumento);
 route.put('/TiposDocumento/:id', PutTipoDocumento);
 route.delete('/TiposDocumento/:id', DeleteTipoDocumento);
-route.get('TipoDocumentos/Buscar/:textoBusqueda', BuscarTipoDocumentoPorTexto)
+route.post('/TiposDocumento/Buscar/', BuscarTipoDocumentoPorTexto) // Aquí está la ruta corregida
 
 export default route;
