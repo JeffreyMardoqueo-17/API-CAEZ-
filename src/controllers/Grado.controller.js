@@ -1,11 +1,10 @@
-import { GetConnection } from '../DataBase/contection/Conexion';
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
-// Método para obtener todos los grados === http://localhost:5000/Grados
+// Método para obtener todos los grados
 export const GetGrados = async (req, res) => {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerGrados');
+        const result = await executeQuery('EXEC SPObtenerGrados');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener los grados: ${error}`);
@@ -13,12 +12,11 @@ export const GetGrados = async (req, res) => {
     }
 };
 
-// Método para obtener un grado por su Id   == http://localhost:5000/Grados/6
+// Método para obtener un grado por su Id
 export const GetGradoPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPObtenerGradoPorId @Id');
+        const result = await executeQuery('EXEC SPObtenerGradoPorId @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -33,12 +31,11 @@ export const GetGradoPorId = async (req, res) => {
 // Método para insertar un nuevo grado
 export const PostGrado = async (req, res) => {
     const { Nombre } = req.body;
-    if (!nombre) {
+    if (!Nombre) {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(50), Nombre).query('EXEC SPInsertarGrado @Nombre');
+        await executeQuery('EXEC SPInsertarGrado @Nombre', [{ name: 'Nombre', type: sql.VarChar(50), value: Nombre }]);
         res.status(201).json({ msg: 'Grado creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el grado: ${error}`);
@@ -46,19 +43,12 @@ export const PostGrado = async (req, res) => {
     }
 };
 
-
-// Método para actualizar un grado existente http://localhost:5000/Grados/5  
-/*
-{
-    "nombre": "Tercero"
-}
- */
+// Método para actualizar un grado existente
 export const PutGrado = async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { Nombre } = req.body;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(50), nombre).query('EXEC SPActualizarGrado @Id, @Nombre');
+        await executeQuery('EXEC SPActualizarGrado @Id, @Nombre', [{ name: 'Id', type: sql.TINYINT, value: id }, { name: 'Nombre', type: sql.VarChar(50), value: Nombre }]);
         res.status(200).json({ msg: 'Grado actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el grado: ${error}`);
@@ -70,8 +60,7 @@ export const PutGrado = async (req, res) => {
 export const DeleteGrado = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPEliminarGrado @Id');
+        await executeQuery('EXEC SPEliminarGrado @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         res.status(200).json({ msg: 'Grado eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el grado: ${error}`);

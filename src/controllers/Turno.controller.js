@@ -1,11 +1,10 @@
-import { GetConnection } from '../DataBase/contection/Conexion';
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
 // Método para obtener todos los turnos
 export const GetTurnos = async (req, res) => {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerTurnos');
+        const result = await executeQuery('EXEC SPObtenerTurnos');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener los turnos: ${error}`);
@@ -17,8 +16,7 @@ export const GetTurnos = async (req, res) => {
 export const GetTurnoPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPObtenerTurnoPorId @Id');
+        const result = await executeQuery('EXEC SPObtenerTurnoPorId @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -33,12 +31,8 @@ export const GetTurnoPorId = async (req, res) => {
 // Método para insertar un nuevo turno
 export const PostTurno = async (req, res) => {
     const { Nombre } = req.body;
-    // if (!Nombre) {
-    //     return res.status(400).json({ msg: 'El campo nombre es requerido' });
-    // }
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPInsertarTurno @Nombre');
+        await executeQuery('EXEC SPInsertarTurno @Nombre', [{ name: 'Nombre', type: sql.VarChar(80), value: Nombre }]);
         res.status(201).json({ msg: 'Turno creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el turno: ${error}`);
@@ -51,8 +45,7 @@ export const PutTurno = async (req, res) => {
     const { id } = req.params;
     const { Nombre } = req.body;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPActualizarTurno @Id, @Nombre');
+        await executeQuery('EXEC SPActualizarTurno @Id, @Nombre', [{ name: 'Id', type: sql.TINYINT, value: id }, { name: 'Nombre', type: sql.VarChar(80), value: Nombre }]);
         res.status(200).json({ msg: 'Turno actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el turno: ${error}`);
@@ -64,8 +57,7 @@ export const PutTurno = async (req, res) => {
 export const DeleteTurno = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPEliminarTurno @Id');
+        await executeQuery('EXEC SPEliminarTurno @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         res.status(200).json({ msg: 'Turno eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el turno: ${error}`);
