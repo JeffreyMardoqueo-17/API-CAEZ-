@@ -12,25 +12,25 @@
         // Agregue rutas a sus archivos de modelo aquí
         "paths": {
             "@configuration/*": [
-                "src/configuration/*"
+                "./src/configuration/*"
             ],
             "@database/*": [
-                "src/database/*"
+                "./src/database/*"
             ],
             "@helpers/*": [
-                "src/helpers/*"
+                "./src/helpers/*"
             ],
             "@models/*": [
-                "src/models/*"
+                "./src/models/*"
             ],
             "@validators/*": [
-                "src/validators/*"
+                "./src/validators/*"
             ],
             "@routers/*": [
-                "src/routers/*"
+                "./src/routers/*"
             ],
             "@controllers/*": [
-                "src/controllers/*"
+                "./src/controllers/*"
             ]
         },
         "lib": [
