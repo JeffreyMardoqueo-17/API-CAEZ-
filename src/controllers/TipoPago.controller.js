@@ -1,11 +1,10 @@
-import {GetConnection} from '../DataBase/contection/Conexion';
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql'
 
 // Método para obtener todos los tipos de pago
 export const GetTiposPago = async (req, res) => {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerTiposPago');
+        const result = await executeQuery('EXEC SPObtenerTiposPago');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener los tipos de pago: ${error}`);
@@ -17,8 +16,7 @@ export const GetTiposPago = async (req, res) => {
 export const GetTipoPagoPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPObtenerTipoPagoPorId @Id');
+        const result = await executeQuery('EXEC SPObtenerTipoPagoPorId @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -37,8 +35,7 @@ export const PostTipoPago = async (req, res) => {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPInsertarTipoPago @Nombre');
+        await executeQuery('EXEC SPInsertarTipoPago @Nombre', [{ name: 'Nombre', type: sql.VarChar(80), value: Nombre }]);
         res.status(201).json({ msg: 'Tipo de pago creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el tipo de pago: ${error}`);
@@ -51,8 +48,7 @@ export const PutTipoPago = async (req, res) => {
     const { id } = req.params;
     const { Nombre } = req.body;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).input('Nombre', sql.VarChar(80), Nombre).query('EXEC SPActualizarTipoPago @Id, @Nombre');
+        await executeQuery('EXEC SPActualizarTipoPago @Id, @Nombre', [{ name: 'Id', type: sql.TINYINT, value: id }, { name: 'Nombre', type: sql.VarChar(80), value: Nombre }]);
         res.status(200).json({ msg: 'Tipo de pago actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el tipo de pago: ${error}`);
@@ -64,20 +60,19 @@ export const PutTipoPago = async (req, res) => {
 export const DeleteTipoPago = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.TINYINT, id).query('EXEC SPEliminarTipoPago @Id');
+        await executeQuery('EXEC SPEliminarTipoPago @Id', [{ name: 'Id', type: sql.TINYINT, value: id }]);
         res.status(200).json({ msg: 'Tipo de pago eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el tipo de pago: ${error}`);
         res.status(500).json({ msg: 'Error al eliminar el tipo de pago' });
     }
 };
+
 // Método para buscar tipo de pagos por un texto de búsqueda
 export const BuscarTipoPagoPorTexto = async (req, res) => {
-    const { textoBusqueda } = req.params;
+    const { textoBusqueda } = req.body; // Cambia req.params a req.body
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('TextoBusqueda', sql.VarChar(80), textoBusqueda).query('EXEC SPBuscarTipoPagoPorTexto @TextoBusqueda');
+        const result = await executeQuery('EXEC SPBuscarTipoPagoPorTexto @TextoBusqueda', [{ name: 'TextoBusqueda', type: sql.VarChar(80), value: textoBusqueda }]);
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al buscar tipo de pagos: ${error}`);
