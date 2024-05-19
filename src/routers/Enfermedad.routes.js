@@ -9,6 +9,6 @@ router.get('/enfermedad/:id', GetEnfermedadPorId);
 router.post('/enfermedad',PostEnfermedad);
 router.put('/enfermedad/:id', PutEnfermedad);
 router.delete('/enfermedad/:id', DeleteEnfermedad);
-router.get('/enfermedad/Buscar/:textoBusqueda', BuscarEnfermedadesPorTexto)
+router.post('/enfermedad/Buscar', BuscarEnfermedadesPorTexto);
 
 export default router;

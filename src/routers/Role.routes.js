@@ -1,7 +1,7 @@
 import express from "express";
 import { GetRoles, GetRolPorId, PutRol, PostRol, DeleteRol } from '../controllers/Role';
 
-const route = Router();
+const route = express.Router();
 
 route.get('/Role', GetRoles);
 route.get('/Role/:id', GetRolPorId);

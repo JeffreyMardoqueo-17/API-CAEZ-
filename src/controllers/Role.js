@@ -1,11 +1,10 @@
-import { GetConnection } from '../DataBase/conection/Conexion';
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
 // Método para obtener todos los roles
 export const GetRoles = async (req, res) => {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerRoles');
+        const result = await executeQuery('EXEC SPObtenerRoles');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener los roles: ${error}`);
@@ -17,8 +16,7 @@ export const GetRoles = async (req, res) => {
 export const GetRolPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.INT, id).query('EXEC SPObtenerRolPorId @Id');
+        const result = await executeQuery('EXEC SPObtenerRolPorId @Id', [{ name: 'Id', type: sql.INT, value: id }]);
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -32,13 +30,12 @@ export const GetRolPorId = async (req, res) => {
 
 // Método para insertar un nuevo rol
 export const PostRol = async (req, res) => {
-    const { name } = req.body;
-    if (!name) {
+    const { Nombre } = req.body;
+    if (!Nombre) {
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Name', sql.VarChar(30), name).query('EXEC SPInsertarRol @Name');
+        await executeQuery('EXEC SPInsertarRol @Name', [{ name: 'Name', type: sql.VarChar(30), value: Nombre }]);
         res.status(201).json({ msg: 'Rol creado correctamente' });
     } catch (error) {
         console.error(`Error al insertar el rol: ${error}`);
@@ -49,10 +46,9 @@ export const PostRol = async (req, res) => {
 // Método para actualizar un rol existente
 export const PutRol = async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body;
+    const { Nombre } = req.body;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.INT, id).input('Name', sql.VarChar(30), name).query('EXEC SPActualizarRol @Id, @Name');
+        await executeQuery('EXEC SPActualizarRol @Id, @Name', [{ name: 'Id', type: sql.INT, value: id }, { name: 'Name', type: sql.VarChar(30), value: Nombre }]);
         res.status(200).json({ msg: 'Rol actualizado correctamente' });
     } catch (error) {
         console.error(`Error al actualizar el rol: ${error}`);
@@ -64,8 +60,7 @@ export const PutRol = async (req, res) => {
 export const DeleteRol = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.INT, id).query('EXEC SPEliminarRol @Id');
+        await executeQuery('EXEC SPEliminarRol @Id', [{ name: 'Id', type: sql.INT, value: id }]);
         res.status(200).json({ msg: 'Rol eliminado correctamente' });
     } catch (error) {
         console.error(`Error al eliminar el rol: ${error}`);

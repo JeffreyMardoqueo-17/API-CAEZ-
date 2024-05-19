@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { GetMesPorNombre, GetMeses} from '../controllers/Mes.controller';
+import { GetMesPorNombre, GetMeses, BuscarMesPorTexto } from '../controllers/Mes.controller';
 
 const route = Router();
 
 // Rutas
+route.get('/Meses/', GetMeses);
 route.get('/Meses/:nombre', GetMesPorNombre);
-route.get('/Meses/', GetMeses)
-
+route.post('/Meses/Buscar', BuscarMesPorTexto);
 export default route;
