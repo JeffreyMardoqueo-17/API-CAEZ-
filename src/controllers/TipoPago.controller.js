@@ -67,7 +67,6 @@ export const DeleteTipoPago = async (req, res) => {
         res.status(500).json({ msg: 'Error al eliminar el tipo de pago' });
     }
 };
-
 // Método para buscar tipo de pagos por un texto de búsqueda
 export const BuscarTipoPagoPorTexto = async (req, res) => {
     const { textoBusqueda } = req.body; // Cambia req.params a req.body

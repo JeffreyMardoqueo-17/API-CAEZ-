@@ -1,11 +1,10 @@
-import { GetConnection } from '../DataBase/conection/Conexion';
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
 // Método para obtener todas las enfermedades
 export const GetEnfermedades = async (req, res) => {
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().query('EXEC SPObtenerEnfermedades');
+        const result = await executeQuery('EXEC SPObtenerEnfermedades');
         res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al obtener las enfermedades: ${error}`);
@@ -17,8 +16,7 @@ export const GetEnfermedades = async (req, res) => {
 export const GetEnfermedadPorId = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('Id', sql.INT, id).query('EXEC SPObtenerEnfermedadPorId @Id');
+        const result = await executeQuery('EXEC SPObtenerEnfermedadPorId @Id', [{ name: 'Id', type: sql.INT, value: id }]);
         if (result.recordset.length > 0) {
             res.status(200).json(result.recordset[0]);
         } else {
@@ -37,8 +35,7 @@ export const PostEnfermedad = async (req, res) => {
         return res.status(400).json({ msg: 'Los campos nombre y descripción son requeridos' });
     }
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Nombre', sql.VarChar(50), nombre).input('Descripcion', sql.VarChar(sql.MAX), descripcion).query('EXEC SPInsertarEnfermedad @Nombre, @Descripcion');
+        await executeQuery('EXEC SPInsertarEnfermedad @Nombre, @Descripcion', [{ name: 'Nombre', type: sql.VarChar(50), value: nombre }, { name: 'Descripcion', type: sql.VarChar(sql.MAX), value: descripcion }]);
         res.status(201).json({ msg: 'Enfermedad creada correctamente' });
     } catch (error) {
         console.error(`Error al insertar la enfermedad: ${error}`);
@@ -51,8 +48,7 @@ export const PutEnfermedad = async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion } = req.body;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.INT, id).input('Nombre', sql.VarChar(50), nombre).input('Descripcion', sql.VarChar(sql.MAX), descripcion).query('EXEC SPActualizarEnfermedad @Id, @Nombre, @Descripcion');
+        await executeQuery('EXEC SPActualizarEnfermedad @Id, @Nombre, @Descripcion', [{ name: 'Id', type: sql.INT, value: id }, { name: 'Nombre', type: sql.VarChar(50), value: nombre }, { name: 'Descripcion', type: sql.VarChar(sql.MAX), value: descripcion }]);
         res.status(200).json({ msg: 'Enfermedad actualizada correctamente' });
     } catch (error) {
         console.error(`Error al actualizar la enfermedad: ${error}`);
@@ -64,8 +60,7 @@ export const PutEnfermedad = async (req, res) => {
 export const DeleteEnfermedad = async (req, res) => {
     const { id } = req.params;
     try {
-        const pool = await GetConnection();
-        await pool.request().input('Id', sql.INT, id).query('EXEC SPEliminarEnfermedad @Id');
+        await executeQuery('EXEC SPEliminarEnfermedad @Id', [{ name: 'Id', type: sql.INT, value: id }]);
         res.status(200).json({ msg: 'Enfermedad eliminada correctamente' });
     } catch (error) {
         console.error(`Error al eliminar la enfermedad: ${error}`);
@@ -75,11 +70,14 @@ export const DeleteEnfermedad = async (req, res) => {
 
 // Método para buscar enfermedades por texto en el nombre o descripción
 export const BuscarEnfermedadesPorTexto = async (req, res) => {
-    const { textoBusqueda } = req.params;
+    const { textoBusqueda } = req.body; // Cambiado de req.params a req.body
     try {
-        const pool = await GetConnection();
-        const result = await pool.request().input('TextoBusqueda', sql.VarChar(sql.MAX), textoBusqueda).query('EXEC SPBuscarEnfermedadesPorTexto @TextoBusqueda');
-        res.status(200).json(result.recordset);
+        const result = await executeQuery('EXEC SPBuscarEnfermedadesPorTexto @TextoBusqueda', [{ name: 'TextoBusqueda', type: sql.VarChar(sql.MAX), value: textoBusqueda }]);
+        if (result.recordset.length > 0) {
+            res.status(200).json(result.recordset);
+        } else {
+            res.status(404).json({ msg: 'No se encontraron enfermedades con el texto de búsqueda proporcionado' });
+        }
     } catch (error) {
         console.error(`Error al buscar enfermedades por texto: ${error}`);
         res.status(500).json({ msg: 'Error al buscar enfermedades por texto' });

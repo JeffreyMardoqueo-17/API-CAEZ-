@@ -400,6 +400,14 @@ BEGIN
     SELECT * FROM Mes;
 END;
 GO
+CREATE PROCEDURE SPBuscarMesPorTexto
+    @TextoBusqueda VARCHAR(50)
+AS
+BEGIN
+    SELECT * FROM Mes
+    WHERE Nombre LIKE '%' + @TextoBusqueda + '%';
+END;
+GO
 -- SP para obtener todos los roles
 CREATE PROCEDURE SPObtenerRoles
 AS
