@@ -1,13 +1,11 @@
-const {validationResult} = require('express-validator');
+const { validationResult } = require('express-validator');
 
-const validateResult = (req, res, next) =>{
-    try {
-        validationResult(req).throw()
-        return next()
-    } catch (error) {
-        res.status(403)
-        res.send({errors : error.array()})
+const validateResult = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ message: 'Validation failed', errors: errors.array() });
     }
+    next();
 }
-// module.exports(validateResult)
-export{validateResult}
+
+export { validateResult };
