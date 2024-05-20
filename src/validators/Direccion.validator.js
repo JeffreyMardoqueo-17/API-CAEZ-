@@ -8,6 +8,8 @@ const ValidateCreateDireccion = [
         .not()
         .isEmpty()
         .withMessage('El nombre no puede estar vacío')
+        .isString()
+        .withMessage('El nombre debe ser un tipo texto')
         .isLength({ max: 200 })
         .withMessage('El nombre no puede exceder los 200 caracteres'),
     (req, res, next) => {
