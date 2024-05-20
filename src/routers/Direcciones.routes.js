@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { GetDirecciones, GetDireccionPorId, PostDireccion, DeleteDireccion, PutDireccion, BuscarDireccionesPorTexto} from '../controllers/Direcciones.controller'
 import { validateToken } from '../helpers/JWT';
-import {ValidateCreateDireccion, ValidateUpdateDireccion} from '../validators/Direcciones';
+import {ValidateCreateDireccion, ValidateUpdateDireccion} from '../validators/Direcciones.validator';
 const route = Router();
 
 route.get('/Direcciones',validateToken, GetDirecciones);
