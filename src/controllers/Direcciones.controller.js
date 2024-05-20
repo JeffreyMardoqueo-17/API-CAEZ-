@@ -28,12 +28,12 @@ export const GetDireccionPorId = async (req, res) => {
 };
 
 export const PostDireccion = async (req, res) => {
-    const { nombre } = req.body;
-    if (!nombre) {
+    const { Nombre } = req.body; // Cambia 'nombre' a 'Nombre'
+    if (!Nombre) { // Cambia 'nombre' a 'Nombre'
         return res.status(400).json({ msg: 'El campo nombre es requerido' });
     }
     try {
-        await executeQuery('EXEC SPInsertarDireccion @Nombre', [{ name: 'Nombre', type: sql.VarChar(200), value: nombre }]);
+        await executeQuery('EXEC SPInsertarDireccion @Nombre', [{ name: 'Nombre', type: sql.VarChar(200), value: Nombre }]); // Cambia 'nombre' a 'Nombre'
         res.status(201).json({ msg: 'Dirección creada correctamente' });
     } catch (error) {
         console.error(`Error al insertar la dirección: ${error}`);
@@ -43,9 +43,9 @@ export const PostDireccion = async (req, res) => {
 
 export const PutDireccion = async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { Nombre } = req.body;
     try {
-        await executeQuery('EXEC SPActualizarDireccion @Id, @Nombre', [{ name: 'Id', type: sql.INT, value: id }, { name: 'Nombre', type: sql.VarChar(200), value: nombre }]);
+        await executeQuery('EXEC SPActualizarDireccion @Id, @Nombre', [{ name: 'Id', type: sql.INT, value: id }, { name: 'Nombre', type: sql.VarChar(200), value: Nombre }]);
         res.status(200).json({ msg: 'Dirección actualizada correctamente' });
     } catch (error) {
         console.error(`Error al actualizar la dirección: ${error}`);
