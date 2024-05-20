@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import { GetTiposDocumento, GetTipoDocumentoPorId, PostTipoDocumento, PutTipoDocumento, DeleteTipoDocumento, BuscarTipoDocumentoPorTexto } from '../controllers/TipoDocumento.controller';
 import { ValidatePostTipoDoc } from '../validators/TipoDocumento';
-
+import { validateToken } from '../helpers/JWT';
 const route = Router();
 
 // Rutas
-route.get('/TiposDocumento', GetTiposDocumento);
-route.get('/TiposDocumento/:id', GetTipoDocumentoPorId);
-route.post('/TiposDocumento',ValidatePostTipoDoc, PostTipoDocumento);
-route.put('/TiposDocumento/:id', PutTipoDocumento);
-route.delete('/TiposDocumento/:id', DeleteTipoDocumento);
-route.post('/TiposDocumento/Buscar/', BuscarTipoDocumentoPorTexto) // Aquí está la ruta corregida
+route.get('/TiposDocumento',validateToken, GetTiposDocumento);
+route.get('/TiposDocumento/:id', validateToken, GetTipoDocumentoPorId);
+route.post('/TiposDocumento',validateToken, PostTipoDocumento);
+route.put('/TiposDocumento/:id', validateToken, PutTipoDocumento);
+route.delete('/TiposDocumento/:id', validateToken, DeleteTipoDocumento);
+route.post('/TiposDocumento/Buscar/', validateToken, BuscarTipoDocumentoPorTexto) // Aquí está la ruta corregida
 
 export default route;
