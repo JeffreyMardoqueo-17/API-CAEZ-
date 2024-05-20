@@ -1,14 +1,15 @@
-import { Router } from 'express';
+import express from 'express';
 import UserController from '../controllers/User.controller';
+import { validateToken } from '../helpers/JWT';
 
-const userRouter = Router();
+const router = express.Router();
 
-userRouter.get('/users', UserController.getUsers);
-userRouter.get('/users/:id', UserController.getUserById);
-userRouter.post('/users', UserController.createUser);
-userRouter.put('/users/:id', UserController.updateUser);
-userRouter.delete('/users/:id', UserController.deleteUser);
-userRouter.post('/login', UserController.login);
-userRouter.put('/users/change-password/:id', UserController.changePassword);
+router.get('/users', validateToken, UserController.getUsers);
+router.get('/users/:id', validateToken, UserController.getUserById);
+router.post('/users', UserController.createUser);
+router.put('/users/:id', validateToken, UserController.updateUser);
+router.delete('/users/:id', validateToken, UserController.deleteUser);
+router.post('/login', UserController.loginUser);
+router.put('/users/:id/password', validateToken, UserController.changePassword);
 
-export default userRouter;
+export default router;

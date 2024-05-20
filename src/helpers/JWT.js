@@ -1,17 +1,14 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
-/* La función generateToken genera un token JWT utilizando la clave secreta secretKey y estableciendo una expiración de 1 hora. La función verifyToken verifica la validez del token utilizando la misma clave secreta. Si el token es válido, devuelve el contenido del token (payload); de lo contrario, lanza un error. */
-const secretKey = 'jeffrey'; // Cambia esto por una clave secreta segura
-const generateToken = (payload) => {
-    return jwt.sign(payload, secretKey, { expiresIn: '1h' }); // El token expira en 1 hora
-};
+export function validateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-const verifyToken = (token) => {
-    try {
-        return jwt.verify(token, secretKey);
-    } catch (error) {
-        throw new Error('Token inválido');
-    }
-};
+    if (token == null) return res.sendStatus(401); // si no hay token, devuelve un error 401
 
-module.exports = { generateToken, verifyToken };
+    jwt.verify(token, 'your-secret-key', (err, user) => {
+        if (err) return res.sendStatus(403); // si el token es inválido, devuelve un error 403
+        req.user = user;
+        next(); // pasa al siguiente middleware o ruta
+    });
+}

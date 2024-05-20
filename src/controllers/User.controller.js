@@ -1,11 +1,12 @@
-import sql from 'mssql';
-import { poolPromise } from '../DataBase/contection/Conexion';
+import jwt from 'jsonwebtoken';
+import { executeQuery } from '../helpers/dbHelper';
+import sql from '../DataBase/contection/Conexion';
+import { encryptPassword } from '../helpers/crypto';
 
 const UserController = {
     async getUsers(req, res) {
         try {
-            const pool = await poolPromise;
-            const result = await pool.request().query('EXEC SPObtenerUsuarios');
+            const result = await executeQuery('EXEC SPObtenerUsuarios');
             res.status(200).json(result.recordset);
         } catch (error) {
             console.error(`Error al obtener los usuarios: ${error}`);
@@ -16,8 +17,7 @@ const UserController = {
     async getUserById(req, res) {
         const { id } = req.params;
         try {
-            const pool = await poolPromise;
-            const result = await pool.request().input('Id', sql.INT, id).query('EXEC SPObtenerUsuarioPorId @Id');
+            const result = await executeQuery('EXEC SPObtenerUsuarioPorId @Id', [{ name: 'Id', type: sql.INT, value: id }]);
             if (result.recordset.length > 0) {
                 res.status(200).json(result.recordset[0]);
             } else {
@@ -29,74 +29,47 @@ const UserController = {
         }
     },
 
-    // Implementa aquí los métodos restantes
-
-    async login(req, res) {
-        const { Login, Password } = req.body;
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('Login', sql.NVarChar(100), Login)
-                .input('Password', sql.NVarChar(100), Password)
-                .query('EXEC SPIniciarSesion @Login, @Password');
-            if (result.recordset.length > 0) {
-                res.status(200).json({ msg: 'Inicio de sesión exitoso', user: result.recordset[0] });
-            } else {
-                res.status(401).json({ msg: 'Credenciales inválidas' });
-            }
-        } catch (error) {
-            console.error(`Error al iniciar sesión: ${error}`);
-            res.status(500).json({ msg: 'Error al iniciar sesión' });
-        }
-    },
-
-    async changePassword(req, res) {
-        const { id } = req.params;
-        const { NewPassword } = req.body;
-        try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.INT, id)
-                .input('NewPassword', sql.NVarChar(100), NewPassword)
-                .query('EXEC SPCambiarContraseña @Id, @NewPassword');
-            res.status(200).json({ msg: 'Contraseña cambiada correctamente' });
-        } catch (error) {
-            console.error(`Error al cambiar la contraseña: ${error}`);
-            res.status(500).json({ msg: 'Error al cambiar la contraseña' });
-        }
-    },
     async createUser(req, res) {
-        const { Name, LastName, Login, Password, Status } = req.body;
+        const { Name, LastName, Login, Password, IdRole } = req.body;
+
+        // Validaciones
+        if (!Name || !LastName || !Login || !Password || !IdRole) {
+            return res.status(400).json({ msg: 'Todos los campos son requeridos' });
+        }
+
+        const hashedPassword = await encryptPassword(Password);
+        const Status = 1; // Estado activo por defecto
+        const RegistrationDate = new Date(); // Fecha actual
+
         try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Name', sql.NVarChar(30), Name)
-                .input('LastName', sql.NVarChar(30), LastName)
-                .input('Login', sql.NVarChar(100), Login)
-                .input('Password', sql.NVarChar(100), Password)
-                .input('Status', sql.TINYINT, Status)
-                .query('EXEC SPInsertarUsuario @Name, @LastName, @Login, @Password, @Status');
-            res.status(201).json({ msg: 'Usuario creado correctamente' });
+            await executeQuery('EXEC SPInsertarUsuario @Name, @LastName, @Login, @Password, @Status, @RegistrationDate, @IdRole', [
+                { name: 'Name', type: sql.NVarChar(30), value: Name },
+                { name: 'LastName', type: sql.NVarChar(30), value: LastName },
+                { name: 'Login', type: sql.NVarChar(100), value: Login },
+                { name: 'Password', type: sql.NVarChar(100), value: hashedPassword },
+                { name: 'Status', type: sql.TinyInt, value: Status },
+                { name: 'RegistrationDate', type: sql.DateTime, value: RegistrationDate },
+                { name: 'IdRole', type: sql.Int, value: IdRole }
+            ]);
+            res.status(201).json({ msg: 'Usuario creado exitosamente' });
         } catch (error) {
             console.error(`Error al crear el usuario: ${error}`);
-            res.status(500).json({ msg: 'Error al crear el usuario' });
+            res.status(500).json({ msg: 'Error al crear el usuario', error: error.message });
         }
     },
 
     async updateUser(req, res) {
         const { id } = req.params;
-        const { Name, LastName, Login, Password, Status } = req.body;
+        const { Name, LastName, Login, Status } = req.body;
         try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.INT, id)
-                .input('Name', sql.NVarChar(30), Name)
-                .input('LastName', sql.NVarChar(30), LastName)
-                .input('Login', sql.NVarChar(100), Login)
-                .input('Password', sql.NVarChar(100), Password)
-                .input('Status', sql.TINYINT, Status)
-                .query('EXEC SPActualizarUsuario @Id, @Name, @LastName, @Login, @Password, @Status');
-            res.status(200).json({ msg: 'Usuario actualizado correctamente' });
+            await executeQuery('EXEC SPActualizarUsuario @Id, @Name, @LastName, @Login, @Status', [
+                { name: 'Id', type: sql.Int, value: id },
+                { name: 'Name', type: sql.NVarChar(30), value: Name },
+                { name: 'LastName', type: sql.NVarChar(30), value: LastName },
+                { name: 'Login', type: sql.NVarChar(100), value: Login },
+                { name: 'Status', type: sql.TinyInt, value: Status }
+            ]);
+            res.status(200).json({ msg: 'Usuario actualizado exitosamente' });
         } catch (error) {
             console.error(`Error al actualizar el usuario: ${error}`);
             res.status(500).json({ msg: 'Error al actualizar el usuario' });
@@ -106,17 +79,67 @@ const UserController = {
     async deleteUser(req, res) {
         const { id } = req.params;
         try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.INT, id)
-                .query('EXEC SPEliminarUsuario @Id');
-            res.status(200).json({ msg: 'Usuario eliminado correctamente' });
+            await executeQuery('EXEC SPEliminarUsuario @Id', [{ name: 'Id', type: sql.Int, value: id }]);
+            res.status(200).json({ msg: 'Usuario eliminado exitosamente' });
         } catch (error) {
             console.error(`Error al eliminar el usuario: ${error}`);
             res.status(500).json({ msg: 'Error al eliminar el usuario' });
         }
-    }
+    },
 
+    async loginUser(req, res) {
+        const { Login, Password } = req.body;
+
+        // Validaciones
+        if (!Login || !Password) {
+            return res.status(400).json({ msg: 'Login y Password son requeridos' });
+        }
+
+        try {
+            const user = await executeQuery('EXEC SPIniciarSesion @Login, @Password', [
+                { name: 'Login', type: sql.NVarChar(100), value: Login },
+                { name: 'Password', type: sql.NVarChar(100), value: Password }
+            ]);
+
+            if (!user) {
+                return res.status(404).json({ msg: 'Usuario no encontrado' });
+            }
+
+            // Aquí puedes generar un token de autenticación y enviarlo en la respuesta
+            res.status(200).json({ msg: 'Inicio de sesión exitoso' });
+        } catch (error) {
+            console.error(`Error al iniciar sesión: ${error}`);
+            res.status(500).json({ msg: 'Error al iniciar sesión', error: error.message });
+        }
+    },
+
+    async changePassword(req, res) {
+        const { id } = req.params;
+        const { NewPassword } = req.body;
+        const hashedPassword = await encryptPassword(NewPassword);
+        try {
+            await executeQuery('EXEC SPCambiarContraseña @Id, @NewPassword', [
+                { name: 'Id', type: sql.Int, value: id },
+                { name: 'NewPassword', type: sql.NVarChar(100), value: hashedPassword }
+            ]);
+            res.status(200).json({ msg: 'Contraseña actualizada exitosamente' });
+        } catch (error) {
+            console.error(`Error al cambiar la contraseña: ${error}`);
+            res.status(500).json({ msg: 'Error al cambiar la contraseña' });
+        }
+    }
 };
 
 export default UserController;
+
+// {
+//     "Name": "Mauricio",
+//     "LastName": "Vasquez",
+//     "Login": "mauricio@gmail.com",
+//     "Password": "mauricio",
+//     "IdRole": 1
+// }
+// {
+//     "Login": "mauricio@gmail.com",
+//     "Password": "mauricio"
+// }

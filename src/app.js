@@ -14,6 +14,7 @@ import Pagos from './routers/Pago.routes'
 import Facturas from './routers/Facturas.routes'
 import Enfermedad from './routers/Enfermedad.routes'
 import Role from './routers/Role.routes'
+import User from './routers/User.routes'
 
 const app = express();
 const port = configuracion.port; // Define la variable port utilizando const
@@ -21,7 +22,9 @@ const port = configuracion.port; // Define la variable port utilizando const
 app.set('port', port);
 
 app.use(express.json());
-app.use(express.urlencoded({ extends: false }));
+app.use(express.urlencoded({ extended: false }));
+
+
 app.use(ParentezcoRouter); //parentezco Router
 app.use(TurnoRputer) //turno
 app.use(GradoRouter)//grado
@@ -35,6 +38,7 @@ app.use(Pagos);
 app.use(Facturas);
 app.use(Enfermedad);
 app.use(Role);
+app.use(User)
 // app.use(ActualizarFondo);//actualizar fondo 
 // app.use(Administradires);
 
