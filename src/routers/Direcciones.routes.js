@@ -4,7 +4,7 @@ import { validateToken } from '../helpers/JWT';
 import {ValidateCreateDireccion, ValidateUpdateDireccion} from '../validators/Direcciones.validator';
 const route = Router();
 
-route.get('/Direcciones',validateToken, GetDirecciones);
+route.get('/Direcciones', GetDirecciones);
 route.get('/Direcciones/:id', validateToken, GetDireccionPorId);
 route.post('/Direcciones',validateToken, ValidateCreateDireccion, PostDireccion);
 route.delete('/Direcciones/:id',validateToken, DeleteDireccion);

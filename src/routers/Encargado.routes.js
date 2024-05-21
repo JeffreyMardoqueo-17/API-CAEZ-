@@ -1,14 +1,14 @@
 import { Router } from 'express';
 // import { GetEncargados, GetEncargadoPorId, PostEncargado, PutEncargado, DeleteEncargado } from '../controllers/Encargado.controller';
-import encargo from '../controllers/Encargado.controller'
-
+import encargado from '../controllers/Encargado.controller'
+import { ValidatePutEncargado, ValidateSearchEncargados, ValidatePostEncargado } from '../validators/Encargado.validator'
 const route = Router();
 
-route.get('/Encargados', encargo.getAllEncargados);
-route.get('/Encargados/:id', encargo.getEncargadoById);
-route.post('/Encargados', encargo.createEncargado);
-route.put('/Encargados/:id', encargo.updateEncargado);
-route.delete('/Encargados/:id', encargo.deleteEncargado);
-route.get('/Encargado/buscar/:nombre', encargo.searchEncargadoByName)
+route.get('/Encargados', encargado.getEncargados);
+route.get('/Encargados/:id', encargado.getEncargadoById);
+route.post('/Encargados', ValidatePostEncargado, encargado.createEncargado);
+route.put('/Encargados/:id', ValidatePutEncargado, encargado.updateEncargado);
+route.delete('/Encargados/:id', encargado.deleteEncargado);
+route.post('/Encargado/buscar/', ValidateSearchEncargados, encargado.searchEncargados)
 
 export default route;

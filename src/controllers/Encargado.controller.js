@@ -1,38 +1,21 @@
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
-import poolPromise from '../DataBase/contection/Conexion';
 
 const EncargadoController = {
-    async createEncargado(req, res) {
+    async getEncargados(req, res) {
         try {
-            const { Nombre, Apellido, IdSexo, IdRole, Telefono, TelEmergencia, Correo, IdDireccion, IdTipoDocumento, NumDocumento, IdAdministrador } = req.body;
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Nombre', sql.VarChar(50), Nombre)
-                .input('Apellido', sql.VarChar(50), Apellido)
-                .input('IdSexo', sql.Int, IdSexo)
-                .input('IdRole', sql.Int, IdRole)
-                .input('Telefono', sql.VarChar(50), Telefono)
-                .input('TelEmergencia', sql.VarChar(10), TelEmergencia)
-                .input('Correo', sql.VarChar(30), Correo)
-                .input('IdDireccion', sql.Int, IdDireccion)
-                .input('IdTipoDocumento', sql.Int, IdTipoDocumento)
-                .input('NumDocumento', sql.VarChar(50), NumDocumento)
-                .input('IdAdministrador', sql.Int, IdAdministrador)
-                .query('EXEC SPInsertarEncargado @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @TelEmergencia, @Correo, @IdDireccion, @IdTipoDocumento, @NumDocumento, @IdAdministrador');
-            res.status(201).json({ msg: 'Encargado creado correctamente' });
+            const result = await executeQuery('EXEC SPTraerTodosEncargados');
+            res.status(200).json(result.recordset);
         } catch (error) {
-            console.error(`Error al crear el encargado: ${error}`);
-            res.status(500).json({ msg: 'Error al crear el encargado' });
+            console.error(`Error al obtener los encargados: ${error}`);
+            res.status(500).json({ msg: 'Error al obtener los encargados' });
         }
     },
 
     async getEncargadoById(req, res) {
+        const { id } = req.params;
         try {
-            const { id } = req.params;
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('Id', sql.Int, id)
-                .query('EXEC SPObtenerEncargadoPorId @Id');
+            const result = await executeQuery('EXEC SPObtenerEncargadoPorId @Id', [{ name: 'Id', type: sql.Int, value: id }]);
             if (result.recordset.length > 0) {
                 res.status(200).json(result.recordset[0]);
             } else {
@@ -44,26 +27,48 @@ const EncargadoController = {
         }
     },
 
-    async updateEncargado(req, res) {
+    async createEncargado(req, res) {
+        const { Nombre, Apellido, IdSexo, IdRole, Telefono, TelEmergencia, Correo, IdDireccion, IdTipoDocumento, NumDocumento, IdAdministrador } = req.body;
         try {
-            const { id } = req.params;
-            const { Nombre, Apellido, IdSexo, IdRole, Telefono, TelEmergencia, Correo, IdDireccion, IdTipoDocumento, NumDocumento, IdAdministrador } = req.body;
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.Int, id)
-                .input('Nombre', sql.VarChar(50), Nombre)
-                .input('Apellido', sql.VarChar(50), Apellido)
-                .input('IdSexo', sql.Int, IdSexo)
-                .input('IdRole', sql.Int, IdRole)
-                .input('Telefono', sql.VarChar(50), Telefono)
-                .input('TelEmergencia', sql.VarChar(10), TelEmergencia)
-                .input('Correo', sql.VarChar(30), Correo)
-                .input('IdDireccion', sql.Int, IdDireccion)
-                .input('IdTipoDocumento', sql.Int, IdTipoDocumento)
-                .input('NumDocumento', sql.VarChar(50), NumDocumento)
-                .input('IdAdministrador', sql.Int, IdAdministrador)
-                .query('EXEC SPActualizarEncargado @Id, @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @TelEmergencia, @Correo, @IdDireccion, @IdTipoDocumento, @NumDocumento, @IdAdministrador');
-            res.status(200).json({ msg: 'Encargado actualizado correctamente' });
+            await executeQuery('EXEC SPInsertarEncargado @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @TelEmergencia, @Correo, @IdDireccion, @IdTipoDocumento, @NumDocumento, @IdAdministrador', [
+                { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
+                { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
+                { name: 'IdSexo', type: sql.Int, value: IdSexo },
+                { name: 'IdRole', type: sql.Int, value: IdRole },
+                { name: 'Telefono', type: sql.VarChar(50), value: Telefono },
+                { name: 'TelEmergencia', type: sql.VarChar(10), value: TelEmergencia },
+                { name: 'Correo', type: sql.VarChar(30), value: Correo },
+                { name: 'IdDireccion', type: sql.Int, value: IdDireccion },
+                { name: 'IdTipoDocumento', type: sql.Int, value: IdTipoDocumento },
+                { name: 'NumDocumento', type: sql.VarChar(50), value: NumDocumento },
+                { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
+            ]);
+            res.status(201).json({ msg: 'Encargado creado exitosamente' });
+        } catch (error) {
+            console.error(`Error al crear el encargado: ${error}`);
+            res.status(500).json({ msg: 'Error al crear el encargado' });
+        }
+    },
+
+    async updateEncargado(req, res) {
+        const { id } = req.params;
+        const { Nombre, Apellido, IdSexo, IdRole, Telefono, TelEmergencia, Correo, IdDireccion, IdTipoDocumento, NumDocumento, IdAdministrador } = req.body;
+        try {
+            await executeQuery('EXEC SPActualizarEncargado @Id, @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @TelEmergencia, @Correo, @IdDireccion, @IdTipoDocumento, @NumDocumento, @IdAdministrador', [
+                { name: 'Id', type: sql.Int, value: id },
+                { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
+                { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
+                { name: 'IdSexo', type: sql.Int, value: IdSexo },
+                { name: 'IdRole', type: sql.Int, value: IdRole },
+                { name: 'Telefono', type: sql.VarChar(50), value: Telefono },
+                { name: 'TelEmergencia', type: sql.VarChar(10), value: TelEmergencia },
+                { name: 'Correo', type: sql.VarChar(30), value: Correo },
+                { name: 'IdDireccion', type: sql.Int, value: IdDireccion },
+                { name: 'IdTipoDocumento', type: sql.Int, value: IdTipoDocumento },
+                { name: 'NumDocumento', type: sql.VarChar(50), value: NumDocumento },
+                { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
+            ]);
+            res.status(200).json({ msg: 'Encargado actualizado exitosamente' });
         } catch (error) {
             console.error(`Error al actualizar el encargado: ${error}`);
             res.status(500).json({ msg: 'Error al actualizar el encargado' });
@@ -71,43 +76,26 @@ const EncargadoController = {
     },
 
     async deleteEncargado(req, res) {
+        const { id } = req.params;
         try {
-            const { id } = req.params;
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.Int, id)
-                .query('EXEC SPEliminarEncargado @Id');
-            res.status(200).json({ msg: 'Encargado eliminado correctamente' });
+            await executeQuery('EXEC SPEliminarEncargado @Id', [{ name: 'Id', type: sql.Int, value: id }]);
+            res.status(200).json({ msg: 'Encargado eliminado exitosamente' });
         } catch (error) {
             console.error(`Error al eliminar el encargado: ${error}`);
             res.status(500).json({ msg: 'Error al eliminar el encargado' });
         }
     },
 
-    async getAllEncargados(req, res) {
+    async searchEncargados(req, res) {
+        const { TextoBusqueda } = req.body;
         try {
-            const pool = await poolPromise;
-            const result = await pool.request().query('EXEC SPTraerTodosEncargados');
+            const result = await executeQuery('EXEC SPBuscarEncargadoPorNombre @TextoBusqueda', [{ name: 'TextoBusqueda', type: sql.VarChar(50), value: TextoBusqueda }]);
             res.status(200).json(result.recordset);
         } catch (error) {
-            console.error(`Error al obtener todos los encargados: ${error}`);
-            res.status(500).json({ msg: 'Error al obtener todos los encargados' });
+            console.error(`Error al buscar encargados: ${error}`);
+            res.status(500).json({ msg: 'Error al buscar encargados' });
         }
     },
-
-    async searchEncargadoByName(req, res) {
-        try {
-            const { textoBusqueda } = req.params;
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('TextoBusqueda', sql.VarChar(50), textoBusqueda)
-                .query('EXEC SPBuscarEncargadoPorNombre @TextoBusqueda');
-            res.status(200).json(result.recordset);
-        } catch (error) {
-            console.error(`Error al buscar encargados por nombre: ${error}`);
-            res.status(500).json({ msg: 'Error al buscar encargados por nombre' });
-        }
-    }
 };
 
 export default EncargadoController;

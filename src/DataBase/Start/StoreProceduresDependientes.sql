@@ -168,7 +168,6 @@ BEGIN
 END;
 GO
 
-
 ---ENCARGADOS =======================================
 -- CREAR ENCARGADOS
 CREATE PROCEDURE SPInsertarEncargado
@@ -235,11 +234,14 @@ BEGIN
 END
 GO
 -- BUSCAR ENCARGADO POR NOMBRES
+
 CREATE PROCEDURE SPBuscarEncargadoPorNombre
     @TextoBusqueda VARCHAR(50)
 AS
 BEGIN
-    SELECT * FROM Encargado WHERE Nombre LIKE '%' + @TextoBusqueda + '%';
+    SELECT * FROM Encargado 
+    WHERE Nombre LIKE '%' + @TextoBusqueda + '%' 
+    OR Apellido LIKE '%' + @TextoBusqueda + '%';
 END
 GO
 -- ALUMNOS============================================================================================
