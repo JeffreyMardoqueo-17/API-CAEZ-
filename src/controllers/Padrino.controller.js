@@ -1,11 +1,10 @@
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
-import { poolPromise } from '../DataBase';
 
 const PadrinoController = {
     async getPadrinos(req, res) {
         try {
-            const pool = await poolPromise;
-            const result = await pool.request().query('EXEC SPObtenerPadrinos');
+            const result = await executeQuery('EXEC SPObtenerPadrinos');
             res.status(200).json(result.recordset);
         } catch (error) {
             console.error(`Error al obtener los padrinos: ${error}`);
@@ -16,8 +15,7 @@ const PadrinoController = {
     async getPadrinoById(req, res) {
         const { id } = req.params;
         try {
-            const pool = await poolPromise;
-            const result = await pool.request().input('Id', sql.INT, id).query('EXEC SPObtenerPadrinoPorId @Id');
+            const result = await executeQuery('EXEC SPObtenerPadrinoPorId @Id', [{ name: 'Id', type: sql.Int, value: id }]);
             if (result.recordset.length > 0) {
                 res.status(200).json(result.recordset[0]);
             } else {
@@ -30,45 +28,42 @@ const PadrinoController = {
     },
 
     async createPadrino(req, res) {
-        const { Nombre, Apellido, IdSexo, IdRole, Telefono, Correo, IdDireccion, IdAdministrador, FechaRegistro } = req.body;
+        const { Nombre, Apellido, IdSexo, IdRole, Telefono, Correo, IdDireccion, IdAdministrador } = req.body;
         try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Nombre', sql.NVarChar(50), Nombre)
-                .input('Apellido', sql.NVarChar(50), Apellido)
-                .input('IdSexo', sql.INT, IdSexo)
-                .input('IdRole', sql.INT, IdRole)
-                .input('Telefono', sql.NVarChar(50), Telefono)
-                .input('Correo', sql.NVarChar(30), Correo)
-                .input('IdDireccion', sql.INT, IdDireccion)
-                .input('IdAdministrador', sql.INT, IdAdministrador)
-                .input('FechaRegistro', sql.DateTime, FechaRegistro)
-                .query('EXEC SPInsertarPadrino @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaRegistro');
-            res.status(201).json({ msg: 'Padrino creado correctamente' });
+            await executeQuery('EXEC SPInsertarPadrino @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaRegistro', [
+                { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
+                { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
+                { name: 'IdSexo', type: sql.Int, value: IdSexo },
+                { name: 'IdRole', type: sql.Int, value: IdRole },
+                { name: 'Telefono', type: sql.VarChar(50), value: Telefono },
+                { name: 'Correo', type: sql.VarChar(30), value: Correo },
+                { name: 'IdDireccion', type: sql.Int, value: IdDireccion },
+                { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
+                { name: 'FechaRegistro', type: sql.DateTime, value: new Date() },
+            ]);
+            res.status(201).json({ msg: 'Padrino creado exitosamente' });
         } catch (error) {
             console.error(`Error al crear el padrino: ${error}`);
             res.status(500).json({ msg: 'Error al crear el padrino' });
         }
     },
-
     async updatePadrino(req, res) {
         const { id } = req.params;
-        const { Nombre, Apellido, IdSexo, IdRole, Telefono, Correo, IdDireccion, IdAdministrador, FechaRegistro } = req.body;
+        const { Nombre, Apellido, IdSexo, IdRole, Telefono, Correo, IdDireccion, IdAdministrador } = req.body;
         try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.INT, id)
-                .input('Nombre', sql.NVarChar(50), Nombre)
-                .input('Apellido', sql.NVarChar(50), Apellido)
-                .input('IdSexo', sql.INT, IdSexo)
-                .input('IdRole', sql.INT, IdRole)
-                .input('Telefono', sql.NVarChar(50), Telefono)
-                .input('Correo', sql.NVarChar(30), Correo)
-                .input('IdDireccion', sql.INT, IdDireccion)
-                .input('IdAdministrador', sql.INT, IdAdministrador)
-                .input('FechaRegistro', sql.DateTime, FechaRegistro)
-                .query('EXEC SPActualizarPadrino @Id, @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaRegistro');
-            res.status(200).json({ msg: 'Padrino actualizado correctamente' });
+            await executeQuery('EXEC SPActualizarPadrino @Id, @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaActualizacion', [
+                { name: 'Id', type: sql.Int, value: id },
+                { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
+                { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
+                { name: 'IdSexo', type: sql.Int, value: IdSexo },
+                { name: 'IdRole', type: sql.Int, value: IdRole },
+                { name: 'Telefono', type: sql.VarChar(50), value: Telefono },
+                { name: 'Correo', type: sql.VarChar(30), value: Correo },
+                { name: 'IdDireccion', type: sql.Int, value: IdDireccion },
+                { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
+                { name: 'FechaActualizacion', type: sql.DateTime, value: new Date() },
+            ]);
+            res.status(200).json({ msg: 'Padrino actualizado exitosamente' });
         } catch (error) {
             console.error(`Error al actualizar el padrino: ${error}`);
             res.status(500).json({ msg: 'Error al actualizar el padrino' });
@@ -78,29 +73,24 @@ const PadrinoController = {
     async deletePadrino(req, res) {
         const { id } = req.params;
         try {
-            const pool = await poolPromise;
-            await pool.request().input('Id', sql.INT, id).query('EXEC SPEliminarPadrino @Id');
-            res.status(200).json({ msg: 'Padrino eliminado correctamente' });
+            await executeQuery('EXEC SPEliminarPadrino @Id', [{ name: 'Id', type: sql.Int, value: id }]);
+            res.status(200).json({ msg: 'Padrino eliminado exitosamente' });
         } catch (error) {
             console.error(`Error al eliminar el padrino: ${error}`);
             res.status(500).json({ msg: 'Error al eliminar el padrino' });
         }
     },
-    // para bucar por nombres
 
     async searchPadrinos(req, res) {
-        const { nombre } = req.params;
+        const { TextoBusqueda } = req.body;
         try {
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('NombreBusqueda', sql.VarChar(50), nombre)
-                .query('EXEC SPBuscarPadrinosPorNombre @NombreBusqueda');
+            const result = await executeQuery('EXEC SPBuscarPadrinosPorNombre @NombreBusqueda', [{ name: 'NombreBusqueda', type: sql.VarChar(50), value: TextoBusqueda }]);
             res.status(200).json(result.recordset);
         } catch (error) {
-            console.error(`Error al buscar padrinos por nombre: ${error}`);
-            res.status(500).json({ msg: 'Error al buscar padrinos por nombre' });
+            console.error(`Error al buscar padrinos: ${error}`);
+            res.status(500).json({ msg: 'Error al buscar padrinos' });
         }
-    }
+    },
 };
 
 export default PadrinoController;

@@ -1,15 +1,6 @@
 import { check } from 'express-validator';
 import { validateResult } from '../helpers/ValidateHeper';
 
-/**-- TABLA Administrador
-CREATE TABLE Administrador(
-    Id BIGINT NOT NULL PRIMARY KEY IDENTITY (1,1),
-    Nombre VARCHAR(50) NOT NULL,
-    Apellido VARCHAR(50) NOT NULL,
-    IdCargo TINYINT NOT NULL FOREIGN KEY REFERENCES Cargo(Id),
-    Telefono VARCHAR(50) NOT NULL,
-    Pass VARCHAR(200) NOT NULL
-); */
 
 const ValidatePostAdministrador = [
     check('nombre')

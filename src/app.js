@@ -15,6 +15,7 @@ import Facturas from './routers/Facturas.routes'
 import Enfermedad from './routers/Enfermedad.routes'
 import Role from './routers/Role.routes'
 import User from './routers/User.routes'
+import padrinoRouter from './routers/Padrino.routes';
 
 const app = express();
 const port = configuracion.port; // Define la variable port utilizando const
@@ -39,6 +40,7 @@ app.use(Facturas);
 app.use(Enfermedad);
 app.use(Role);
 app.use(User)
+app.use(padrinoRouter)
 // app.use(ActualizarFondo);//actualizar fondo 
 // app.use(Administradires);
 
