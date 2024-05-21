@@ -6,9 +6,9 @@ const route = Router();
 
 route.get('/Encargados', encargado.getEncargados);
 route.get('/Encargados/:id', encargado.getEncargadoById);
-route.post('/Encargados', ValidatePostEncargado, encargado.createEncargado);
-route.put('/Encargados/:id', ValidatePutEncargado, encargado.updateEncargado);
+route.post('/Encargados', ValidatePostEncargado,encargado.createEncargado);
+route.put('/Encargados/:id', ValidatePutEncargado,encargado.updateEncargado);
 route.delete('/Encargados/:id', encargado.deleteEncargado);
-route.post('/Encargado/buscar/', ValidateSearchEncargados, encargado.searchEncargados)
+route.post('/Encargados/buscar/',ValidateSearchEncargados, encargado.searchEncargados)
 
 export default route;
