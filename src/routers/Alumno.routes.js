@@ -1,17 +1,8 @@
 import express from 'express';
-import alumno from '../controllers/Alumno.controller';
+import {createAlumno, getAlumnosPorGrados} from '../controllers/Alumno.controller';
 
 const router = express.Router();
 
-router.get('/alumnos', alumno.obtenerTodosLosAlumnos);
-router.get('/alumnos/:id', alumno.obtenerAlumnoPorId);
-router.post('/alumnos', alumno.crearAlumno);
-router.put('/alumnos/:id', alumno.modificarAlumno);
-router.delete('/alumnos/:id', alumno.eliminarAlumno);
-router.get('alumnos/buscar/:nombre', alumno.buscarAlumnosPorNombre);
-router.get('alumnos/buscar/:idgrado', alumno.buscarAlumnosPorGrado);
-router.get('/alumnos/beca', alumno.buscarAlumnosPorBeca);
-
-
-
+// router.post('/alumnos', createAlumno);
+router.post('/alumnosPorGrado', getAlumnosPorGrados);
 export default router;

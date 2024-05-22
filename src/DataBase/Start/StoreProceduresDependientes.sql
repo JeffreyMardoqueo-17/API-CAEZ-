@@ -244,7 +244,7 @@ BEGIN
     OR Apellido LIKE '%' + @TextoBusqueda + '%';
 END
 GO
--- ALUMNOS============================================================================================
+--ALUMNOS==========================================================================================
 -- CREAR ALUMNOS
 CREATE PROCEDURE SPCrearAlumno
     @Nombre VARCHAR(50),
@@ -281,13 +281,8 @@ BEGIN
     END
 
     -- Insertar el alumno y asignarle el grupo correspondiente
-    INSERT INTO Alumno (Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado)
-    VALUES (@Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado);
-
-    -- Asignar al alumno al grupo correspondiente
-    UPDATE Alumno
-    SET IdGrupo = @IdGrupo
-    WHERE Id = SCOPE_IDENTITY();
+    INSERT INTO Alumno (Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdGrupo, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado)
+    VALUES (@Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdGrupo, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado);
 
     SELECT SCOPE_IDENTITY() AS IdAlumno;
 END
@@ -395,6 +390,16 @@ BEGIN
     WHERE EsBecado = 0;
 
     SELECT @TotalBecados AS TotalBecados, @TotalNoBecados AS TotalNoBecados;
+END
+GO
+CREATE PROCEDURE SPGetAlumnosPorGrado
+    @Grado INT
+AS
+BEGIN
+    SELECT a.*
+    FROM Alumno a
+    INNER JOIN Grupo g ON a.IdGrupo = g.Id
+    WHERE g.Nombre = CONCAT('Grado ', @Grado);
 END
 GO
 

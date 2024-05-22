@@ -1,152 +1,56 @@
+import { executeRawQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
-import { poolPromise } from '../DataBase/contection/Conexion';
 
-const AlumnoController = {
-    // Método para crear un nuevo alumno
-    async crearAlumno(req, res) {
-        const { Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado } = req.body;
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('Nombre', sql.VarChar(50), Nombre)
-                .input('Apellido', sql.VarChar(50), Apellido)
-                .input('FechaNacimiento', sql.Date, FechaNacimiento)
-                .input('IdSexo', sql.Int, IdSexo)
-                .input('IdRole', sql.Int, IdRole)
-                .input('IdEncargado', sql.Int, IdEncargado)
-                .input('IdEnfermedad', sql.Int, IdEnfermedad)
-                .input('IdTipoDocumento', sql.Int, IdTipoDocumento)
-                .input('NumDocumento', sql.VarChar(50), NumDocumento)
-                .input('IdGrado', sql.Int, IdGrado)
-                .input('IdTurno', sql.Int, IdTurno)
-                .input('IdAdministrador', sql.Int, IdAdministrador)
-                .input('IdPadrino', sql.Int, IdPadrino)
-                .input('FechaRegistro', sql.DateTime, FechaRegistro)
-                .input('EsBecado', sql.Bit, EsBecado)
-                .query('EXEC SPCrearAlumno @Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado');
-
-            res.status(201).json({ msg: 'Alumno creado correctamente', idAlumno: result.recordset[0].IdAlumno });
-        } catch (error) {
-            console.error(`Error al crear el alumno: ${error}`);
-            res.status(500).json({ msg: 'Error al crear el alumno' });
+export async function createAlumno(req, res) {
+    const { Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado } = req.body;
+    try {
+        const FechaRegistro = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const query = `EXEC SPCrearAlumno @Nombre='${Nombre}', @Apellido='${Apellido}', @FechaNacimiento='${FechaNacimiento}', @IdSexo=${IdSexo}, @IdRole=${IdRole}, @IdEncargado=${IdEncargado}, @IdEnfermedad=${IdEnfermedad}, @IdTipoDocumento=${IdTipoDocumento}, @NumDocumento='${NumDocumento}', @IdGrado=${IdGrado}, @IdTurno=${IdTurno}, @IdAdministrador=${IdAdministrador}, @IdPadrino=${IdPadrino}, @FechaRegistro='${FechaRegistro}', @EsBecado=${EsBecado}`;
+        const result = await executeRawQuery(query);
+        if (result.recordset && result.recordset.length > 0) {
+            res.status(201).json({ msg: 'Alumno creado exitosamente', IdAlumno: result.recordset[0].IdAlumno });
+        } else {
+            throw new Error('No se pudo crear el alumno');
         }
-    },
+    } catch (error) {
+        console.error(`Error al crear el alumno: ${error}`);
+        res.status(500).json({ msg: 'Error al crear el alumno' });
+    }
+}
 
-    // Método para modificar los datos de un alumno
-    async modificarAlumno(req, res) {
-        const { Id, Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, FechaRegistro, EsBecado } = req.body;
-        try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.Int, Id)
-                .input('Nombre', sql.VarChar(50), Nombre)
-                .input('Apellido', sql.VarChar(50), Apellido)
-                .input('FechaNacimiento', sql.Date, FechaNacimiento)
-                .input('IdSexo', sql.Int, IdSexo)
-                .input('IdRole', sql.Int, IdRole)
-                .input('IdEncargado', sql.Int, IdEncargado)
-                .input('IdEnfermedad', sql.Int, IdEnfermedad)
-                .input('IdTipoDocumento', sql.Int, IdTipoDocumento)
-                .input('NumDocumento', sql.VarChar(50), NumDocumento)
-                .input('IdGrado', sql.Int, IdGrado)
-                .input('IdTurno', sql.Int, IdTurno)
-                .input('IdAdministrador', sql.Int, IdAdministrador)
-                .input('IdPadrino', sql.Int, IdPadrino)
-                .input('FechaRegistro', sql.DateTime, FechaRegistro)
-                .input('EsBecado', sql.Bit, EsBecado)
-                .query('EXEC SPModificarAlumno @Id, @Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @FechaRegistro, @EsBecado');
-            res.status(200).json({ msg: 'Alumno modificado correctamente' });
-        } catch (error) {
-            console.error(`Error al modificar el alumno: ${error}`);
-            res.status(500).json({ msg: 'Error al modificar el alumno' });
-        }
-    },
-
-    // Método para obtener un alumno por su Id
-    async obtenerAlumnoPorId(req, res) {
-        const { id } = req.params;
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('Id', sql.Int, id)
-                .query('EXEC SPTraerAlumnoPorId @Id');
-            if (result.recordset.length > 0) {
-                res.status(200).json(result.recordset[0]);
-            } else {
-                res.status(404).json({ msg: 'Alumno no encontrado' });
-            }
-        } catch (error) {
-            console.error(`Error al obtener el alumno: ${error}`);
-            res.status(500).json({ msg: 'Error al obtener el alumno' });
-        }
-    },
-
-    // Método para obtener todos los alumnos
-    async obtenerTodosLosAlumnos(req, res) {
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request().query('EXEC SPTraerTodosLosAlumnos');
+// traer alumno por grados
+export async function getAlumnosPorGrados(req, res) {
+    const { Grado } = req.body;
+    try {
+        const query = `EXEC SPGetAlumnosPorGrado @Grado=${Grado}`;
+        const result = await executeRawQuery(query);
+        if (result.recordset && result.recordset.length > 0) {
             res.status(200).json(result.recordset);
-        } catch (error) {
-            console.error(`Error al obtener los alumnos: ${error}`);
-            res.status(500).json({ msg: 'Error al obtener los alumnos' });
+        } else {
+            res.status(404).json({ msg: 'No se encontraron alumnos para el grado especificado' });
         }
-    },
+    } catch (error) {
+        console.error(`Error al obtener los alumnos: ${error}`);
+        res.status(500).json({ msg: 'Error al obtener los alumnos' });
+    }
+}
 
-    // Método para eliminar un alumno por su Id
-    async eliminarAlumno(req, res) {
-        const { id } = req.params;
-        try {
-            const pool = await poolPromise;
-            await pool.request()
-                .input('Id', sql.Int, id)
-                .query('EXEC SPEliminarAlumno @Id');
-            res.status(200).json({ msg: 'Alumno eliminado correctamente' });
-        } catch (error) {
-            console.error(`Error al eliminar el alumno: ${error}`);
-            res.status(500).json({ msg: 'Error al eliminar el alumno' });
-        }
-    },
-
-    // Método para buscar alumnos por nombre
-    async buscarAlumnosPorNombre(req, res) {
-        const { nombre } = req.params;
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('Nombre', sql.VarChar(50), nombre)
-                .query('EXEC SPBuscarAlumnosPorNombre @Nombre');
-            res.status(200).json(result.recordset);
-        } catch (error) {
-            console.error(`Error al buscar alumnos por nombre: ${error}`);
-            res.status(500).json({ msg: 'Error al buscar alumnos por nombre' });
-        }
-    },
-
-    // Método para buscar alumnos por grado
-    async buscarAlumnosPorGrado(req, res) {
-        const { idGrado } = req.params;
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request()
-                .input('IdGrado', sql.Int, idGrado)
-                .query('EXEC SPBuscarAlumnosPorGrado @IdGrado');
-            res.status(200).json(result.recordset);
-        } catch (error) {
-            console.error(`Error al buscar alumnos por grado: ${error}`);
-            res.status(500).json({ msg: 'Error al buscar alumnos por grado' });
-        }
-    },
-    async buscarAlumnosPorBeca(req, res) {
-        try {
-            const pool = await poolPromise;
-            const result = await pool.request().query('EXEC SPBuscarAlumnosPorBeca');
-            res.status(200).json(result.recordset[0]);
-        } catch (error) {
-            console.error(`Error al buscar alumnos por beca: ${error}`);
-            res.status(500).json({ msg: 'Error al buscar alumnos por beca' });
-        }
-    },
-};
-
-export default AlumnoController;
+// {
+//     "Nombre": "Lenin",
+//     "Apellido": "Geiii",
+//     "FechaNacimiento": "2005-09-15",
+//     "IdSexo": 1,
+//     "IdRole": 4,
+//     "IdEncargado": 4,
+//     "IdEnfermedad": 14,
+//     "IdTipoDocumento": 1,
+//     "NumDocumento": "12345678",
+//     "IdGrado": 11,
+//     "IdTurno": 1,
+//     "IdAdministrador": 3,
+//     "IdPadrino": 4,
+//     "EsBecado": true
+// }
+// {
+//     "Grado": 11
+// }
