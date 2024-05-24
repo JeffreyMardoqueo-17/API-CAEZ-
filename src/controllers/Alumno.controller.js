@@ -1,4 +1,5 @@
-import { executeRawQuery } from '../helpers/dbHelper';
+import mssql from 'mssql';
+import { executeQuery, executeRawQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
 export async function createAlumno(req, res) {
@@ -34,6 +35,35 @@ export async function getAlumnosPorGrados(req, res) {
         res.status(500).json({ msg: 'Error al obtener los alumnos' });
     }
 }
+
+//traer a todos los alumnos
+
+export const getAlumnos = async (req, res) => {
+    try {
+        const result = await executeQuery(`EXEC SPTraerTodosLosAlumnos`);
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(`Error al obtener los encargados ${error}`);
+        res.status(500).json({ msg: `Error al obtener los encargados` });
+    }
+}
+
+//traer alumnos por ID
+export const getAlumnosbyID = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await executeQuery('EXEC SPTraerAlumnoPorIds @Id', [{ name: 'Id', type: sql.Int, value: id }]);
+        if (result.recordset.length > 0) 
+            res.status(200).json(result.recordset[0]);
+        else 
+            res.status(404).json({ msg: 'Alumno no encontrado' });
+        
+    } catch (error) {
+        console.error(`Error al obtener el alumno: ${error}`);
+        res.status(500).json({ msg: 'Error al obtener el alumno' });
+    }
+}
+
 
 // {
 //     "Nombre": "Lenin",
