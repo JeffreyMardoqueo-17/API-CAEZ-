@@ -37,7 +37,6 @@ export async function getAlumnosPorGrados(req, res) {
 }
 
 //traer a todos los alumnos
-
 export const getAlumnos = async (req, res) => {
     try {
         const result = await executeQuery(`EXEC SPTraerTodosLosAlumnos`);
@@ -63,8 +62,38 @@ export const getAlumnosbyID = async (req, res) => {
         res.status(500).json({ msg: 'Error al obtener el alumno' });
     }
 }
+//DELETE
+export const deleteAlumno = async (req, res) => {
+    const{id} = req.params;
+    try {
+        await executeQuery('EXEC SPEliminarAlumno @Id', [{name: 'Id', type: sql.Int, value: id}]);
+        res.status(200).json({msg: 'Alumno eliminado'});
+    } catch (error) {
+        console.error('Error al intentar eliminar a el alumnno: ' + error);
+        res.status(500).json({msg: 'Error al eliminar el encargado'})
+    }
+}
 
+export const BuscarAlumnoPorNombre = async (req, res) => {
+    const { TextoBusqueda } = req.body;
 
+    if (!TextoBusqueda) {
+        return res.status(400).json({ msg: 'TextoBusqueda es requerido' });
+    }
+
+    try {
+        const result = await executeQuery('EXEC SPBuscarAlumnosPorNombre @TextoBusqueda', [{ name: 'TextoBusqueda', type: sql.VarChar(50), value: TextoBusqueda }]);
+
+        if (!result.recordset || result.recordset.length === 0) {
+            return res.status(404).json({ msg: 'No se encontraron resultados' });
+        }
+
+        res.status(200).json(result.recordset);
+    } catch (error) {
+        console.error(`Error al buscar al alumno por nombre: ${error}`);
+        res.status(500).json({ msg: 'Error al buscar el alumno por nombre' });
+    }
+};
 // {
 //     "Nombre": "Lenin",
 //     "Apellido": "Geiii",
