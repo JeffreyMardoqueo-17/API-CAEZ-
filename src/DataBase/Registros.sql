@@ -1,16 +1,23 @@
-select * from Alumno where IdGrupo = 2;
-GO
-CREATE PROCEDURE SPGetAlumnosPorGrado
-    @Grado INT
+ALTER PROCEDURE SPBuscarAlumnosPorBeca
 AS
 BEGIN
-    SELECT a.*
-    FROM Alumno a
-    INNER JOIN Grupo g ON a.IdGrupo = g.Id
-    WHERE g.Nombre = CONCAT('Grado ', @Grado);
+    SET NOCOUNT ON;
+
+    DECLARE @TotalBecados INT, @TotalNoBecados INT;
+
+    SELECT @TotalBecados = COUNT(*)
+    FROM Alumno
+    WHERE EsBecado = 1;
+
+    SELECT @TotalNoBecados = COUNT(*)
+    FROM Alumno
+    WHERE EsBecado = 0;
+
+    SELECT @TotalBecados AS TotalBecados, @TotalNoBecados AS TotalNoBecados;
+
+    -- Agregamos una consulta para obtener los detalles de todos los alumnos becados
+    SELECT *
+    FROM Alumno
+    WHERE EsBecado = 1;
 END
 GO
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'SPBuscarAlumnosPorGrado')
-BEGIN
-    DROP PROCEDURE SPBuscarAlumnosPorGrado;
-END 
