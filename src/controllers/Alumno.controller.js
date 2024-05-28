@@ -96,14 +96,14 @@ export const BuscarAlumnoPorNombre = async (req, res) => {
 };
 //buscar o filtrar a alumnos por grados
 export const getAlumnosPorGrado = async (req, res) => {
-    const { IdGrado } = req.body;
+    const { Grado } = req.body;
 
-    if (!IdGrado) {
-        return res.status(400).json({ msg: 'IdGrado es requerido' });
+    if (!Grado) {
+        return res.status(400).json({ msg: 'Grado es requerido' });
     }
 
     try {
-        const result = await executeQuery('EXEC SPBuscarAlumnosPorGrado @IdGrado', [{ name: 'IdGrado', type: sql.Int, value: IdGrado }]);
+        const result = await executeQuery('EXEC SPGetAlumnosPorGrado @Grado', [{ name: 'Grado', type: sql.Int, value: Grado }]);
 
         if (!result.recordset || result.recordset.length === 0) {
             return res.status(404).json({ msg: 'No se encontraron alumnos para el grado especificado' });
@@ -115,6 +115,8 @@ export const getAlumnosPorGrado = async (req, res) => {
         res.status(500).json({ msg: 'Error al buscar los alumnos por grado' });
     }
 };
+
+
 
 // {
 //     "Nombre": "Lenin",

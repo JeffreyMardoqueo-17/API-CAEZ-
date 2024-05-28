@@ -374,7 +374,6 @@ BEGIN
     WHERE IdGrado = @IdGrado;
 END
 
-
 GO
 -- BUSCAR ALUMNOS POR BECA
 CREATE PROCEDURE SPBuscarAlumnosPorBeca
