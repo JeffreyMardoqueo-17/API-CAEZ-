@@ -355,13 +355,14 @@ END
 GO
 -- BUSCAR ALUMNOS POR NOMBRES
 CREATE PROCEDURE SPBuscarAlumnosPorNombre
-    @Nombre VARCHAR(50)
+    @TextoBusqueda VARCHAR(50)
 AS
-BEGIN
-    SELECT *
-    FROM Alumno
-    WHERE Nombre LIKE '%' + @Nombre + '%';
+BEGIN  
+    SELECT * FROM Alumno 
+    WHERE Nombre LIKE '%' + @TextoBusqueda + '%' 
+    OR Apellido LIKE '%' + @TextoBusqueda + '%';
 END
+
 GO
 -- BUSCAR ALUMNOS POR GRADO
 CREATE PROCEDURE SPBuscarAlumnosPorGrado
@@ -372,6 +373,8 @@ BEGIN
     FROM Alumno
     WHERE IdGrado = @IdGrado;
 END
+
+
 GO
 -- BUSCAR ALUMNOS POR BECA
 CREATE PROCEDURE SPBuscarAlumnosPorBeca
