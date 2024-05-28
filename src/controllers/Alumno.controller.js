@@ -52,7 +52,7 @@ export const getAlumnos = async (req, res) => {
 export const getAlumnosbyID = async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await executeQuery('EXEC SPTraerAlumnoPorIds @Id', [{ name: 'Id', type: sql.Int, value: id }]);
+        const result = await executeQuery('EXEC SPTraerAlumnoPorId @Id', [{ name: 'Id', type: sql.Int, value: id }]);
         if (result.recordset.length > 0) 
             res.status(200).json(result.recordset[0]);
         else 
