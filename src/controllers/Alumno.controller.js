@@ -115,8 +115,24 @@ export const getAlumnosPorGrado = async (req, res) => {
         res.status(500).json({ msg: 'Error al buscar los alumnos por grado' });
     }
 };
+//buscar alumnos por peca
+export const getAlumnosPorBeca = async (req, res) => {
+    try {
+        const result = await executeQuery('EXEC SPBuscarAlumnosPorBeca');
 
+        if (!result || !result.recordsets || result.recordsets.length === 0) {
+            return res.status(404).json({ msg: 'No se encontraron datos' });
+        }
 
+        const totals = result.recordsets[0][0]; // Totales de becados y no becados
+        const becados = result.recordsets[1]; // Detalles de los alumnos becados
+
+        res.status(200).json({ totals, becados });
+    } catch (error) {
+        console.error(`Error al buscar los alumnos por beca: ${error}`);
+        res.status(500).json({ msg: 'Error al buscar los alumnos por beca' });
+    }
+};
 
 // {
 //     "Nombre": "Lenin",

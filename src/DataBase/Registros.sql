@@ -9,3 +9,8 @@ BEGIN
     INNER JOIN Grupo g ON a.IdGrupo = g.Id
     WHERE g.Nombre = CONCAT('Grado ', @Grado);
 END
+GO
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'SPBuscarAlumnosPorGrado')
+BEGIN
+    DROP PROCEDURE SPBuscarAlumnosPorGrado;
+END 
