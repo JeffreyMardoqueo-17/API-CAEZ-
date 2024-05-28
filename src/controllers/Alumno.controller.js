@@ -37,7 +37,6 @@ export async function getAlumnosPorGrados(req, res) {
 }
 
 //traer a todos los alumnos
-
 export const getAlumnos = async (req, res) => {
     try {
         const result = await executeQuery(`EXEC SPTraerTodosLosAlumnos`);
@@ -61,6 +60,17 @@ export const getAlumnosbyID = async (req, res) => {
     } catch (error) {
         console.error(`Error al obtener el alumno: ${error}`);
         res.status(500).json({ msg: 'Error al obtener el alumno' });
+    }
+}
+//DELETE
+export const deleteAlumno = async (req, res) => {
+    const{id} = req.params;
+    try {
+        await executeQuery('EXEC SPEliminarAlumno @Id', [{name: 'Id', type: sql.Int, value: id}]);
+        res.status(200).json({msg: 'Alumno eliminado'});
+    } catch (error) {
+        console.error('Error al intentar eliminar a el alumnno: ' + error);
+        res.status(500).json({msg: 'Error al eliminar el encargado'})
     }
 }
 
