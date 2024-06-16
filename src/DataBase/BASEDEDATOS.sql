@@ -144,6 +144,7 @@ CREATE TABLE Pago (
     Multa DECIMAL(10, 2)  NULL DEFAULT 0, ---MULTA LA QUITAMOS O QUE NO APAREZCA EN EL INGRESO DE DATOS
 	IdTipoPago INT NULL,
     Descuento DECIMAL(5, 2)  NULL DEFAULT 0, -- Descuento como porcentaje (por ejemplo, 20%)
+    Precio DECIMAL(10, 2) NOT NULL DEFAULT 0, 
     TotalPagado DECIMAL(10, 2) NOT NULL DEFAULT 0,
     FechaRegistro DATETIME NOT NULL,
     IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),

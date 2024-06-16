@@ -424,14 +424,12 @@ END
 GO
 ---========================================SP DE PAGOS 
 
-
----========================================SP DE PAGOS 
 CREATE PROCEDURE SPCrearPago
     @IdAlumno INT,
     @Multa DECIMAL(10, 2) = 0,
     @IdTipoPago INT = NULL,
     @Descuento DECIMAL(5, 2) = 0,
-    @TotalPagado DECIMAL(10, 2),
+    @Precio DECIMAL(10, 2),
     @FechaRegistro DATETIME,
     @IdAdministrador INT,
     @Descripcion VARCHAR(MAX),
@@ -439,9 +437,13 @@ CREATE PROCEDURE SPCrearPago
 AS
 BEGIN
     DECLARE @IdPago INT;
+    DECLARE @TotalPagado DECIMAL(10, 2);
 
-    INSERT INTO Pago (IdAlumno, Multa, IdTipoPago, Descuento, TotalPagado, FechaRegistro, IdAdministrador, Descripcion)
-    VALUES (@IdAlumno, @Multa, @IdTipoPago, @Descuento, @TotalPagado, @FechaRegistro, @IdAdministrador, @Descripcion);
+    -- Calcula el total pagado
+    SET @TotalPagado = @Precio - (@Precio * @Descuento / 100) + @Multa;
+
+    INSERT INTO Pago (IdAlumno, Multa, IdTipoPago, Descuento, Precio, TotalPagado, FechaRegistro, IdAdministrador, Descripcion)
+    VALUES (@IdAlumno, @Multa, @IdTipoPago, @Descuento, @Precio, @TotalPagado, @FechaRegistro, @IdAdministrador, @Descripcion);
 
     SET @IdPago = SCOPE_IDENTITY();
 

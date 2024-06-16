@@ -3,10 +3,10 @@ import {BuscarAlumnoPorNombre, createAlumno, deleteAlumno, getAlumnos, getAlumno
 
 const router = express.Router();
 
-// router.post('/alumnos', createAlumno);
-// router.get('/alumnos', getAlumnos)
+router.post('/alumnos', createAlumno);
+router.get('/alumnos', getAlumnos)
 router.post('/alumnosPorGrado', getAlumnosPorGrados);
-// router.get('/alumnos/:id', getAlumnosbyID);
+router.get('/alumnos/:id', getAlumnosbyID);
 router.delete('/alumnos/:id', deleteAlumno);
 router.post('/alumnos/buscar/', BuscarAlumnoPorNombre);
 router.post('/alumnos/buscar/grado', getAlumnosPorGrado);
