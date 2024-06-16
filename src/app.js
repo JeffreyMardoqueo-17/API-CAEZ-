@@ -17,12 +17,14 @@ import Role from './routers/Role.routes'
 import User from './routers/User.routes'
 import padrinoRouter from './routers/Padrino.routes';
 import Grupos from "./routers/Grupo.routes";
+const cors = require("cors");
 
 const app = express();
 const port = configuracion.port; // Define la variable port utilizando const
 
 app.set('port', port);
 
+app.use(cors()); //aqui instanciamos los cors
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -2,11 +2,19 @@ import mssql from 'mssql';
 import { executeQuery, executeRawQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
+// Crear un nuevo alumno
 export async function createAlumno(req, res) {
-    const { Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad, IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado } = req.body;
+    const {
+        Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad,
+        IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado
+    } = req.body;
     try {
         const FechaRegistro = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        const query = `EXEC SPCrearAlumno @Nombre='${Nombre}', @Apellido='${Apellido}', @FechaNacimiento='${FechaNacimiento}', @IdSexo=${IdSexo}, @IdRole=${IdRole}, @IdEncargado=${IdEncargado}, @IdEnfermedad=${IdEnfermedad}, @IdTipoDocumento=${IdTipoDocumento}, @NumDocumento='${NumDocumento}', @IdGrado=${IdGrado}, @IdTurno=${IdTurno}, @IdAdministrador=${IdAdministrador}, @IdPadrino=${IdPadrino}, @FechaRegistro='${FechaRegistro}', @EsBecado=${EsBecado}`;
+        const query = `EXEC SPCrearAlumno @Nombre='${Nombre}', @Apellido='${Apellido}', @FechaNacimiento='${FechaNacimiento}', 
+            @IdSexo=${IdSexo}, @IdRole=${IdRole}, @IdEncargado=${IdEncargado}, @IdEnfermedad=${IdEnfermedad}, 
+            @IdTipoDocumento=${IdTipoDocumento}, @NumDocumento='${NumDocumento}', @IdGrado=${IdGrado}, 
+            @IdTurno=${IdTurno}, @IdAdministrador=${IdAdministrador}, @IdPadrino=${IdPadrino}, 
+            @FechaRegistro='${FechaRegistro}', @EsBecado=${EsBecado}`;
         const result = await executeRawQuery(query);
         if (result.recordset && result.recordset.length > 0) {
             res.status(201).json({ msg: 'Alumno creado exitosamente', IdAlumno: result.recordset[0].IdAlumno });
@@ -19,7 +27,7 @@ export async function createAlumno(req, res) {
     }
 }
 
-// traer alumno por grados
+// Obtener alumnos por grados
 export async function getAlumnosPorGrados(req, res) {
     const { Grado } = req.body;
     try {
@@ -36,44 +44,46 @@ export async function getAlumnosPorGrados(req, res) {
     }
 }
 
-//traer a todos los alumnos
+// Obtener todos los alumnos
 export const getAlumnos = async (req, res) => {
     try {
         const result = await executeQuery(`EXEC SPTraerTodosLosAlumnos`);
         res.status(200).json(result.recordset);
     } catch (error) {
-        console.error(`Error al obtener los encargados ${error}`);
-        res.status(500).json({ msg: `Error al obtener los encargados` });
+        console.error(`Error al obtener los alumnos: ${error}`);
+        res.status(500).json({ msg: 'Error al obtener los alumnos' });
     }
 }
 
-//traer alumnos por ID
+// Obtener alumno por ID
 export const getAlumnosbyID = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await executeQuery('EXEC SPTraerAlumnoPorId @Id', [{ name: 'Id', type: sql.Int, value: id }]);
-        if (result.recordset.length > 0) 
+        if (result.recordset.length > 0)
             res.status(200).json(result.recordset[0]);
-        else 
+        else
             res.status(404).json({ msg: 'Alumno no encontrado' });
-        
+
     } catch (error) {
         console.error(`Error al obtener el alumno: ${error}`);
         res.status(500).json({ msg: 'Error al obtener el alumno' });
     }
 }
-//DELETE
+
+// Eliminar un alumno
 export const deleteAlumno = async (req, res) => {
-    const{id} = req.params;
+    const { id } = req.params;
     try {
-        await executeQuery('EXEC SPEliminarAlumno @Id', [{name: 'Id', type: sql.Int, value: id}]);
-        res.status(200).json({msg: 'Alumno eliminado'});
+        await executeQuery('EXEC SPEliminarAlumno @Id', [{ name: 'Id', type: sql.Int, value: id }]);
+        res.status(200).json({ msg: 'Alumno eliminado' });
     } catch (error) {
-        console.error('Error al intentar eliminar a el alumnno: ' + error);
-        res.status(500).json({msg: 'Error al eliminar el encargado'})
+        console.error('Error al intentar eliminar al alumno: ' + error);
+        res.status(500).json({ msg: 'Error al eliminar el alumno' });
     }
 }
 
+// Buscar alumno por nombre
 export const BuscarAlumnoPorNombre = async (req, res) => {
     const { TextoBusqueda } = req.body;
 
@@ -93,8 +103,9 @@ export const BuscarAlumnoPorNombre = async (req, res) => {
         console.error(`Error al buscar al alumno por nombre: ${error}`);
         res.status(500).json({ msg: 'Error al buscar el alumno por nombre' });
     }
-};
-//buscar o filtrar a alumnos por grados
+}
+
+// Obtener alumnos por grado
 export const getAlumnosPorGrado = async (req, res) => {
     const { Grado } = req.body;
 
@@ -114,8 +125,9 @@ export const getAlumnosPorGrado = async (req, res) => {
         console.error(`Error al buscar los alumnos por grado: ${error}`);
         res.status(500).json({ msg: 'Error al buscar los alumnos por grado' });
     }
-};
-//buscar alumnos por peca
+}
+
+// Obtener alumnos por beca
 export const getAlumnosPorBeca = async (req, res) => {
     try {
         const result = await executeQuery('EXEC SPBuscarAlumnosPorBeca');
@@ -132,7 +144,7 @@ export const getAlumnosPorBeca = async (req, res) => {
         console.error(`Error al buscar los alumnos por beca: ${error}`);
         res.status(500).json({ msg: 'Error al buscar los alumnos por beca' });
     }
-};
+}
 
 // {
 //     "Nombre": "Lenin",
