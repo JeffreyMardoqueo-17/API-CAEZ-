@@ -1,4 +1,3 @@
--- CREAR ALUMNOS
 ALTER PROCEDURE SPCrearAlumno
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
@@ -40,8 +39,6 @@ BEGIN
     SELECT SCOPE_IDENTITY() AS IdAlumno;
 END
 GO
-
--- MODIFICAR ALUMNOS
 ALTER PROCEDURE SPModificarAlumno
     @Id INT,
     @Nombre VARCHAR(50),
@@ -78,24 +75,33 @@ BEGIN
         FechaRegistro = @FechaRegistro,
         EsBecado = @EsBecado
     WHERE Id = @Id;
+
+    SELECT *
+    FROM Alumno
+    WHERE Id = @Id;
 END
 GO
-
--- TRAER ALUMNOS POR ID
 ALTER PROCEDURE SPTraerAlumnoPorId
     @Id INT
 AS
 BEGIN
-    SELECT a.*, 
-            s.Nombre AS Sexo, 
-            r.[Name] AS [Role], 
-            e.Nombre AS Encargado, 
-            enf.Nombre AS Enfermedad, 
-            td.Nombre AS TipoDocumento, 
-            g.Nombre AS Grado, 
-            t.Nombre AS Turno, 
-            adm.[Name] AS Administrador, 
-            p.Nombre AS Padrino
+    SELECT 
+        a.Id,
+        a.Nombre,
+        a.Apellido,
+        a.FechaNacimiento,
+        s.Nombre AS Sexo,
+        r.[Name] AS Role,
+        e.Nombre AS Encargado,
+        enf.Nombre AS Enfermedad,
+        td.Nombre AS TipoDocumento,
+        g.Nombre AS Grado,
+        t.Nombre AS Turno,
+        adm.[Name] AS Administrador,
+        p.Nombre AS Padrino,
+        a.FechaRegistro,
+        a.EsBecado,
+        a.IdGrupo
     FROM Alumno a
     INNER JOIN Sexo s ON a.IdSexo = s.Id
     INNER JOIN Role r ON a.IdRole = r.Id
@@ -109,21 +115,26 @@ BEGIN
     WHERE a.Id = @Id;
 END
 GO
-
--- TRAER A TODOS LOS ALUMNOS
 ALTER PROCEDURE SPTraerTodosLosAlumnos
 AS
 BEGIN
-    SELECT a.*, 
-            s.Nombre AS Sexo, 
-            r.[Name] AS [Role], 
-            e.Nombre AS Encargado, 
-            enf.Nombre AS Enfermedad, 
-            td.Nombre AS TipoDocumento, 
-            g.Nombre AS Grado, 
-            t.Nombre AS Turno, 
-            adm.[Name] AS Administrador, 
-            p.Nombre AS Padrino
+    SELECT 
+        a.Id,
+        a.Nombre,
+        a.Apellido,
+        a.FechaNacimiento,
+        s.Nombre AS Sexo,
+        r.[Name] AS Role,
+        e.Nombre AS Encargado,
+        enf.Nombre AS Enfermedad,
+        td.Nombre AS TipoDocumento,
+        g.Nombre AS Grado,
+        t.Nombre AS Turno,
+        adm.[Name] AS Administrador,
+        p.Nombre AS Padrino,
+        a.FechaRegistro,
+        a.EsBecado,
+        a.IdGrupo
     FROM Alumno a
     INNER JOIN Sexo s ON a.IdSexo = s.Id
     INNER JOIN Role r ON a.IdRole = r.Id
@@ -134,106 +145,5 @@ BEGIN
     INNER JOIN Turno t ON a.IdTurno = t.Id
     INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
     INNER JOIN Padrino p ON a.IdPadrino = p.Id;
-END
-GO
-
--- ELIMINAR ALUMNOS
-ALTER PROCEDURE SPEliminarAlumno
-    @Id INT
-AS
-BEGIN
-    DELETE FROM Alumno
-    WHERE Id = @Id;
-END
-GO
-
--- BUSCAR ALUMNOS POR NOMBRES
-ALTER PROCEDURE SPBuscarAlumnosPorNombre
-    @TextoBusqueda VARCHAR(50)
-AS
-BEGIN  
-    SELECT a.*, 
-            s.Nombre AS Sexo, 
-            r.[Name] AS [Role], 
-            e.Nombre AS Encargado, 
-            enf.Nombre AS Enfermedad, 
-            td.Nombre AS TipoDocumento, 
-            g.Nombre AS Grado, 
-            t.Nombre AS Turno, 
-            adm.[Name] AS Administrador, 
-            p.Nombre AS Padrino
-    FROM Alumno a
-    INNER JOIN Sexo s ON a.IdSexo = s.Id
-    INNER JOIN Role r ON a.IdRole = r.Id
-    INNER JOIN Encargado e ON a.IdEncargado = e.Id
-    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
-    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
-    INNER JOIN Grado g ON a.IdGrado = g.Id
-    INNER JOIN Turno t ON a.IdTurno = t.Id
-    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
-    INNER JOIN Padrino p ON a.IdPadrino = p.Id
-    WHERE a.Nombre LIKE '%' + @TextoBusqueda + '%' 
-    OR a.Apellido LIKE '%' + @TextoBusqueda + '%';
-END
-GO
-
--- BUSCAR ALUMNOS POR GRADO
-ALTER PROCEDURE SPBuscarAlumnosPorGrado
-    @Grado VARCHAR(50)
-AS
-BEGIN
-    SELECT a.*, 
-            s.Nombre AS Sexo, 
-            r.[Name] AS [Role], 
-            e.Nombre AS Encargado, 
-            enf.Nombre AS Enfermedad, 
-            td.Nombre AS TipoDocumento, 
-            g.Nombre AS Grado, 
-            t.Nombre AS Turno, 
-            adm.[Name] AS Administrador, 
-            p.Nombre AS Padrino
-    FROM Alumno a
-    INNER JOIN Sexo s ON a.IdSexo = s.Id
-    INNER JOIN Role r ON a.IdRole = r.Id
-    INNER JOIN Encargado e ON a.IdEncargado = e.Id
-    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
-    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
-    INNER JOIN Grado g ON a.IdGrado = g.Id
-    INNER JOIN Turno t ON a.IdTurno = t.Id
-    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
-    INNER JOIN Padrino p ON a.IdPadrino = p.Id
-    WHERE g.Nombre = @Grado;
-END
-GO
-
--- BUSCAR ALUMNOS POR BECA
-ALTER PROCEDURE SPBuscarAlumnosPorBeca
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    DECLARE @TotalBecados INT, @TotalNoBecados INT;
-
-    SELECT @TotalBecados = COUNT(*)
-    FROM Alumno
-    WHERE EsBecado = 1;
-
-    SELECT @TotalNoBecados = COUNT(*)
-    FROM Alumno
-    WHERE EsBecado = 0;
-
-    SELECT @TotalBecados AS TotalBecados, @TotalNoBecados AS TotalNoBecados;
-END
-GO
-
--- OBTENER ALUMNOS POR GRADO
-ALTER PROCEDURE SPGetAlumnosPorGrado
-    @Grado VARCHAR(50)
-AS
-BEGIN
-    SELECT a.*
-    FROM Alumno a
-    INNER JOIN Grado g ON a.IdGrado = g.Id
-    WHERE g.Nombre = @Grado;
 END
 GO
