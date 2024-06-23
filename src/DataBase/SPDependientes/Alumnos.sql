@@ -81,6 +81,7 @@ BEGIN
     WHERE Id = @Id;
 END
 GO
+
 ALTER PROCEDURE SPTraerAlumnoPorId
     @Id INT
 AS
@@ -101,7 +102,7 @@ BEGIN
         p.Nombre AS Padrino,
         a.FechaRegistro,
         a.EsBecado,
-        a.IdGrupo
+        gr.Nombre AS Grupo
     FROM Alumno a
     INNER JOIN Sexo s ON a.IdSexo = s.Id
     INNER JOIN Role r ON a.IdRole = r.Id
@@ -112,9 +113,12 @@ BEGIN
     INNER JOIN Turno t ON a.IdTurno = t.Id
     INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
     INNER JOIN Padrino p ON a.IdPadrino = p.Id
+    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
     WHERE a.Id = @Id;
 END
 GO
+
+
 ALTER PROCEDURE SPTraerTodosLosAlumnos
 AS
 BEGIN
@@ -134,7 +138,7 @@ BEGIN
         p.Nombre AS Padrino,
         a.FechaRegistro,
         a.EsBecado,
-        a.IdGrupo
+        gr.Nombre AS Grupo
     FROM Alumno a
     INNER JOIN Sexo s ON a.IdSexo = s.Id
     INNER JOIN Role r ON a.IdRole = r.Id
@@ -144,7 +148,7 @@ BEGIN
     INNER JOIN Grado g ON a.IdGrado = g.Id
     INNER JOIN Turno t ON a.IdTurno = t.Id
     INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
-    INNER JOIN Padrino p ON a.IdPadrino = p.Id;
-	INNER JOIN Grupo 
+    INNER JOIN Padrino p ON a.IdPadrino = p.Id
+    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id;
 END
 GO

@@ -28,21 +28,22 @@ export async function createAlumno(req, res) {
 }
 
 // Obtener alumnos por grados
-export async function getAlumnosPorGrados(req, res) {
-    const { Grado } = req.body;
+export async function getAlumnosPorGrupos(req, res) {
+    const { Grupo } = req.body;
     try {
-        const query = `EXEC SPGetAlumnosPorGrado @Grado=${Grado}`;
+        const query = `EXEC SPGetAlumnosPorGrupo @Grupo='${Grupo}'`;
         const result = await executeRawQuery(query);
         if (result.recordset && result.recordset.length > 0) {
             res.status(200).json(result.recordset);
         } else {
-            res.status(404).json({ msg: 'No se encontraron alumnos para el grado especificado' });
+            res.status(404).json({ msg: 'No se encontraron alumnos para el grupo especificado' });
         }
     } catch (error) {
         console.error(`Error al obtener los alumnos: ${error}`);
         res.status(500).json({ msg: 'Error al obtener los alumnos' });
     }
 }
+
 
 // Obtener todos los alumnos
 export const getAlumnos = async (req, res) => {
