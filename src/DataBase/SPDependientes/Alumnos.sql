@@ -145,5 +145,6 @@ BEGIN
     INNER JOIN Turno t ON a.IdTurno = t.Id
     INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
     INNER JOIN Padrino p ON a.IdPadrino = p.Id;
+	INNER JOIN Grupo 
 END
 GO
