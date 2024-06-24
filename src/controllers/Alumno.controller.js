@@ -109,18 +109,23 @@ export const BuscarAlumnoPorNombre = async (req, res) => {
 
 
 // Obtener alumnos por beca
-export const getAlumnosPorBeca = async (req, res) => {
-    try {
-        const result = await executeQuery('EXEC SPBuscarAlumnosPorBeca');
+export const getAlumnosPorBecaStatus = async (req, res) => {
+    const { EsBecado } = req.body;
 
-        if (!result || !result.recordsets || result.recordsets.length === 0) {
-            return res.status(404).json({ msg: 'No se encontraron datos' });
+    if (EsBecado === undefined) {
+        return res.status(400).json({ msg: 'EsBecado es requerido' });
+    }
+
+    try {
+        const query = 'EXEC SPGetAlumnosPorBecaStatus @EsBecado';
+        const parameters = [{ name: 'EsBecado', type: sql.Bit, value: EsBecado }];
+        const result = await executeQuery(query, parameters);
+
+        if (!result.recordset || result.recordset.length === 0) {
+            return res.status(404).json({ msg: 'No se encontraron alumnos con el estado de beca especificado' });
         }
 
-        const totals = result.recordsets[0][0]; // Totales de becados y no becados
-        const becados = result.recordsets[1]; // Detalles de los alumnos becados
-
-        res.status(200).json({ totals, becados });
+        res.status(200).json(result.recordset);
     } catch (error) {
         console.error(`Error al buscar los alumnos por beca: ${error}`);
         res.status(500).json({ msg: 'Error al buscar los alumnos por beca' });

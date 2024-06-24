@@ -152,3 +152,147 @@ BEGIN
     INNER JOIN Grupo gr ON a.IdGrupo = gr.Id;
 END
 GO
+
+--ALTER PROCEDURE SPGetAlumnosPorGrado
+--    @Grado NVARCHAR(50)
+--AS
+--BEGIN
+--    SELECT 
+--        a.Id,
+--        a.Nombre,
+--        a.Apellido,
+--        a.FechaNacimiento,
+--        s.Nombre AS Sexo,
+--        r.[Name] AS Role,
+--        e.Nombre AS Encargado,
+--        enf.Nombre AS Enfermedad,
+--        td.Nombre AS TipoDocumento,
+--        g.Nombre AS Grado,
+--        t.Nombre AS Turno,
+--        adm.[Name] AS Administrador,
+--        p.Nombre AS Padrino,
+--        a.FechaRegistro,
+--        a.EsBecado,
+--        gr.Nombre AS Grupo
+--    FROM Alumno a
+--    INNER JOIN Sexo s ON a.IdSexo = s.Id
+--    INNER JOIN Role r ON a.IdRole = r.Id
+--    INNER JOIN Encargado e ON a.IdEncargado = e.Id
+--    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
+--    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
+--    INNER JOIN Grado g ON a.IdGrado = g.Id
+--    INNER JOIN Turno t ON a.IdTurno = t.Id
+--    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
+--    INNER JOIN Padrino p ON a.IdPadrino = p.Id
+--    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
+--    WHERE g.Nombre = @Grado;
+--END
+--GO
+
+CREATE PROCEDURE SPGetAlumnosPorGrupo
+    @Grupo NVARCHAR(50)
+AS
+BEGIN
+    SELECT 
+        a.Id,
+        a.Nombre,
+        a.Apellido,
+        a.FechaNacimiento,
+        s.Nombre AS Sexo,
+        r.[Name] AS Role,
+        e.Nombre AS Encargado,
+        enf.Nombre AS Enfermedad,
+        td.Nombre AS TipoDocumento,
+        g.Nombre AS Grado,
+        t.Nombre AS Turno,
+        adm.[Name] AS Administrador,
+        p.Nombre AS Padrino,
+        a.FechaRegistro,
+        a.EsBecado,
+        gr.Nombre AS Grupo
+    FROM Alumno a
+    INNER JOIN Sexo s ON a.IdSexo = s.Id
+    INNER JOIN Role r ON a.IdRole = r.Id
+    INNER JOIN Encargado e ON a.IdEncargado = e.Id
+    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
+    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
+    INNER JOIN Grado g ON a.IdGrado = g.Id
+    INNER JOIN Turno t ON a.IdTurno = t.Id
+    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
+    INNER JOIN Padrino p ON a.IdPadrino = p.Id
+    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
+    WHERE gr.Nombre = @Grupo;
+END
+GO
+ALTER PROCEDURE SPBuscarAlumnosPorNombre
+    @TextoBusqueda NVARCHAR(50)
+AS
+BEGIN
+    SELECT 
+        a.Id,
+        a.Nombre,
+        a.Apellido,
+        a.FechaNacimiento,
+        s.Nombre AS Sexo,
+        r.[Name] AS Role,
+        e.Nombre AS Encargado,
+        enf.Nombre AS Enfermedad,
+        td.Nombre AS TipoDocumento,
+        g.Nombre AS Grado,
+        t.Nombre AS Turno,
+        adm.[Name] AS Administrador,
+        p.Nombre AS Padrino,
+        a.FechaRegistro,
+        a.EsBecado,
+        gr.Nombre AS Grupo
+    FROM Alumno a
+    INNER JOIN Sexo s ON a.IdSexo = s.Id
+    INNER JOIN Role r ON a.IdRole = r.Id
+    INNER JOIN Encargado e ON a.IdEncargado = e.Id
+    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
+    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
+    INNER JOIN Grado g ON a.IdGrado = g.Id
+    INNER JOIN Turno t ON a.IdTurno = t.Id
+    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
+    INNER JOIN Padrino p ON a.IdPadrino = p.Id
+    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
+    WHERE a.Nombre LIKE '%' + @TextoBusqueda + '%'
+       OR a.Apellido LIKE '%' + @TextoBusqueda + '%';
+END
+GO
+
+CREATE PROCEDURE SPGetAlumnosPorBecaStatus
+    @EsBecado BIT
+AS
+BEGIN
+    SELECT 
+        a.Id,
+        a.Nombre,
+        a.Apellido,
+        a.FechaNacimiento,
+        s.Nombre AS Sexo,
+        r.[Name] AS Role,
+        e.Nombre AS Encargado,
+        enf.Nombre AS Enfermedad,
+        td.Nombre AS TipoDocumento,
+        g.Nombre AS Grado,
+        t.Nombre AS Turno,
+        adm.[Name] AS Administrador,
+        p.Nombre AS Padrino,
+        a.FechaRegistro,
+        a.EsBecado,
+        gr.Nombre AS Grupo
+    FROM Alumno a
+    INNER JOIN Sexo s ON a.IdSexo = s.Id
+    INNER JOIN Role r ON a.IdRole = r.Id
+    INNER JOIN Encargado e ON a.IdEncargado = e.Id
+    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
+    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
+    INNER JOIN Grado g ON a.IdGrado = g.Id
+    INNER JOIN Turno t ON a.IdTurno = t.Id
+    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
+    INNER JOIN Padrino p ON a.IdPadrino = p.Id
+    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
+    WHERE a.EsBecado = @EsBecado;
+END
+GO
