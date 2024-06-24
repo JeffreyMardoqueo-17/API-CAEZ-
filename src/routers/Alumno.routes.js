@@ -9,5 +9,5 @@ router.post('/alumnosPorGrupo', getAlumnosPorGrupos);  //LISTO
 router.get('/alumnos/:id', getAlumnosbyID); //listo
 router.delete('/alumnos/:id', deleteAlumno);  //LISTO
 router.post('/alumnos/buscar/', BuscarAlumnoPorNombre); //listo 
-router.post('/alumnos/becados', getAlumnosPorBecaStatus);
+router.post('/alumnos/becados', getAlumnosPorBecaStatus); //Listo
 export default router;

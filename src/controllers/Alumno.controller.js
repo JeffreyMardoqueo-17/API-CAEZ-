@@ -3,6 +3,14 @@ import { executeQuery, executeRawQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
 // Crear un nuevo alumno
+/**
+ * Crea un nuevo alumno.
+ * 
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la creación del alumno.
+ * @throws {Error} - Si no se puede crear el alumno.
+ */
 export async function createAlumno(req, res) {
     const {
         Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad,
@@ -28,6 +36,12 @@ export async function createAlumno(req, res) {
 }
 
 // Obtener alumnos por grados
+/**
+ * Obtiene los alumnos por grupos.
+ * @param {Object} req - El objeto de solicitud.
+ * @param {Object} res - El objeto de respuesta.
+ * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la operación.
+ */
 export async function getAlumnosPorGrupos(req, res) {
     const { Grupo } = req.body;
     try {
@@ -45,6 +59,13 @@ export async function getAlumnosPorGrupos(req, res) {
 }
 
 // Obtener todos los alumnos
+/**
+ * Obtiene todos los alumnos.
+ * 
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la operación.
+ */
 export const getAlumnos = async (req, res) => {
     try {
         const result = await executeQuery(`EXEC SPTraerTodosLosAlumnos`);
@@ -56,6 +77,12 @@ export const getAlumnos = async (req, res) => {
 }
 
 // Obtener alumno por ID
+/**
+ * Obtiene un alumno por su ID.
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la operación.
+ */
 export const getAlumnosbyID = async (req, res) => {
     const { id } = req.params;
     try {
@@ -72,6 +99,13 @@ export const getAlumnosbyID = async (req, res) => {
 }
 
 // Eliminar un alumno
+/**
+ * Elimina un alumno.
+ * @param {Object} req - El objeto de solicitud.
+ * @param {Object} res - El objeto de respuesta.
+ * @returns {Promise<void>} - Una promesa que se resuelve cuando se completa la eliminación del alumno.
+ * @throws {Error} - Si ocurre un error al intentar eliminar al alumno.
+ */
 export const deleteAlumno = async (req, res) => {
     const { id } = req.params;
     try {
@@ -84,6 +118,13 @@ export const deleteAlumno = async (req, res) => {
 }
 
 // Buscar alumno por nombre
+/**
+ * Busca un alumno por su nombre.
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @returns {Object} - El objeto de respuesta JSON con los resultados de la búsqueda.
+ * @throws {Error} - Si ocurre un error durante la búsqueda.
+ */
 export const BuscarAlumnoPorNombre = async (req, res) => {
     const { TextoBusqueda } = req.body;
 
@@ -109,6 +150,13 @@ export const BuscarAlumnoPorNombre = async (req, res) => {
 
 
 // Obtener alumnos por beca
+/**
+ * Obtiene los alumnos por estado de beca.
+ * @async
+ * @param {Object} req - El objeto de solicitud HTTP.
+ * @param {Object} res - El objeto de respuesta HTTP.
+ * @returns {Object} - El objeto de respuesta JSON con los alumnos encontrados o un mensaje de error.
+ */
 export const getAlumnosPorBecaStatus = async (req, res) => {
     const { EsBecado } = req.body;
 
