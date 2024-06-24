@@ -39,46 +39,122 @@ BEGIN
     SELECT SCOPE_IDENTITY() AS IdAlumno;
 END
 GO
-ALTER PROCEDURE SPModificarAlumno
-    @Id INT,
+
+ALTER PROCEDURE SPActualizarAlumno
+    @IdAlumno INT,
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
     @FechaNacimiento DATE,
-    @Sexo VARCHAR(50),
-    @Role VARCHAR(50),
-    @Encargado VARCHAR(50),
-    @Enfermedad VARCHAR(50),
-    @TipoDocumento VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @IdEncargado INT,
+    @IdEnfermedad INT,
+    @IdTipoDocumento INT,
     @NumDocumento VARCHAR(50),
-    @Grado VARCHAR(50),
-    @Turno VARCHAR(50),
-    @Administrador VARCHAR(50),
-    @Padrino VARCHAR(50),
-    @FechaRegistro DATETIME,
+    @IdGrado INT,
+    @IdTurno INT,
+    @IdAdministrador INT,
+    @IdPadrino INT,
     @EsBecado BIT
 AS
 BEGIN
+    DECLARE @IdGrupo INT;
+
+    -- Verificar si ya existe un grupo para el grado del alumno
+    SELECT @IdGrupo = Id
+    FROM Grupo
+    WHERE Nombre = CONCAT('Grado ', @IdGrado);
+
+    -- Si no existe, crear un nuevo grupo
+    IF @IdGrupo IS NULL
+    BEGIN
+        INSERT INTO Grupo (Nombre)
+        VALUES (CONCAT('Grado ', @IdGrado));
+        
+        SET @IdGrupo = SCOPE_IDENTITY();
+    END
+
+    -- Actualizar el alumno con el grupo correspondiente
     UPDATE Alumno
     SET Nombre = @Nombre,
         Apellido = @Apellido,
         FechaNacimiento = @FechaNacimiento,
-        IdSexo = (SELECT Id FROM Sexo WHERE Nombre = @Sexo),
-        IdRole = (SELECT Id FROM Role WHERE Nombre = @Role),
-        IdEncargado = (SELECT Id FROM Encargado WHERE Nombre = @Encargado),
-        IdEnfermedad = (SELECT Id FROM Enfermedad WHERE Descripcion = @Enfermedad),
-        IdTipoDocumento = (SELECT Id FROM TipoDocumento WHERE Nombre = @TipoDocumento),
+        IdSexo = @IdSexo,
+        IdRole = @IdRole,
+        IdEncargado = @IdEncargado,
+        IdEnfermedad = @IdEnfermedad,
+        IdTipoDocumento = @IdTipoDocumento,
         NumDocumento = @NumDocumento,
-        IdGrado = (SELECT Id FROM Grado WHERE Nombre = @Grado),
-        IdTurno = (SELECT Id FROM Turno WHERE Nombre = @Turno),
-        IdAdministrador = (SELECT Id FROM [User] WHERE [Name] = @Administrador),
-        IdPadrino = (SELECT Id FROM Padrino WHERE Nombre = @Padrino),
-        FechaRegistro = @FechaRegistro,
+        IdGrado = @IdGrado,
+        IdGrupo = @IdGrupo,
+        IdTurno = @IdTurno,
+        IdAdministrador = @IdAdministrador,
+        IdPadrino = @IdPadrino,
         EsBecado = @EsBecado
-    WHERE Id = @Id;
+    WHERE Id = @IdAlumno;
 
-    SELECT *
-    FROM Alumno
-    WHERE Id = @Id;
+    SELECT @IdAlumno AS IdAlumno;
+END
+
+GO
+
+ALTER PROCEDURE SPActualizarAlumno
+    @IdAlumno INT,
+    @Nombre VARCHAR(50) = NULL,
+    @Apellido VARCHAR(50) = NULL,
+    @FechaNacimiento DATE = NULL,
+    @IdSexo INT = NULL,
+    @IdRole INT = NULL,
+    @IdEncargado INT = NULL,
+    @IdEnfermedad INT = NULL,
+    @IdTipoDocumento INT = NULL,
+    @NumDocumento VARCHAR(50) = NULL,
+    @IdGrado INT = NULL,
+    @IdTurno INT = NULL,
+    @IdAdministrador INT = NULL,
+    @IdPadrino INT = NULL,
+    @EsBecado BIT = NULL
+AS
+BEGIN
+    DECLARE @IdGrupo INT;
+
+    -- Verificar si ya existe un grupo para el grado del alumno
+    IF @IdGrado IS NOT NULL
+    BEGIN
+        SELECT @IdGrupo = Id
+        FROM Grupo
+        WHERE Nombre = CONCAT('Grado ', @IdGrado);
+
+        -- Si no existe, crear un nuevo grupo
+        IF @IdGrupo IS NULL
+        BEGIN
+            INSERT INTO Grupo (Nombre)
+            VALUES (CONCAT('Grado ', @IdGrado));
+            
+            SET @IdGrupo = SCOPE_IDENTITY();
+        END
+    END
+
+    -- Actualizar el alumno con el grupo correspondiente
+    UPDATE Alumno
+    SET Nombre = COALESCE(@Nombre, Nombre),
+        Apellido = COALESCE(@Apellido, Apellido),
+        FechaNacimiento = COALESCE(@FechaNacimiento, FechaNacimiento),
+        IdSexo = COALESCE(@IdSexo, IdSexo),
+        IdRole = COALESCE(@IdRole, IdRole),
+        IdEncargado = COALESCE(@IdEncargado, IdEncargado),
+        IdEnfermedad = COALESCE(@IdEnfermedad, IdEnfermedad),
+        IdTipoDocumento = COALESCE(@IdTipoDocumento, IdTipoDocumento),
+        NumDocumento = COALESCE(@NumDocumento, NumDocumento),
+        IdGrado = COALESCE(@IdGrado, IdGrado),
+        IdGrupo = COALESCE(@IdGrupo, IdGrupo),
+        IdTurno = COALESCE(@IdTurno, IdTurno),
+        IdAdministrador = COALESCE(@IdAdministrador, IdAdministrador),
+        IdPadrino = COALESCE(@IdPadrino, IdPadrino),
+        EsBecado = COALESCE(@EsBecado, EsBecado)
+    WHERE Id = @IdAlumno;
+
+    SELECT @IdAlumno AS IdAlumno;
 END
 GO
 
@@ -96,6 +172,7 @@ BEGIN
         e.Nombre AS Encargado,
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
+		a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
         g.Nombre AS Grado,
         t.Nombre AS Turno,
         adm.[Name] AS Administrador,
@@ -118,7 +195,6 @@ BEGIN
 END
 GO
 
-
 ALTER PROCEDURE SPTraerTodosLosAlumnos
 AS
 BEGIN
@@ -128,10 +204,11 @@ BEGIN
         a.Apellido,
         a.FechaNacimiento,
         s.Nombre AS Sexo,
-        r.[Name] AS Role,
+        r.[Name] AS [Role],
         e.Nombre AS Encargado,
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
+		a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
         g.Nombre AS Grado,
         t.Nombre AS Turno,
         adm.[Name] AS Administrador,
@@ -143,53 +220,18 @@ BEGIN
     INNER JOIN Sexo s ON a.IdSexo = s.Id
     INNER JOIN Role r ON a.IdRole = r.Id
     INNER JOIN Encargado e ON a.IdEncargado = e.Id
-    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
+    LEFT JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id -- LEFT JOIN para permitir valores nulos
     INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
     INNER JOIN Grado g ON a.IdGrado = g.Id
     INNER JOIN Turno t ON a.IdTurno = t.Id
     INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
-    INNER JOIN Padrino p ON a.IdPadrino = p.Id
+    LEFT JOIN Padrino p ON a.IdPadrino = p.Id -- LEFT JOIN para permitir valores nulos
     INNER JOIN Grupo gr ON a.IdGrupo = gr.Id;
 END
 GO
 
---ALTER PROCEDURE SPGetAlumnosPorGrado
---    @Grado NVARCHAR(50)
---AS
---BEGIN
---    SELECT 
---        a.Id,
---        a.Nombre,
---        a.Apellido,
---        a.FechaNacimiento,
---        s.Nombre AS Sexo,
---        r.[Name] AS Role,
---        e.Nombre AS Encargado,
---        enf.Nombre AS Enfermedad,
---        td.Nombre AS TipoDocumento,
---        g.Nombre AS Grado,
---        t.Nombre AS Turno,
---        adm.[Name] AS Administrador,
---        p.Nombre AS Padrino,
---        a.FechaRegistro,
---        a.EsBecado,
---        gr.Nombre AS Grupo
---    FROM Alumno a
---    INNER JOIN Sexo s ON a.IdSexo = s.Id
---    INNER JOIN Role r ON a.IdRole = r.Id
---    INNER JOIN Encargado e ON a.IdEncargado = e.Id
---    INNER JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
---    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
---    INNER JOIN Grado g ON a.IdGrado = g.Id
---    INNER JOIN Turno t ON a.IdTurno = t.Id
---    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
---    INNER JOIN Padrino p ON a.IdPadrino = p.Id
---    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
---    WHERE g.Nombre = @Grado;
---END
---GO
 
-CREATE PROCEDURE SPGetAlumnosPorGrupo
+ALTER PROCEDURE SPGetAlumnosPorGrupo
     @Grupo NVARCHAR(50)
 AS
 BEGIN
@@ -203,6 +245,7 @@ BEGIN
         e.Nombre AS Encargado,
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
+        a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
         g.Nombre AS Grado,
         t.Nombre AS Turno,
         adm.[Name] AS Administrador,
@@ -261,7 +304,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE SPGetAlumnosPorBecaStatus
+ALTER PROCEDURE SPGetAlumnosPorBecaStatus
     @EsBecado BIT
 AS
 BEGIN
@@ -275,6 +318,7 @@ BEGIN
         e.Nombre AS Encargado,
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
+        a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
         g.Nombre AS Grado,
         t.Nombre AS Turno,
         adm.[Name] AS Administrador,
