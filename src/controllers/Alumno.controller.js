@@ -231,6 +231,8 @@ export const getAlumnosPorBecaStatus = async (req, res) => {
     }
 }
 
+//  *s
+
 // {
 //     "Nombre": "Lenin",
 //     "Apellido": "Geiii",

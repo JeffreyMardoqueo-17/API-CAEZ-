@@ -2,5 +2,5 @@ import {config} from 'dotenv'
 config();
 
 export default {
-    port: 5000
+    port: 3000
 }

@@ -1,4 +1,4 @@
-ALTER PROCEDURE SPCrearAlumno
+CREATE PROCEDURE SPCrearAlumno
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
     @FechaNacimiento DATE,
@@ -40,7 +40,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE SPActualizarAlumno
+cREATE PROCEDURE SPActualizarAlumno
     @IdAlumno INT,
     @Nombre VARCHAR(50),
     @Apellido VARCHAR(50),
@@ -98,7 +98,7 @@ END
 
 GO
 
-ALTER PROCEDURE SPActualizarAlumno
+CREATE PROCEDURE SPActualizarAlumno
     @IdAlumno INT,
     @Nombre VARCHAR(50) = NULL,
     @Apellido VARCHAR(50) = NULL,
@@ -158,7 +158,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE SPTraerAlumnoPorId
+CREATE PROCEDURE SPTraerAlumnoPorId
     @Id INT
 AS
 BEGIN
@@ -169,7 +169,7 @@ BEGIN
         a.FechaNacimiento,
         s.Nombre AS Sexo,
         r.[Name] AS Role,
-        e.Nombre AS Encargado,
+        CONCAT(e.Nombre, ' ', e.Apellido) AS Encargado, -- Concatenamos Nombre y Apellido
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
 		a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
@@ -195,7 +195,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE SPTraerTodosLosAlumnos
+CREATE PROCEDURE SPTraerTodosLosAlumnos
 AS
 BEGIN
     SELECT 
@@ -205,7 +205,7 @@ BEGIN
         a.FechaNacimiento,
         s.Nombre AS Sexo,
         r.[Name] AS [Role],
-        e.Nombre AS Encargado,
+        CONCAT(e.Nombre, ' ', e.Apellido) AS Encargado, -- Concatenamos Nombre y Apellido
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
 		a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
@@ -231,7 +231,7 @@ END
 GO
 
 
-ALTER PROCEDURE SPGetAlumnosPorGrupo
+CREATE PROCEDURE SPGetAlumnosPorGrupo
     @Grupo NVARCHAR(50)
 AS
 BEGIN
@@ -242,7 +242,7 @@ BEGIN
         a.FechaNacimiento,
         s.Nombre AS Sexo,
         r.[Name] AS Role,
-        e.Nombre AS Encargado,
+        CONCAT(e.Nombre, ' ', e.Apellido) AS Encargado, -- Concatenamos Nombre y Apellido
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
         a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
@@ -267,7 +267,7 @@ BEGIN
     WHERE gr.Nombre = @Grupo;
 END
 GO
-ALTER PROCEDURE SPBuscarAlumnosPorNombre
+CREATE PROCEDURE SPBuscarAlumnosPorNombre
     @TextoBusqueda NVARCHAR(50)
 AS
 BEGIN
@@ -278,7 +278,7 @@ BEGIN
         a.FechaNacimiento,
         s.Nombre AS Sexo,
         r.[Name] AS Role,
-        e.Nombre AS Encargado,
+        CONCAT(e.Nombre, ' ', e.Apellido) AS Encargado, -- Concatenamos Nombre y Apellido
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
         g.Nombre AS Grado,
@@ -304,7 +304,7 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE SPGetAlumnosPorBecaStatus
+CREATE PROCEDURE SPGetAlumnosPorBecaStatus
     @EsBecado BIT
 AS
 BEGIN
@@ -315,7 +315,7 @@ BEGIN
         a.FechaNacimiento,
         s.Nombre AS Sexo,
         r.[Name] AS Role,
-        e.Nombre AS Encargado,
+        CONCAT(e.Nombre, ' ', e.Apellido) AS Encargado, -- Concatenamos Nombre y Apellido
         enf.Nombre AS Enfermedad,
         td.Nombre AS TipoDocumento,
         a.NumDocumento,  -- Aquí agregamos la columna NumDocumento
@@ -338,5 +338,55 @@ BEGIN
     INNER JOIN Padrino p ON a.IdPadrino = p.Id
     INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
     WHERE a.EsBecado = @EsBecado;
+END
+GO
+
+CREATE PROCEDURE SPFiltrarOrdenarAlumnos
+    @Orden nvarchar(20)
+AS
+BEGIN
+    SELECT 
+        a.Id,
+        a.Nombre,
+        a.Apellido,
+        a.FechaNacimiento,
+        s.Nombre AS Sexo,
+        r.[Name] AS [Role],
+        CONCAT(e.Nombre, ' ', e.Apellido) AS Encargado,
+        enf.Nombre AS Enfermedad,
+        td.Nombre AS TipoDocumento,
+        a.NumDocumento,
+        g.Nombre AS Grado,
+        t.Nombre AS Turno,
+        adm.[Name] AS Administrador,
+        p.Nombre AS Padrino,
+        a.FechaRegistro,
+        a.EsBecado,
+        gr.Nombre AS Grupo
+    FROM Alumno a
+    INNER JOIN Sexo s ON a.IdSexo = s.Id
+    INNER JOIN Role r ON a.IdRole = r.Id
+    INNER JOIN Encargado e ON a.IdEncargado = e.Id
+    LEFT JOIN Enfermedad enf ON a.IdEnfermedad = enf.Id
+    INNER JOIN TipoDocumento td ON a.IdTipoDocumento = td.Id
+    INNER JOIN Grado g ON a.IdGrado = g.Id
+    INNER JOIN Turno t ON a.IdTurno = t.Id
+    INNER JOIN [User] adm ON a.IdAdministrador = adm.Id
+    LEFT JOIN Padrino p ON a.IdPadrino = p.Id
+    INNER JOIN Grupo gr ON a.IdGrupo = gr.Id
+    ORDER BY
+        CASE 
+            WHEN @Orden = 'NombreAsc' THEN a.Nombre
+            WHEN @Orden = 'NombreDesc' THEN a.Nombre
+            ELSE NULL
+        END ASC,
+        CASE 
+            WHEN @Orden = 'NombreDesc' THEN a.Nombre
+            ELSE NULL
+        END DESC,
+        CASE 
+            WHEN @Orden = 'FechaRegistro' THEN a.FechaRegistro
+            ELSE NULL
+        END DESC;
 END
 GO
