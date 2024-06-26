@@ -1,15 +1,7 @@
-// En un archivo separado, por ejemplo, tokenManager.js
-
 import jwt from 'jsonwebtoken';
 
-// Array para almacenar los tokens
-let tokens = [];
-
+// Función para generar y devolver un token JWT
 export function generateAndStoreToken(userId) {
-    // Generar un token de autenticación
-    const token = jwt.sign({ id: userId }, 'your-secret-key');
-    // No necesitas almacenar el token en el servidor. En su lugar, devuélvelo para que el cliente pueda almacenarlo.
-    console.log(token);
+    const token = jwt.sign({ id: userId }, 'your-secret-key', { expiresIn: '1h' }); // Añadimos expiresIn para seguridad
     return token;
-
 }

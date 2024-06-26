@@ -97,6 +97,7 @@ const UserController = {
         }
 
         try {
+            // Ejecutar el procedimiento almacenado para verificar el usuario
             const user = await executeQuery('EXEC SPIniciarSesion @Login, @Password', [
                 { name: 'Login', type: sql.NVarChar(100), value: Login },
                 { name: 'Password', type: sql.NVarChar(100), value: Password }
@@ -106,7 +107,7 @@ const UserController = {
                 return res.status(404).json({ msg: 'Usuario no encontrado' });
             }
 
-            // Generar y almacenar el token
+            // Generar y devolver el token
             const token = generateAndStoreToken(user.id);
 
             // Enviar el token en la respuesta
@@ -116,7 +117,6 @@ const UserController = {
             res.status(500).json({ msg: 'Error al iniciar sesión', error: error.message });
         }
     },
-
     async changePassword(req, res) {
         const { id } = req.params;
         const { NewPassword } = req.body;

@@ -7,5 +7,4 @@ const validateResult = (req, res, next) => {
     }
     next();
 }
-
 export { validateResult };
