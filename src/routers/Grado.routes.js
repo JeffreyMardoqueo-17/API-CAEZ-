@@ -5,10 +5,10 @@ import { validateToken } from '../helpers/JWT';
 
 const router = Router();
 
-router.get('/Grados', validateToken, GetGrados);
-router.get('/Grados/:id', validateToken, GetGradoPorId);
-router.post('/Grados',ValidateCreateGrado, validateToken, PostGrado);
-router.put('/Grados/:id',ValidateUpdateGrado,validateToken, PutGrado);
-router.delete('/Grados/:id',validateToken, DeleteGrado);
+router.get('/Grados', GetGrados);
+router.get('/Grados/:id', GetGradoPorId);
+router.post('/Grados', ValidateCreateGrado, PostGrado);
+router.put('/Grados/:id', ValidateUpdateGrado, PutGrado);
+router.delete('/Grados/:id', DeleteGrado);
 
 export default router;
