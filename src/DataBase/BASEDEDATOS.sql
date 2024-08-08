@@ -1,0 +1,199 @@
+--CREATE DATABASE CaezPagos
+--USE CaezPagos
+
+-- TABLA Direccion
+CREATE TABLE Direccion(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(200) NOT NULL
+);
+GO
+
+-- TABLA Turno
+CREATE TABLE Turno(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(80) NOT NULL
+);
+GO
+
+-- TABLA Grado
+CREATE TABLE Grado(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    Colegiatura DECIMAL(10, 2) NOT NULL DEFAULT 0
+);
+GO
+
+-- TABLA TipoDocumento
+CREATE TABLE TipoDocumento(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL
+);
+GO
+
+-- TABLA TipoPago
+CREATE TABLE TipoPago(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(80) NOT NULL
+);
+GO
+
+-- TABLA Sexo
+CREATE TABLE Sexo (
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1, 1),
+    Nombre VARCHAR(10) NOT NULL
+);
+GO
+
+-- TABLA Parentezco
+CREATE TABLE Parentezco(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL
+);
+GO
+
+-- TABLA Enfermedad
+CREATE TABLE Enfermedad(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    Descripcion VARCHAR(MAX) NOT NULL
+);
+GO
+
+-- TABLA Mes
+CREATE TABLE Mes(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL
+);
+GO
+
+-- TABLA Role
+CREATE TABLE [Role](
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    [Name] VARCHAR(30) NOT NULL
+);
+GO
+
+-- TABLA User
+CREATE TABLE [User](
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    [Name] NVARCHAR(30) NOT NULL,
+    LastName NVARCHAR(30) NOT NULL,
+    [Login] NVARCHAR(100),
+    [Password] NVARCHAR(100) NOT NULL,
+    [Status] TINYINT NOT NULL,
+    RegistrationDate DATETIME NOT NULL,
+    IdRole INT NOT NULL FOREIGN KEY REFERENCES [Role](Id)
+);
+GO
+
+-- TABLA Padrino
+CREATE TABLE Padrino(
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    Apellido VARCHAR(50) NOT NULL,
+    IdSexo INT NOT NULL FOREIGN KEY REFERENCES Sexo(Id),
+    IdRole INT NOT NULL FOREIGN KEY REFERENCES [Role](Id),
+    Telefono VARCHAR (50) NOT NULL,
+    Correo VARCHAR(30) NOT NULL,
+    IdDireccion INT NOT NULL FOREIGN KEY REFERENCES Direccion(Id),
+    IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
+    FechaRegistro DATETIME NOT NULL
+);
+GO
+
+-- TABLA Encargado
+CREATE TABLE Encargado(
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    Apellido VARCHAR(50) NOT NULL,
+    IdSexo INT NOT NULL FOREIGN KEY REFERENCES Sexo(Id),
+    IdRole INT NOT NULL FOREIGN KEY REFERENCES [Role](Id),
+    Telefono VARCHAR (50) NOT NULL,
+    TelEmergencia VARCHAR (10) NOT NULL,
+    Correo VARCHAR(30) NOT NULL,
+    IdDireccion INT NOT NULL FOREIGN KEY REFERENCES Direccion(Id),
+    IdTipoDocumento INT NOT NULL FOREIGN KEY REFERENCES TipoDocumento(Id),
+    NumDocumento VARCHAR(50) NOT NULL,
+    IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
+    FechaRegistro DATETIME NOT NULL
+);
+GO
+
+-- TABLA Alumno
+CREATE TABLE Alumno(
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    Apellido VARCHAR(50) NOT NULL,
+    FechaNacimiento DATE NOT NULL,
+    IdSexo INT NOT NULL FOREIGN KEY REFERENCES Sexo(Id),
+    IdRole INT NOT NULL FOREIGN KEY REFERENCES [Role](Id),
+    IdEncargado INT NOT NULL FOREIGN KEY REFERENCES Encargado(Id),
+    IdEnfermedad INT NULL FOREIGN KEY REFERENCES Enfermedad(Id),
+    IdTipoDocumento INT NOT NULL FOREIGN KEY REFERENCES TipoDocumento(Id),
+    NumDocumento VARCHAR(50) NOT NULL,
+    IdGrado INT NOT NULL FOREIGN KEY REFERENCES Grado(Id),
+    IdTurno INT NOT NULL FOREIGN KEY REFERENCES Turno(Id),
+    IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
+    IdPadrino INT NULL FOREIGN KEY REFERENCES Padrino(Id),
+    FechaRegistro DATETIME NOT NULL,
+    EsBecado BIT NOT NULL DEFAULT 0 -- 0 para no becado, 1 para becado
+);
+GO
+
+-- TABLA Grupo
+CREATE TABLE Grupo(
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Nombre VARCHAR(50) NOT NULL,
+    IdAlumno INT NULL FOREIGN KEY REFERENCES Alumno(Id)
+);
+GO
+
+-- TABLA Pago
+CREATE TABLE Pago (
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1, 1),
+    IdAlumno INT NOT NULL FOREIGN KEY REFERENCES Alumno(Id),
+    Multa DECIMAL(10, 2) NULL DEFAULT 0,
+    IdTipoPago INT NULL,
+    Descuento DECIMAL(5, 2) NULL DEFAULT 0, -- Descuento como porcentaje (por ejemplo, 20%)
+    Precio DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    TotalPagado DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    FechaRegistro DATETIME NOT NULL,
+    IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
+    Descripcion VARCHAR(MAX) NOT NULL
+);
+GO
+
+-- TABLA PagoMes
+CREATE TABLE PagoMes(
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    IdPago INT NOT NULL FOREIGN KEY REFERENCES Pago(Id),
+    IdMes INT NOT NULL FOREIGN KEY REFERENCES Mes(Id)
+);
+GO
+
+-- TABLA Factura
+CREATE TABLE Factura (
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1, 1),
+    IdPago INT NULL FOREIGN KEY REFERENCES Pago(Id),
+    IdAlumno INT NOT NULL FOREIGN KEY REFERENCES Alumno(Id),
+    RutaPDF NVARCHAR(MAX) NOT NULL
+);
+GO
+
+-- TABLA InformacionFinanciera
+CREATE TABLE InformacionFinanciera (
+    Id INT NOT NULL PRIMARY KEY IDENTITY (1, 1),
+    FondoActual DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    DeudaTotal DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    SaldoPorCompletar DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    NumEstudiantes INT NOT NULL DEFAULT 0
+);
+GO
+
+-- REGISTRO PARA USAR EL SIS
+INSERT INTO Role ([Name])
+VALUES ('Administrador')
+go
+---------------------------------------jeffreymardoqueo260
+INSERT INTO [User] ([Name], LastName, [Login], [Password], [Status], RegistrationDate, IdRole)
+VALUES ('Jeffrey', 'Mardoqueo', 'jeffreymardoqueo260@gmail.com', 'jeffreymardoqueo260', 1, SYSDATETIME(), 1)
