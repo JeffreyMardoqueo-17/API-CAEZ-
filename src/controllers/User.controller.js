@@ -166,6 +166,7 @@ const UserController = {
             // Verificar si la contraseña es correcta
             const isPasswordCorrect = await verifyPassword(Password, userData.Password);
             if (!isPasswordCorrect) {
+                console.log(isPasswordCorrect)
                 return res.status(400).json({ msg: 'Contraseña incorrecta' });
             }
 
