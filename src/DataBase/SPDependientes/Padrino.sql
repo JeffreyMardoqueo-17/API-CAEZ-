@@ -39,11 +39,11 @@ BEGIN
         p.Nombre,
         p.Apellido,
         s.Nombre AS Sexo,
-        r.Nombre AS Role,
+        r.[Name] AS [Role],
         p.Telefono,
         p.Correo,
-        d.Direccion AS Direccion,
-        u.Nombre + ' ' + u.Apellido AS Administrador,
+        d.Nombre AS Direccion,
+        u.[Name] + ' ' + u.LastName AS Administrador,
         p.FechaRegistro
     FROM Padrino p
     INNER JOIN Sexo s ON p.IdSexo = s.Id
@@ -63,11 +63,11 @@ BEGIN
         p.Nombre,
         p.Apellido,
         s.Nombre AS Sexo,
-        r.Nombre AS Role,
+        r.[Name] AS [Role],
         p.Telefono,
         p.Correo,
-        d.Direccion AS Direccion,
-        u.Nombre + ' ' + u.Apellido AS Administrador,
+        d.[Nombre] AS Direccion,
+        u.[Name] + ' ' + u.LastName AS Administrador,
         p.FechaRegistro
     FROM Padrino p
     INNER JOIN Sexo s ON p.IdSexo = s.Id

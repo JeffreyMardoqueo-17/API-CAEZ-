@@ -54,7 +54,6 @@ const UserController = {
         if (!Name || !LastName || !Login || !Password || !IdRole) {
             return res.status(400).json({ msg: 'Todos los campos son requeridos' });
         }
-
         // Encriptar la contraseña
         const hashedPassword = await encryptPassword(Password);
         const Status = 1; // Estado activo por defecto

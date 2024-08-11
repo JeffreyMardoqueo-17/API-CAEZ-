@@ -127,7 +127,7 @@ BEGIN
     -- Actualizar un registro de la tabla Encargado basado en el ID proporcionado
     UPDATE Encargado
     SET 
-        Nombre = @Nombre,
+        Nombre = @Nombre, 
         Apellido = @Apellido,
         IdSexo = @IdSexo,
         IdRole = @IdRole,

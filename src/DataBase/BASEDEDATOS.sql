@@ -1,5 +1,10 @@
---CREATE DATABASE CaezPagos
---USE CaezPagos
+---- CREATE DATABASE
+--CREATE DATABASE PagosCAEZ;
+--GO
+
+---- USE DATABASE
+--USE PagosCAEZ;
+--GO
 
 -- TABLA Direccion
 CREATE TABLE Direccion(
@@ -131,7 +136,6 @@ CREATE TABLE Alumno(
     IdEnfermedad INT NULL FOREIGN KEY REFERENCES Enfermedad(Id),
     IdTipoDocumento INT NOT NULL FOREIGN KEY REFERENCES TipoDocumento(Id),
     NumDocumento VARCHAR(50) NOT NULL,
-    IdGrado INT NOT NULL FOREIGN KEY REFERENCES Grado(Id),
     IdTurno INT NOT NULL FOREIGN KEY REFERENCES Turno(Id),
     IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
     IdPadrino INT NULL FOREIGN KEY REFERENCES Padrino(Id),
@@ -140,11 +144,11 @@ CREATE TABLE Alumno(
 );
 GO
 
--- TABLA Grupo
-CREATE TABLE Grupo(
+-- TABLA AlumnoGrado (Intermedia para Alumno y Grado)
+CREATE TABLE AlumnoGrado(
     Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-    Nombre VARCHAR(50) NOT NULL,
-    IdAlumno INT NULL FOREIGN KEY REFERENCES Alumno(Id)
+    IdAlumno INT NOT NULL FOREIGN KEY REFERENCES Alumno(Id),
+    IdGrado INT NOT NULL FOREIGN KEY REFERENCES Grado(Id)
 );
 GO
 
@@ -190,10 +194,12 @@ CREATE TABLE InformacionFinanciera (
 );
 GO
 
--- REGISTRO PARA USAR EL SIS
+-- REGISTRO PARA USAR EL SISTEMA
 INSERT INTO Role ([Name])
-VALUES ('Administrador')
-go
----------------------------------------jeffreymardoqueo260
-INSERT INTO [User] ([Name], LastName, [Login], [Password], [Status], RegistrationDate, IdRole)
-VALUES ('Jeffrey', 'Mardoqueo', 'jeffreymardoqueo260@gmail.com', 'jeffreymardoqueo260', 1, SYSDATETIME(), 1)
+VALUES ('Administrador');
+GO
+
+---- REGISTRO DEL USUARIO ADMINISTRADOR
+--INSERT INTO [User] ([Name], LastName, [Login], [Password], [Status], RegistrationDate, IdRole)
+--VALUES ('Jeffrey', 'Mardoqueo', 'jeffreymardoqueo260@gmail.com', 'jeffreymardoqueo260', 1, SYSDATETIME(), 1);
+--GO
