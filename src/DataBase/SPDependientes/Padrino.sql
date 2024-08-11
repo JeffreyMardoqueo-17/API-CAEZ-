@@ -86,4 +86,31 @@ BEGIN
     WHERE Id = @Id;
 END;
 GO
-
+-- Procedimiento para actualizar un padrino
+CREATE PROCEDURE SPUpdatePadrino
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @IdSexo INT,
+    @IdRole INT,
+    @Telefono VARCHAR(50),
+    @Correo VARCHAR(30),
+    @IdDireccion INT,
+    @IdAdministrador INT,
+    @FechaRegistro DATETIME
+AS
+BEGIN
+    UPDATE Padrino
+    SET 
+        Nombre = @Nombre,
+        Apellido = @Apellido,
+        IdSexo = @IdSexo,
+        IdRole = @IdRole,
+        Telefono = @Telefono,
+        Correo = @Correo,
+        IdDireccion = @IdDireccion,
+        IdAdministrador = @IdAdministrador,
+        FechaRegistro = @FechaRegistro
+    WHERE Id = @Id;
+END;
+GO

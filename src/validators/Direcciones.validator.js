@@ -14,7 +14,7 @@ const ValidateCreateDireccion = [
         validateResult(req, res, next)
     }
 ];
-                                                                                                                                                                                                                
+
 const ValidateUpdateDireccion = [
     check('Nombre')
         .optional()

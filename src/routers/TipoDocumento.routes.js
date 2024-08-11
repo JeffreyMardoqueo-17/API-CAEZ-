@@ -6,6 +6,7 @@ import { ValidateCreateTipoDoc, ValidateUpdateTipoDoc } from '../validators/Tipo
 const route = Router();
 
 // Rutas
+//ya estan las validaciones d elos inputs solo faltan las del tocken
 route.get('/TiposDocumento', GetTiposDocumento);
 route.get('/TiposDocumento/:id', GetTipoDocumentoPorId);
 route.post('/TiposDocumento', ValidateCreateTipoDoc, PostTipoDocumento);

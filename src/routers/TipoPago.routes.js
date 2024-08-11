@@ -6,6 +6,7 @@ import { validateToken } from '../helpers/JWT';
 const route = Router();
 
 // Rutas
+//ya estan las validaciones d elos inputs solo faltan las del tocken
 route.get('/TiposPago', GetTiposPago);
 route.get('/TiposPago/:id', GetTipoPagoPorId);
 route.post('/TiposPago', ValidateCreateTipoPago, PostTipoPago);

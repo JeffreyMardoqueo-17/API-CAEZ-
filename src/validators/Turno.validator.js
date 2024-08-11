@@ -8,11 +8,11 @@ const ValidatePostTurno = [
         .isEmpty()
         .isString()
         .withMessage('El nombre debe ser un tipo texto no vacío')
-        .isLength({max: 50})
+        .isLength({ max: 50 })
         .withMessage('El nombre debe tener un máximo de 50 caracteres'),
-        (req, res, next) => { //verificar, retornar o que siga todo el flujo
-    validateResult(req, res, next)
-}
+    (req, res, next) => { //verificar, retornar o que siga todo el flujo
+        validateResult(req, res, next)
+    }
 ];
 
 const ValidatePutTurno = [
@@ -22,10 +22,10 @@ const ValidatePutTurno = [
         .isEmpty()
         .isString()
         .withMessage('El nombre debe ser un tipo texto no vacío')
-        .isLength({max: 50})
+        .isLength({ max: 50 })
         .withMessage('El nombre debe tener un máximo de 50 caracteres'),
-        (req, res, next) => { //verificar, retornar o que siga todo el flujo
-    validateResult(req, res, next)
-}
+    (req, res, next) => { //verificar, retornar o que siga todo el flujo
+        validateResult(req, res, next)
+    }
 ];
 export { ValidatePostTurno, ValidatePutTurno };

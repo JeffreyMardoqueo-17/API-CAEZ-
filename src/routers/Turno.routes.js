@@ -5,7 +5,7 @@ import { ValidatePostTurno, ValidatePutTurno } from '../validators/Turno.validat
 
 const route = Router();
 
-// Rutas
+// Rutas, aqui esta ya listo las validaciones, solo fatla la validaciones del tocken
 route.get('/Turnos', GetTurnos); // Ruta para obtener todos los turnos
 route.get('/Turnos/:id', GetTurnoPorId); // Ruta para obtener un turno por su ID
 route.post('/Turnos', ValidatePostTurno, PostTurno); // Ruta para insertar un nuevo turno

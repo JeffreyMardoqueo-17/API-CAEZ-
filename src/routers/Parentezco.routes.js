@@ -6,14 +6,7 @@ import { ValidateCreateParentezco, ValidateUpdateParentezco } from '../validator
 
 const route = Router();
 
-// Rutas
-// route.get('/Parentezcos', validateToken, GetParentezcos); 
-// route.get('/Parentezcos/:id', validateToken, GetParentezcoPorId);
-// route.post('/Parentezcos',ValidateCreateParentezco, validateToken, PostParentezco);
-// route.delete('/Parentezcos/:id', validateToken, DeleteParentezco); 
-// route.put('/Parentezcos/:id',ValidateUpdateParentezco, validateToken, PutParentezco); 
-// route.post('/Parentezcos/Buscar', validateToken, BuscarParentezcoPorTexto);
-
+//ya estan las validaciones d elos inputs solo faltan las del tocken
 route.get('/Parentezcos', GetParentezcos);
 route.get('/Parentezcos/:id', GetParentezcoPorId);
 route.post('/Parentezcos', ValidateCreateParentezco, PostParentezco);

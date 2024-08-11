@@ -1,6 +1,7 @@
 import { check } from 'express-validator';
 import { validateResult } from '../helpers/ValidateHeper';
 
+//validaciones, para registrar y actualizar grado
 const ValidateCreateGrado = [
     check('Nombre')
         .exists()
