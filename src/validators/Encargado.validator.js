@@ -4,8 +4,7 @@ import { validateResult } from '../helpers/ValidateHeper';
 const ValidatePostEncargado = [
     check('Nombre')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
         .matches(/^[a-zA-ZÁÉÍÓÚáéíóú\s]*$/)
         .isLength({ max: 50 })
@@ -13,8 +12,7 @@ const ValidatePostEncargado = [
 
     check('Apellido')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
         .matches(/^[a-zA-ZÁÉÍÓÚáéíóú\s]*$/)
         .isLength({ max: 50 })
@@ -22,66 +20,59 @@ const ValidatePostEncargado = [
 
     check('IdSexo')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdSexo debe ser un número entero'),
 
     check('IdRole')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdRole debe ser un número entero'),
 
     check('Telefono')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
-        .withMessage('El teléfono debe ser un tipo texto no vacío'),
+        .isLength({ max: 15 })
+        .withMessage('El teléfono debe ser un tipo texto no vacío y no más de 15 caracteres'),
 
     check('TelEmergencia')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
-        .isLength({ max: 10 })
-        .withMessage('El TelEmergencia debe ser un tipo texto no vacío y no más de 10 caracteres'),
+        .isLength({ max: 15 })
+        .withMessage('El TelEmergencia debe ser un tipo texto no vacío y no más de 15 caracteres'),
 
     check('Correo')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isEmail()
+        .normalizeEmail()
         .withMessage('El correo debe ser un correo electrónico válido'),
 
     check('IdDireccion')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdDireccion debe ser un número entero'),
 
     check('IdTipoDocumento')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdTipoDocumento debe ser un número entero'),
 
     check('NumDocumento')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
         .isLength({ max: 50 })
         .withMessage('El NumDocumento debe ser un tipo texto no vacío y no más de 50 caracteres'),
 
     check('IdAdministrador')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdAdministrador debe ser un número entero'),
 
@@ -89,18 +80,17 @@ const ValidatePostEncargado = [
         validateResult(req, res, next)
     }
 ];
+
 const ValidatePutEncargado = [
     check('id')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El id debe ser un número entero'),
 
     check('Nombre')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
         .matches(/^[a-zA-ZÁÉÍÓÚáéíóú\s]*$/)
         .isLength({ max: 50 })
@@ -108,8 +98,7 @@ const ValidatePutEncargado = [
 
     check('Apellido')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
         .matches(/^[a-zA-ZÁÉÍÓÚáéíóú\s]*$/)
         .isLength({ max: 50 })
@@ -117,66 +106,59 @@ const ValidatePutEncargado = [
 
     check('IdSexo')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdSexo debe ser un número entero'),
 
     check('IdRole')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdRole debe ser un número entero'),
 
     check('Telefono')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
-        .withMessage('El teléfono debe ser un tipo texto no vacío'),
+        .isLength({ max: 15 })
+        .withMessage('El teléfono debe ser un tipo texto no vacío y no más de 15 caracteres'),
 
     check('TelEmergencia')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
-        .isLength({ max: 10 })
-        .withMessage('El TelEmergencia debe ser un tipo texto no vacío y no más de 10 caracteres'),
+        .isLength({ max: 15 })
+        .withMessage('El TelEmergencia debe ser un tipo texto no vacío y no más de 15 caracteres'),
 
     check('Correo')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isEmail()
+        .normalizeEmail()
         .withMessage('El correo debe ser un correo electrónico válido'),
 
     check('IdDireccion')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdDireccion debe ser un número entero'),
 
     check('IdTipoDocumento')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdTipoDocumento debe ser un número entero'),
 
     check('NumDocumento')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isString()
         .isLength({ max: 50 })
         .withMessage('El NumDocumento debe ser un tipo texto no vacío y no más de 50 caracteres'),
 
     check('IdAdministrador')
         .exists()
-        .not()
-        .isEmpty()
+        .notEmpty()
         .isInt()
         .withMessage('El IdAdministrador debe ser un número entero'),
 
@@ -184,18 +166,5 @@ const ValidatePutEncargado = [
         validateResult(req, res, next)
     }
 ];
-const ValidateSearchEncargados = [
-    check('TextoBusqueda')
-        .exists()
-        .not()
-        .isEmpty()
-        .isString()
-        .isLength({ max: 50 })
-        .withMessage('El TextoBusqueda debe ser un tipo texto no vacío y no más de 50 caracteres'),
-    (req, res, next) => {
-        validateResult(req, res, next)
-    }
-];
 
-
-export { ValidatePostEncargado, ValidatePutEncargado, ValidateSearchEncargados};
+export { ValidatePostEncargado, ValidatePutEncargado };
