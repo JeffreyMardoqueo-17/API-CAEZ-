@@ -102,8 +102,9 @@ const PadrinoController = {
         const { id } = req.params;
         const { Nombre, Apellido, IdSexo, IdRole, Telefono, Correo, IdDireccion, IdAdministrador } = req.body;
         try {
-            // Ejecuta el procedimiento almacenado para actualizar un padrino existente.
-            await executeQuery('EXEC SPUpdatePadrino @Id, @No mbre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaRegistro', [
+            // Ejecuta el procedimiento almacenado para actualizar un padrino existente
+
+            await executeQuery('EXEC SPUpdatePadrino @Id, @Nombre, @Apellido, @IdSexo, @IdRole, @Telefono, @Correo, @IdDireccion, @IdAdministrador, @FechaRegistro', [
                 { name: 'Id', type: sql.Int, value: id },
                 { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
                 { name: 'Apellido', type: sql.VarChar(50), value: Apellido },

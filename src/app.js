@@ -17,6 +17,7 @@ import Role from './routers/Role.routes'
 import User from './routers/User.routes'
 import padrinoRouter from './routers/Padrino.routes';
 import Grupos from "./routers/Grupo.routes";
+import Sexo from './routers/Sexo.routes';
 const cors = require("cors");
 
 const app = express();
@@ -45,6 +46,7 @@ app.use(Role);
 app.use(User)
 app.use(padrinoRouter)
 app.use(Grupos)
+app.use(Sexo)
 // app.use(ActualizarFondo);//actualizar fondo 
 // app.use(Administradires);
 

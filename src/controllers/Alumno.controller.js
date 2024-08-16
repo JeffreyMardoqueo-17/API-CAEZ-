@@ -1,8 +1,6 @@
-import mssql from 'mssql';
-import { executeQuery, executeRawQuery } from '../helpers/dbHelper';
+import { executeQuery } from '../helpers/dbHelper';
 import sql from 'mssql';
 
-// Crear un nuevo alumno
 /**
  * Crea un nuevo alumno.
  * 
@@ -16,135 +14,92 @@ export async function createAlumno(req, res) {
         Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad,
         IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado
     } = req.body;
+
     try {
-        const FechaRegistro = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        const query = `EXEC SPCrearAlumno @Nombre='${Nombre}', @Apellido='${Apellido}', @FechaNacimiento='${FechaNacimiento}', 
-            @IdSexo=${IdSexo}, @IdRole=${IdRole}, @IdEncargado=${IdEncargado}, @IdEnfermedad=${IdEnfermedad}, 
-            @IdTipoDocumento=${IdTipoDocumento}, @NumDocumento='${NumDocumento}', @IdGrado=${IdGrado}, 
-            @IdTurno=${IdTurno}, @IdAdministrador=${IdAdministrador}, @IdPadrino=${IdPadrino}, 
-            @FechaRegistro='${FechaRegistro}', @EsBecado=${EsBecado}`;
-        const result = await executeRawQuery(query);
-        if (result.recordset && result.recordset.length > 0) {
+        // Definir los parámetros de entrada del procedimiento almacenado
+        await executeQuery('SPCrearAlumno @Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @EsBecado', [
+            { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
+            { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
+            { name: 'FechaNacimiento', type: sql.Date, value: FechaNacimiento },
+            { name: 'IdSexo', type: sql.Int, value: IdSexo },
+            { name: 'IdRole', type: sql.Int, value: IdRole },
+            { name: 'IdEncargado', type: sql.Int, value: IdEncargado },
+            { name: 'IdEnfermedad', type: sql.Int, value: IdEnfermedad },
+            { name: 'IdTipoDocumento', type: sql.Int, value: IdTipoDocumento },
+            { name: 'NumDocumento', type: sql.VarChar(50), value: NumDocumento },
+            { name: 'IdGrado', type: sql.Int, value: IdGrado },
+            { name: 'IdTurno', type: sql.Int, value: IdTurno },
+            { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
+            { name: 'IdPadrino', type: sql.Int, value: IdPadrino },
+            { name: 'EsBecado', type: sql.Bit, value: EsBecado }
+        ]);
+
+        // Verificar el resultado
+        if (result && result.recordset.length > 0) {
             res.status(201).json({ msg: 'Alumno creado exitosamente', IdAlumno: result.recordset[0].IdAlumno });
         } else {
             throw new Error('No se pudo crear el alumno');
         }
     } catch (error) {
-        console.error(`Error al crear el alumno: ${error}`);
+        console.error(`Error al crear el alumno: ${error.message}`);
         res.status(500).json({ msg: 'Error al crear el alumno' });
     }
 }
-
 /**
- * Actualiza un alumno existente.
+ * Obtiene una lista de todos los alumnos.
  * 
  * @param {Object} req - El objeto de solicitud HTTP.
  * @param {Object} res - El objeto de respuesta HTTP.
- * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la actualización del alumno.
- * @throws {Error} - Si no se puede actualizar el alumno.
+ * @returns {Promise<void>} - Una promesa que resuelve con la lista de alumnos.
  */
-export async function updateAlumno(req, res) {
-    const { id: IdAlumno } = req.params; // Tomar IdAlumno desde req.params
-    const {
-        Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad,
-        IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado
-    } = req.body;
-
+export async function obtenerTodosLosAlumnos(req, res) {
     try {
-        // Construir la consulta SQL dinámicamente basado en los campos presentes en req.body
-        const queryParts = [`@IdAlumno=${IdAlumno}`];
+        // Ejecutar el procedimiento almacenado sin parámetros
+        const result = await executeQuery('SPObtenerTodosAlumnos');
 
-        if (Nombre !== undefined) queryParts.push(`@Nombre='${Nombre}'`);
-        if (Apellido !== undefined) queryParts.push(`@Apellido='${Apellido}'`);
-        if (FechaNacimiento !== undefined) queryParts.push(`@FechaNacimiento='${FechaNacimiento}'`);
-        if (IdSexo !== undefined) queryParts.push(`@IdSexo=${IdSexo}`);
-        if (IdRole !== undefined) queryParts.push(`@IdRole=${IdRole}`);
-        if (IdEncargado !== undefined) queryParts.push(`@IdEncargado=${IdEncargado}`);
-        if (IdEnfermedad !== undefined) queryParts.push(`@IdEnfermedad=${IdEnfermedad}`);
-        if (IdTipoDocumento !== undefined) queryParts.push(`@IdTipoDocumento=${IdTipoDocumento}`);
-        if (NumDocumento !== undefined) queryParts.push(`@NumDocumento='${NumDocumento}'`);
-        if (IdGrado !== undefined) queryParts.push(`@IdGrado=${IdGrado}`);
-        if (IdTurno !== undefined) queryParts.push(`@IdTurno=${IdTurno}`);
-        if (IdAdministrador !== undefined) queryParts.push(`@IdAdministrador=${IdAdministrador}`);
-        if (IdPadrino !== undefined) queryParts.push(`@IdPadrino=${IdPadrino}`);
-        if (EsBecado !== undefined) queryParts.push(`@EsBecado=${EsBecado ? 1 : 0}`);
-
-        const query = `EXEC SPActualizarAlumno ${queryParts.join(', ')}`;
-
-        const result = await executeRawQuery(query);
-
+        // Verificar si hay resultados
         if (result.recordset && result.recordset.length > 0) {
-            res.status(200).json({ msg: 'Alumno actualizado exitosamente', IdAlumno: result.recordset[0].IdAlumno });
+            return res.status(200).json(result.recordset);
         } else {
-            throw new Error('No se pudo actualizar el alumno');
+            // No se encontraron alumnos
+            return res.status(204).send({ msg: 'No hay alumnos mi rey' }); // Enviar 204 sin contenido
         }
     } catch (error) {
-        console.error(`Error al actualizar el alumno: ${error}`);
-        res.status(500).json({ msg: 'Error al actualizar el alumno' });
-    }
-}
-
-
-
-// Obtener alumnos por grados
-/**
- * Obtiene los alumnos por grupos.
- * @param {Object} req - El objeto de solicitud.
- * @param {Object} res - El objeto de respuesta.
- * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la operación.
- */
-export async function getAlumnosPorGrupos(req, res) {
-    const { Grupo } = req.body;
-    try {
-        const query = `EXEC SPGetAlumnosPorGrupo @Grupo='${Grupo}'`;
-        const result = await executeRawQuery(query);
-        if (result.recordset && result.recordset.length > 0) {
-            res.status(200).json(result.recordset);
-        } else {
-            res.status(404).json({ msg: 'No se encontraron alumnos para el grupo especificado' });
+        console.error(`Error al obtener todos los alumnos: ${error}`);
+        if (!res.headersSent) {
+            return res.status(500).json({ msg: 'Error al obtener los alumnos.' });
         }
-    } catch (error) {
-        console.error(`Error al obtener los alumnos: ${error}`);
-        res.status(500).json({ msg: 'Error al obtener los alumnos' });
     }
 }
 
-// Obtener todos los alumnos
-/**
- * Obtiene todos los alumnos.
- * 
- * @param {Object} req - El objeto de solicitud HTTP.
- * @param {Object} res - El objeto de respuesta HTTP.
- * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la operación.
- */
-export const getAlumnos = async (req, res) => {
-    try {
-        const result = await executeQuery(`EXEC SPTraerTodosLosAlumnos`);
-        res.status(200).json(result.recordset);
-    } catch (error) {
-        console.error(`Error al obtener los alumnos: ${error}`);
-        res.status(500).json({ msg: 'Error al obtener los alumnos' });
-    }
-}
-
-// Obtener alumno por ID
+// Obtener un alumno por ID
 /**
  * Obtiene un alumno por su ID.
+ * 
  * @param {Object} req - El objeto de solicitud HTTP.
  * @param {Object} res - El objeto de respuesta HTTP.
- * @returns {Promise<void>} - Una promesa que resuelve cuando se completa la operación.
+ * @returns {Promise<void>} - Una promesa que resuelve con los detalles del alumno.
  */
-export const getAlumnosbyID = async (req, res) => {
+export async function obtenerAlumnoPorID(req, res) {
     const { id } = req.params;
-    try {
-        const result = await executeQuery('EXEC SPTraerAlumnoPorId @Id', [{ name: 'Id', type: sql.Int, value: id }]);
-        if (result.recordset.length > 0)
-            res.status(200).json(result.recordset[0]);
-        else
-            res.status(404).json({ msg: 'Alumno no encontrado' });
 
+    try {
+        // Definir el parámetro de entrada
+        const inputParams = [
+            { name: 'Id', type: sql.Int, value: id }
+        ];
+        // Ejecutar el procedimiento almacenado con el parámetro
+        const result = await executeQuery('SPObtenerAlumnoPorID', inputParams);
+        // Verificar si hay resultados
+        if (result.recordset && result.recordset.length > 0) {
+            return res.status(200).json(result.recordset[0]);
+        } else {
+            return res.status(404).json({ msg: 'Alumno no encontrado.' });
+        }
     } catch (error) {
-        console.error(`Error al obtener el alumno: ${error}`);
-        res.status(500).json({ msg: 'Error al obtener el alumno' });
+        console.error(`Error al obtener el alumno por ID: ${error}`);
+        if (!res.headersSent) {
+            return res.status(500).json({ msg: 'Error al obtener el alumno.' });
+        }
     }
 }

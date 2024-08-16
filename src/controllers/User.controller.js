@@ -69,7 +69,6 @@ const UserController = {
                 { name: 'RegistrationDate', type: sql.DateTime, value: RegistrationDate },
                 { name: 'IdRole', type: sql.Int, value: IdRole }
             ]);
-
             res.status(201).json({ msg: 'Usuario creado exitosamente', userId: result.recordset[0].Id });
         } catch (error) {
             console.error(`Error al crear el usuario: ${error}`);
