@@ -12,7 +12,8 @@ CREATE PROCEDURE SPCrearAlumno
     @IdTurno INT,
     @IdAdministrador INT,
     @IdPadrino INT = NULL,
-    @EsBecado BIT = 0
+    @EsBecado BIT = 0,
+    @IdAlumno INT OUTPUT
 AS
 BEGIN
     BEGIN TRY
@@ -24,7 +25,7 @@ BEGIN
         VALUES (@Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdTurno, @IdAdministrador, @IdPadrino, GETDATE(), @EsBecado);
 
         -- Obtener el Id del alumno recién creado
-        DECLARE @IdAlumno INT = SCOPE_IDENTITY();
+        SET @IdAlumno = SCOPE_IDENTITY();
 
         -- Verificar si el alumno ya está asignado a ese grado
         IF NOT EXISTS (SELECT 1 FROM AlumnoGrado WHERE IdAlumno = @IdAlumno AND IdGrado = @IdGrado)
@@ -117,5 +118,98 @@ BEGIN
     INNER JOIN [User] u ON a.IdAdministrador = u.Id
     LEFT JOIN Padrino p ON a.IdPadrino = p.Id
     WHERE a.Id = @Id;
+END;
+GO
+------------SP PARA MODIFICAR A LOS ALUMNOS
+CREATE PROCEDURE SPModificarAlumno
+    @Id INT,
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @FechaNacimiento DATE,
+    @IdSexo INT,
+    @IdRole INT,
+    @IdEncargado INT,
+    @IdEnfermedad INT = NULL,
+    @IdTipoDocumento INT,
+    @NumDocumento VARCHAR(50),
+    @IdGrado INT,
+    @IdTurno INT,
+    @IdAdministrador INT,
+    @IdPadrino INT = NULL,
+    @EsBecado BIT = 0
+AS
+BEGIN
+    BEGIN TRY
+        -- Inicio de la transacción
+        BEGIN TRANSACTION;
+
+        -- Actualizar datos del alumno en la tabla Alumno
+        UPDATE Alumno
+        SET 
+            Nombre = @Nombre,
+            Apellido = @Apellido,
+            FechaNacimiento = @FechaNacimiento,
+            IdSexo = @IdSexo,
+            IdRole = @IdRole,
+            IdEncargado = @IdEncargado,
+            IdEnfermedad = @IdEnfermedad,
+            IdTipoDocumento = @IdTipoDocumento,
+            NumDocumento = @NumDocumento,
+            IdTurno = @IdTurno,
+            IdAdministrador = @IdAdministrador,
+            IdPadrino = @IdPadrino,
+            EsBecado = @EsBecado
+        WHERE 
+            Id = @Id;
+
+        -- Actualizar la relación en AlumnoGrado si es necesario
+        IF EXISTS (SELECT 1 FROM AlumnoGrado WHERE IdAlumno = @Id)
+        BEGIN
+            UPDATE AlumnoGrado
+            SET IdGrado = @IdGrado
+            WHERE IdAlumno = @Id;
+        END
+        ELSE
+        BEGIN
+            -- Si no existe, agregar la relación
+            INSERT INTO AlumnoGrado (IdAlumno, IdGrado)
+            VALUES (@Id, @IdGrado);
+        END
+
+        -- Confirmar la transacción
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Si ocurre un error, revertir la transacción
+        ROLLBACK TRANSACTION;
+        THROW; -- Lanzar el error para que se muestre en el cliente
+    END CATCH
+END;
+GO
+---------SP PARA ELIMINAR
+CREATE PROCEDURE SPEliminarAlumno
+    @Id INT
+AS
+BEGIN
+    BEGIN TRY
+        -- Inicio de la transacción
+        BEGIN TRANSACTION;
+
+        -- Eliminar la relación del alumno en AlumnoGrado
+        DELETE FROM AlumnoGrado
+        WHERE IdAlumno = @Id;
+
+        -- Eliminar el alumno de la tabla Alumno
+        DELETE FROM Alumno
+        WHERE Id = @Id;
+
+        -- Confirmar la transacción
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        -- Si ocurre un error, revertir la transacción
+        ROLLBACK TRANSACTION;
+        THROW; -- Lanzar el error para que se muestre en el cliente
+    END CATCH
 END;
 GO
