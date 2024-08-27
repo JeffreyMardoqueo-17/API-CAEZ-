@@ -16,27 +16,33 @@ export async function createAlumno(req, res) {
     } = req.body;
 
     try {
-        // Definir la consulta para ejecutar el procedimiento almacenado
-        const result = await executeQuery('SPCrearAlumno', [
-            { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
-            { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
-            { name: 'FechaNacimiento', type: sql.Date, value: FechaNacimiento },
-            { name: 'IdSexo', type: sql.Int, value: IdSexo },
-            { name: 'IdRole', type: sql.Int, value: IdRole },
-            { name: 'IdEncargado', type: sql.Int, value: IdEncargado },
-            { name: 'IdEnfermedad', type: sql.Int, value: IdEnfermedad },
-            { name: 'IdTipoDocumento', type: sql.Int, value: IdTipoDocumento },
-            { name: 'NumDocumento', type: sql.VarChar(50), value: NumDocumento },
-            { name: 'IdGrado', type: sql.Int, value: IdGrado },
-            { name: 'IdTurno', type: sql.Int, value: IdTurno },
-            { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
-            { name: 'IdPadrino', type: sql.Int, value: IdPadrino },
-            { name: 'EsBecado', type: sql.Bit, value: EsBecado },
-            { name: 'IdAlumno', type: sql.Int, value: null, output: true } // Parámetro de salida
-        ]);
+        // Verificar si req.body contiene los datos esperados
+        console.log('Datos recibidos:', req.body);
 
-        // Verificar el resultado
-        if (result && result.output && result.output.IdAlumno) {
+        // Configurar la conexión
+        const pool = await sql.connect(/* tu configuración de conexión */);
+
+        // Ejecutar el procedimiento almacenado
+        const result = await pool.request()
+            .input('Nombre', sql.VarChar(50), Nombre)
+            .input('Apellido', sql.VarChar(50), Apellido)
+            .input('FechaNacimiento', sql.Date, FechaNacimiento)
+            .input('IdSexo', sql.Int, IdSexo)
+            .input('IdRole', sql.Int, IdRole)
+            .input('IdEncargado', sql.Int, IdEncargado)
+            .input('IdEnfermedad', sql.Int, IdEnfermedad || null)
+            .input('IdTipoDocumento', sql.Int, IdTipoDocumento)
+            .input('NumDocumento', sql.VarChar(50), NumDocumento)
+            .input('IdGrado', sql.Int, IdGrado)
+            .input('IdTurno', sql.Int, IdTurno)
+            .input('IdAdministrador', sql.Int, IdAdministrador)
+            .input('IdPadrino', sql.Int, IdPadrino || null)
+            .input('EsBecado', sql.Bit, EsBecado || false)
+            .output('IdAlumno', sql.Int)
+            .execute('SPCrearAlumno');  // Aquí el nombre del procedimiento almacenado debe coincidir
+
+        // Verificar si se creó el alumno
+        if (result.output.IdAlumno) {
             res.status(201).json({ msg: 'Alumno creado exitosamente', IdAlumno: result.output.IdAlumno });
         } else {
             throw new Error('No se pudo crear el alumno');
@@ -46,6 +52,7 @@ export async function createAlumno(req, res) {
         res.status(500).json({ msg: 'Error al crear el alumno' });
     }
 }
+
 /**
  * Obtiene una lista de todos los alumnos.
  * 
