@@ -11,8 +11,8 @@ import sql from 'mssql';
  */
 export async function createAlumno(req, res) {
     const {
-        Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad,
-        IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado
+        Nombre, Apellido, FechaNacimiento, Sexo, Role, Encargado, Enfermedad,
+        TipoDocumento, NumDocumento, Grado, Turno, Administrador, Padrino, EsBecado
     } = req.body;
 
     try {
@@ -27,16 +27,16 @@ export async function createAlumno(req, res) {
             .input('Nombre', sql.VarChar(50), Nombre)
             .input('Apellido', sql.VarChar(50), Apellido)
             .input('FechaNacimiento', sql.Date, FechaNacimiento)
-            .input('IdSexo', sql.Int, IdSexo)
-            .input('IdRole', sql.Int, IdRole)
-            .input('IdEncargado', sql.Int, IdEncargado)
-            .input('IdEnfermedad', sql.Int, IdEnfermedad || null)
-            .input('IdTipoDocumento', sql.Int, IdTipoDocumento)
+            .input('IdSexo', sql.Int, Sexo)  // Mapea 'Sexo' a 'IdSexo'
+            .input('IdRole', sql.Int, Role)  // Mapea 'Role' a 'IdRole'
+            .input('IdEncargado', sql.Int, Encargado)  // Mapea 'Encargado' a 'IdEncargado'
+            .input('IdEnfermedad', sql.Int, Enfermedad || null)  // Mapea 'Enfermedad' a 'IdEnfermedad'
+            .input('IdTipoDocumento', sql.Int, TipoDocumento)  // Mapea 'TipoDocumento' a 'IdTipoDocumento'
             .input('NumDocumento', sql.VarChar(50), NumDocumento)
-            .input('IdGrado', sql.Int, IdGrado)
-            .input('IdTurno', sql.Int, IdTurno)
-            .input('IdAdministrador', sql.Int, IdAdministrador)
-            .input('IdPadrino', sql.Int, IdPadrino || null)
+            .input('IdGrado', sql.Int, Grado)  // Mapea 'Grado' a 'IdGrado'
+            .input('IdTurno', sql.Int, Turno)  // Mapea 'Turno' a 'IdTurno'
+            .input('IdAdministrador', sql.Int, Administrador)  // Mapea 'Administrador' a 'IdAdministrador'
+            .input('IdPadrino', sql.Int, Padrino || null)  // Mapea 'Padrino' a 'IdPadrino'
             .input('EsBecado', sql.Bit, EsBecado || false)
             .output('IdAlumno', sql.Int)
             .execute('SPCrearAlumno');  // Aquí el nombre del procedimiento almacenado debe coincidir
