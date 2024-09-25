@@ -145,10 +145,10 @@ const UserController = {
     },
 
     /**
-     * Inicia sesión de un usuario.
-     * @param {Object} req - La solicitud HTTP.
-     * @param {Object} res - La respuesta HTTP.
-     */
+    * Inicia sesión de un usuario.
+    * @param {Object} req - La solicitud HTTP.
+    * @param {Object} res - La respuesta HTTP.
+    */
     async loginUser(req, res) {
         const { Login, Password } = req.body;
 
@@ -158,34 +158,50 @@ const UserController = {
         }
 
         try {
-            // Ejecutar el procedimiento almacenado para verificar el usuario
+            // Ejecutar el procedimiento almacenado para obtener el usuario por login
             const user = await executeQuery('EXEC SPUserGetByLogin @Login', [
                 { name: 'Login', type: sql.NVarChar(100), value: Login }
             ]);
 
+            // Verificar si se encontró el usuario
             if (user.recordset.length === 0) {
                 return res.status(404).json({ msg: 'Usuario no encontrado' });
             }
 
             const userData = user.recordset[0];
 
+            // Verificar si userData tiene los datos esperados
+            console.log("Datos del usuario:", userData);
+
             // Verificar si la contraseña es correcta
-            const isPasswordCorrect = await verifyPassword(Password, userData.Password);
+            const isPasswordCorrect = await verifyPassword(Password, userData.Password); // Verificar hash
             if (!isPasswordCorrect) {
-                console.log(isPasswordCorrect)
                 return res.status(400).json({ msg: 'Contraseña incorrecta' });
             }
 
             // Generar y devolver el token
             const token = generateAndStoreToken(userData.Id);
 
-            // Enviar el token en la respuesta
-            res.status(200).json({ msg: 'Inicio de sesión exitoso', token });
+            // Enviar la respuesta con el token y los datos del usuario
+            res.status(200).json({
+                msg: 'Inicio de sesión exitoso',
+                token,
+                user: {
+                    id: userData.Id,
+                    name: userData.Name,
+                    lastName: userData.LastName,
+                    login: userData.Login,
+                    status: userData.Status,
+                    registrationDate: userData.RegistrationDate,
+                    role: userData.RoleName // Se devuelve el nombre del rol
+                }
+            });
         } catch (error) {
             console.error(`Error al iniciar sesión: ${error}`);
             res.status(500).json({ msg: 'Error al iniciar sesión', error: error.message });
         }
     }
+
 };
 
 export default UserController;

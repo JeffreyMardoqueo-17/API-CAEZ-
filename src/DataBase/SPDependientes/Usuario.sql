@@ -116,52 +116,74 @@
         WHERE Id = @Id;
     END;
     GO
-CREATE PROCEDURE SPUserLogin
-    @Login NVARCHAR(100),
-    @Password NVARCHAR(100)
+
+
+-- CREATE PROCEDURE SPUserLogin
+--     @Login NVARCHAR(100),
+--     @Password NVARCHAR(100)
+-- AS
+-- BEGIN
+--     -- Verifica si el usuario con el login proporcionado existe
+--     IF EXISTS (SELECT 1 FROM [User] WHERE [Login] = @Login)
+--     BEGIN
+--         -- Verifica si el Login y Password son correctos
+--         DECLARE @UserId INT;
+--         SELECT 
+--             @UserId = Id
+--         FROM 
+--             [User]
+--         WHERE 
+--             [Login] = @Login 
+--             AND [Password] = @Password;
+
+--         -- Si se encontró el usuario con ese login y contraseña
+--         IF @UserId IS NOT NULL
+--         BEGIN
+--             -- Devuelve la información del usuario
+--             SELECT 
+--                 Id,
+--                 [Name],
+--                 LastName,
+--                 [Login],
+--                 [Status],
+--                 RegistrationDate,
+--                 IdRole
+--             FROM 
+--                 [User]
+--             WHERE 
+--                 Id = @UserId;
+--         END
+--         ELSE
+--         BEGIN
+--             -- Si la contraseña es incorrecta, devuelve un mensaje de error
+--             SELECT 'Login o contraseña incorrectos' AS ErrorMessage;
+--         END
+--     END
+--     ELSE
+--     BEGIN
+--         -- Si el usuario no existe con ese login, devuelve un mensaje de error
+--         SELECT 'Usuario no encontrado' AS ErrorMessage;
+--     END
+-- END;
+-- GO
+CREATE PROCEDURE SPUserGetByLogin
+    @Login NVARCHAR(100)
 AS
 BEGIN
-    -- Verifica si el usuario con el login proporcionado existe
-    IF EXISTS (SELECT 1 FROM [User] WHERE [Login] = @Login)
-    BEGIN
-        -- Verifica si el Login y Password son correctos
-        DECLARE @UserId INT;
-        SELECT 
-            @UserId = Id
-        FROM 
-            [User]
-        WHERE 
-            [Login] = @Login 
-            AND [Password] = @Password;
-
-        -- Si se encontró el usuario con ese login y contraseña
-        IF @UserId IS NOT NULL
-        BEGIN
-            -- Devuelve la información del usuario
-            SELECT 
-                Id,
-                [Name],
-                LastName,
-                [Login],
-                [Status],
-                RegistrationDate,
-                IdRole
-            FROM 
-                [User]
-            WHERE 
-                Id = @UserId;
-        END
-        ELSE
-        BEGIN
-            -- Si la contraseña es incorrecta, devuelve un mensaje de error
-            SELECT 'Login o contraseña incorrectos' AS ErrorMessage;
-        END
-    END
-    ELSE
-    BEGIN
-        -- Si el usuario no existe con ese login, devuelve un mensaje de error
-        SELECT 'Usuario no encontrado' AS ErrorMessage;
-    END
+    -- Selecciona el usuario con el Login proporcionado
+    SELECT 
+        Id,
+        [Name],
+        LastName,
+        [Login],
+        [Password],  -- Aquí se devuelve el hash de la contraseña almacenada
+        [Status],
+        RegistrationDate,
+        IdRole
+    FROM 
+        [User]
+    WHERE 
+        [Login] = @Login;
 END;
 GO
 
