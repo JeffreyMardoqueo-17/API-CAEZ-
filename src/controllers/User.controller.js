@@ -53,7 +53,6 @@ const UserController = {
     "Password": "12345",
     "IdRole":1
 }
-
      */
     async createUser(req, res) {
         const { Name, LastName, Login, Password, IdRole } = req.body;
@@ -200,9 +199,33 @@ const UserController = {
             console.error(`Error al iniciar sesión: ${error}`);
             res.status(500).json({ msg: 'Error al iniciar sesión', error: error.message });
         }
+    },
+
+    /**
+* Cierra la sesión de un usuario (logout).
+* @param {Object} req - La solicitud HTTP.
+* @param {Object} res - La respuesta HTTP.
+*/
+    async logoutUser(req, res) {
+        try {
+            const token = req.headers.authorization?.split(' ')[1]; // Obtener el token desde los headers
+            if (!token) {
+                return res.status(400).json({ msg: 'Token no proporcionado' });
+            }
+
+            // En este punto podrías manejar blacklisting de tokens o registro de actividad si fuera necesario.
+            // Si no, simplemente devolvemos una respuesta exitosa.
+
+            return res.status(200).json({ msg: 'Sesión cerrada exitosamente' });
+        } catch (error) {
+            console.error(`Error al cerrar sesión: ${error}`);
+            res.status(500).json({ msg: 'Error al cerrar sesión', error: error.message });
+        }
     }
 
+
 };
+
 
 export default UserController;
 

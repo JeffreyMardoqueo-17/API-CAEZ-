@@ -12,4 +12,7 @@ router.delete('/users/:id', UserController.deleteUser);
 router.post('/login', UserController.loginUser);
 // router.put('/users/:id/password', UserController.changePassword);
 
+
+router.post('/logout', validateToken, UserController.logoutUser); // Nueva ruta de logout
+// router.put('/users/:id/password', UserController.changePassword);
 export default router;
