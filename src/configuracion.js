@@ -1,6 +1,6 @@
-import {config} from 'dotenv'
+import { config } from 'dotenv'
 config();
 
 export default {
-    port: 3000
+    port: 9000
 }

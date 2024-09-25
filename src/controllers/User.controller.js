@@ -46,6 +46,14 @@ const UserController = {
      * Crea un nuevo usuario.
      * @param {Object} req - La solicitud HTTP.
      * @param {Object} res - La respuesta HTTP.
+     * {
+    "Name": "Jeffrey",
+    "LastName": "Mardoqueo",
+    "Login": "jeffrey@gmail.com",
+    "Password": "12345",
+    "IdRole":1
+}
+
      */
     async createUser(req, res) {
         const { Name, LastName, Login, Password, IdRole } = req.body;

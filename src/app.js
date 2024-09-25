@@ -25,7 +25,7 @@ const port = configuracion.port; // Define la variable port utilizando const
 
 app.set('port', port);
 
-app.use(cors()); //aqui instanciamos los cors
+app.use(cors()); // 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

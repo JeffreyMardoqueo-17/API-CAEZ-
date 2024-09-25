@@ -140,17 +140,12 @@ CREATE TABLE Alumno(
     IdAdministrador INT NOT NULL FOREIGN KEY REFERENCES [User](Id),
     IdPadrino INT NULL FOREIGN KEY REFERENCES Padrino(Id),
     FechaRegistro DATETIME NOT NULL,
-    EsBecado BIT NOT NULL DEFAULT 0 -- 0 para no becado, 1 para becado
+    EsBecado BIT NOT NULL DEFAULT 0, -- 0 para no becado, 1 para becado
+    IdGrado INT NOT NULL FOREIGN KEY REFERENCES Grado(Id) -- Almacena el grado directamente
 );
 GO
 
--- TABLA AlumnoGrado (Intermedia para Alumno y Grado)
-CREATE TABLE AlumnoGrado(
-    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-    IdAlumno INT NOT NULL FOREIGN KEY REFERENCES Alumno(Id),
-    IdGrado INT NOT NULL FOREIGN KEY REFERENCES Grado(Id)
-);
-GO
+
 
 -- TABLA Pago
 CREATE TABLE Pago (
