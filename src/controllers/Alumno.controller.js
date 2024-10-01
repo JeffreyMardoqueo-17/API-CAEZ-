@@ -16,42 +16,41 @@ export async function createAlumno(req, res) {
     } = req.body;
 
     try {
-        // Verificar si req.body contiene los datos esperados
-        console.log('Datos recibidos:', req.body);
-
-        // Configurar la conexión
-        const pool = await sql.connect(/* tu configuración de conexión */);
+        // Determinar si se debe asignar un padrino o dejarlo como null
+        const idPadrino = EsBecado ? Padrino : null;
 
         // Ejecutar el procedimiento almacenado
-        const result = await pool.request()
-            .input('Nombre', sql.VarChar(50), Nombre)
-            .input('Apellido', sql.VarChar(50), Apellido)
-            .input('FechaNacimiento', sql.Date, FechaNacimiento)
-            .input('IdSexo', sql.Int, Sexo)  // Mapea 'Sexo' a 'IdSexo'
-            .input('IdRole', sql.Int, Role)  // Mapea 'Role' a 'IdRole'
-            .input('IdEncargado', sql.Int, Encargado)  // Mapea 'Encargado' a 'IdEncargado'
-            .input('IdEnfermedad', sql.Int, Enfermedad || null)  // Mapea 'Enfermedad' a 'IdEnfermedad'
-            .input('IdTipoDocumento', sql.Int, TipoDocumento)  // Mapea 'TipoDocumento' a 'IdTipoDocumento'
-            .input('NumDocumento', sql.VarChar(50), NumDocumento)
-            .input('IdGrado', sql.Int, Grado)  // Mapea 'Grado' a 'IdGrado'
-            .input('IdTurno', sql.Int, Turno)  // Mapea 'Turno' a 'IdTurno'
-            .input('IdAdministrador', sql.Int, Administrador)  // Mapea 'Administrador' a 'IdAdministrador'
-            .input('IdPadrino', sql.Int, Padrino || null)  // Mapea 'Padrino' a 'IdPadrino'
-            .input('EsBecado', sql.Bit, EsBecado || false)
-            .output('IdAlumno', sql.Int)
-            .execute('SPCrearAlumno');  // Aquí el nombre del procedimiento almacenado debe coincidir
+        const result = await executeQuery('EXEC SPCrearAlumno @Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @EsBecado', [
+            { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
+            { name: 'Apellido', type: sql.VarChar(50), value: Apellido },
+            { name: 'FechaNacimiento', type: sql.Date, value: FechaNacimiento },
+            { name: 'IdSexo', type: sql.Int, value: Sexo },
+            { name: 'IdRole', type: sql.Int, value: Role },
+            { name: 'IdEncargado', type: sql.Int, value: Encargado },
+            { name: 'IdEnfermedad', type: sql.Int, value: Enfermedad || null },
+            { name: 'IdTipoDocumento', type: sql.Int, value: TipoDocumento },
+            { name: 'NumDocumento', type: sql.VarChar(50), value: NumDocumento },
+            { name: 'IdGrado', type: sql.Int, value: Grado },
+            { name: 'IdTurno', type: sql.Int, value: Turno },
+            { name: 'IdAdministrador', type: sql.Int, value: Administrador },
+            // Aquí se evalúa si EsBecado es true, se envía el padrino, de lo contrario null
+            { name: 'IdPadrino', type: sql.Int, value: idPadrino },
+            { name: 'EsBecado', type: sql.Bit, value: EsBecado ? 1 : 0 }
+        ]);
 
         // Verificar si se creó el alumno
-        if (result.output.IdAlumno) {
-            res.status(201).json({ msg: 'Alumno creado exitosamente', IdAlumno: result.output.IdAlumno });
+        if (result.rowsAffected[0] > 0) {
+            res.status(201).json({ msg: 'Alumno creado exitosamente' });
         } else {
             throw new Error('No se pudo crear el alumno');
         }
     } catch (error) {
         console.error(`Error al crear el alumno: ${error.message}`);
+        console.log(result)
         res.status(500).json({ msg: 'Error al crear el alumno' });
     }
 }
+
 
 /**
  * Obtiene una lista de todos los alumnos.
@@ -62,23 +61,19 @@ export async function createAlumno(req, res) {
  */
 export async function obtenerTodosLosAlumnos(req, res) {
     try {
-        // Ejecutar el procedimiento almacenado sin parámetros
-        const result = await executeQuery('SPObtenerTodosAlumnos');
+        const result = await executeQuery('EXEC SPObtenerTodosAlumnos');
 
-        // Verificar si hay resultados
-        if (result.recordset && result.recordset.length > 0) {
+        if (result.recordset.length > 0) {
             return res.status(200).json(result.recordset);
         } else {
-            // No se encontraron alumnos
-            return res.status(204).send({ msg: 'No hay alumnos mi rey' }); // Enviar 204 sin contenido
+            return res.status(204).json({ msg: 'No se encontraron alumnos.' });
         }
     } catch (error) {
         console.error(`Error al obtener todos los alumnos: ${error}`);
-        if (!res.headersSent) {
-            return res.status(500).json({ msg: 'Error al obtener los alumnos.' });
-        }
+        return res.status(500).json({ msg: 'Error al obtener los alumnos.' });
     }
 }
+
 
 /**
  * Obtiene un alumno por su ID.
@@ -91,19 +86,18 @@ export async function obtenerAlumnoPorID(req, res) {
     const { id } = req.params;
 
     try {
-        // Ejecuta el procedimiento almacenado directamente con la consulta SQL
-        const result = await executeQuery(`EXEC SPObtenerAlumnoPorID @Id`, [
+        const result = await executeQuery('EXEC SPObtenerAlumnoPorID @Id', [
             { name: 'Id', type: sql.Int, value: id }
         ]);
 
         if (result.recordset.length > 0) {
-            res.status(200).json(result.recordset[0]);
+            return res.status(200).json(result.recordset[0]);
         } else {
-            res.status(404).json({ msg: 'Alumno no encontrado' });
+            return res.status(404).json({ msg: 'Alumno no encontrado' });
         }
     } catch (error) {
         console.error(`Error al obtener el alumno por ID: ${error}`);
-        res.status(500).json({ msg: 'Error al obtener el alumno' });
+        return res.status(500).json({ msg: 'Error al obtener el alumno' });
     }
 }
 
@@ -134,14 +128,13 @@ export async function obtenerAlumnoPorID(req, res) {
 
  */
 export async function updateAlumno(req, res) {
-    const { id } = req.params; // Obtener el id de los parámetros
+    const { id } = req.params;
     const {
         Nombre, Apellido, FechaNacimiento, IdSexo, IdRole, IdEncargado, IdEnfermedad,
         IdTipoDocumento, NumDocumento, IdGrado, IdTurno, IdAdministrador, IdPadrino, EsBecado
     } = req.body;
 
     try {
-        // Ejecuta el procedimiento almacenado para actualizar un alumno existente
         await executeQuery('EXEC SPModificarAlumno @Id, @Nombre, @Apellido, @FechaNacimiento, @IdSexo, @IdRole, @IdEncargado, @IdEnfermedad, @IdTipoDocumento, @NumDocumento, @IdGrado, @IdTurno, @IdAdministrador, @IdPadrino, @EsBecado', [
             { name: 'Id', type: sql.Int, value: id },
             { name: 'Nombre', type: sql.VarChar(50), value: Nombre },
@@ -150,14 +143,14 @@ export async function updateAlumno(req, res) {
             { name: 'IdSexo', type: sql.Int, value: IdSexo },
             { name: 'IdRole', type: sql.Int, value: IdRole },
             { name: 'IdEncargado', type: sql.Int, value: IdEncargado },
-            { name: 'IdEnfermedad', type: sql.Int, value: IdEnfermedad },
+            { name: 'IdEnfermedad', type: sql.Int, value: IdEnfermedad || null },
             { name: 'IdTipoDocumento', type: sql.Int, value: IdTipoDocumento },
             { name: 'NumDocumento', type: sql.VarChar(50), value: NumDocumento },
             { name: 'IdGrado', type: sql.Int, value: IdGrado },
             { name: 'IdTurno', type: sql.Int, value: IdTurno },
             { name: 'IdAdministrador', type: sql.Int, value: IdAdministrador },
-            { name: 'IdPadrino', type: sql.Int, value: IdPadrino },
-            { name: 'EsBecado', type: sql.Bit, value: EsBecado }
+            { name: 'IdPadrino', type: sql.Int, value: IdPadrino || null },
+            { name: 'EsBecado', type: sql.Bit, value: EsBecado || 0 }
         ]);
 
         res.status(200).json({ msg: 'Alumno modificado exitosamente' });
@@ -177,13 +170,11 @@ export async function updateAlumno(req, res) {
  */
 export async function deleteAlumno(req, res) {
     const { id } = req.params;
+
     try {
-        // Definir el parámetro de entrada
-        const inputParams = [
+        await executeQuery('EXEC SPEliminarAlumno @Id', [
             { name: 'Id', type: sql.Int, value: id }
-        ]; s
-        // Ejecutar el procedimiento almacenado
-        await executeQuery('SPEliminarAlumno', inputParams);
+        ]);
 
         res.status(200).json({ msg: 'Alumno eliminado exitosamente' });
     } catch (error) {
